@@ -1127,6 +1127,7 @@ body {
     transform: translateY(20px);
     transition: transform 0.3s ease;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
 }
 
 .track-details-modal.show .track-details-content {
@@ -2577,4 +2578,12 @@ body[data-theme="dark"] .sort-select {
 body[data-theme="dark"] .sort-select option {
     color: #ffffff;
     background-color: #1a1a1a;
+}
+
+body[data-theme="dark"] .track-action-btn.playlist-btn {
+    color: #e0e0e0;
+}
+
+body[data-theme="dark"] .track-action-btn.playlist-btn:hover {
+    color: #ffffff;
 }
