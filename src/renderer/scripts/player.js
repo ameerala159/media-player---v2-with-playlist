@@ -14,14 +14,19 @@ export class Player {
         this.artistNameEl = document.querySelector('.artist-name');
         this.albumArtEl = document.querySelector('.album-art');
         this.nowPlaying = document.querySelector('.now-playing');
+        this.volumeBtn = document.getElementById('volumeBtn');
+        this.volumeSlider = document.getElementById('volumeSlider');
+        this.volumeDropdown = document.getElementById('volumeDropdown');
 
         this.isPlaying = false;
         this.currentTrackIndex = -1;
         this.audioPlayer = new Audio();
         this.updateProgressInterval = null;
         this.currentPlaylist = [];
-        this.skipDuration = 5; // Initialize skip duration within Player class
-        this.lastSkipTime = 0; // Add timestamp for last skip
+        this.skipDuration = 5;
+        this.lastSkipTime = 0;
+        this.isMuted = false;
+        this.lastVolume = 100;
     }
 
     // Initialize player
@@ -76,6 +81,20 @@ export class Player {
             } else {
                 // If it's a single track, just play it
                 this.playTrack(event.detail.index, event.detail.shape);
+            }
+        });
+
+        // Volume control
+        this.volumeSlider.addEventListener('input', () => this.handleVolumeChange());
+        this.volumeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.toggleVolumeDropdown();
+        });
+
+        // Close volume dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!this.volumeBtn.contains(e.target) && !this.volumeDropdown.contains(e.target)) {
+                this.volumeDropdown.classList.remove('show');
             }
         });
     }
@@ -288,5 +307,50 @@ export class Player {
         this.albumArtEl.src = '';
         this.currentTimeEl.textContent = '0:00';
         this.totalTimeEl.textContent = '0:00';
+    }
+
+    // Toggle volume dropdown
+    toggleVolumeDropdown() {
+        this.volumeDropdown.classList.toggle('show');
+    }
+
+    // Handle volume change
+    handleVolumeChange() {
+        const volume = parseInt(this.volumeSlider.value);
+        this.audioPlayer.volume = volume / 100;
+        this.updateVolumeIcon(volume);
+        this.isMuted = false;
+        this.lastVolume = volume;
+    }
+
+    // Toggle mute
+    toggleMute() {
+        if (this.isMuted) {
+            // Unmute
+            this.audioPlayer.volume = this.lastVolume / 100;
+            this.volumeSlider.value = this.lastVolume;
+            this.isMuted = false;
+        } else {
+            // Mute
+            this.lastVolume = parseInt(this.volumeSlider.value);
+            this.audioPlayer.volume = 0;
+            this.volumeSlider.value = 0;
+            this.isMuted = true;
+        }
+        this.updateVolumeIcon(parseInt(this.volumeSlider.value));
+    }
+
+    // Update volume icon based on volume level
+    updateVolumeIcon(volume) {
+        const icon = this.volumeBtn.querySelector('i');
+        icon.className = ''; // Clear existing classes
+        
+        if (volume === 0) {
+            icon.className = 'fas fa-volume-mute';
+        } else if (volume < 50) {
+            icon.className = 'fas fa-volume-down';
+        } else {
+            icon.className = 'fas fa-volume-up';
+        }
     }
 } 

@@ -379,7 +379,8 @@ body {
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 20px;
     z-index: 1000;
     height: var(--player-controls-height-desktop); /* Use variable height */
     flex-shrink: 0; /* Prevent it from shrinking */
@@ -389,7 +390,6 @@ body {
 .now-playing {
     display: flex;
     align-items: center;
-    width: 30%;
     cursor: pointer;
     transition: transform 0.3s ease;
 }
@@ -479,7 +479,7 @@ body {
 }
 
 .progress-container {
-    width: 30%;
+    flex: 1; /* Allow progress bar to take available space */
     display: flex;
     align-items: center;
     gap: 10px;
@@ -946,6 +946,7 @@ body {
         order: 3;
         gap: 15px;
         margin-top: 5px;
+        flex-wrap: wrap; /* Allow controls to wrap to the next line on smaller screens */
     }
 
     .control-btn {
@@ -1580,7 +1581,8 @@ html, body {
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 20px;
     z-index: 1000;
     height: var(--player-controls-height-desktop); /* Use variable height */
     flex-shrink: 0; /* Prevent it from shrinking */
@@ -1677,6 +1679,7 @@ html, body {
         order: 3;
         gap: 15px;
         margin-top: 5px;
+        flex-wrap: wrap; /* Allow controls to wrap to the next line on smaller screens */
     }
 
     .control-btn {
@@ -2428,4 +2431,145 @@ body[data-theme="dark"] .playlist-tracks-list {
 body[data-theme="dark"] .playlist-tracks-list .empty-state {
     color: #888;
     border-color: #333;
+}
+
+/* Volume Control Styles */
+.volume-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 60px; /* Fixed width for the volume container */
+    flex-shrink: 0;
+    justify-content: center;
+}
+
+.volume-btn {
+    font-size: 1.2em;
+    color: var(--text-color);
+    transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.volume-btn i {
+    width: 20px; /* Fixed width for the icon */
+    text-align: center;
+}
+
+.volume-btn:hover {
+    color: #1db954;
+}
+
+.volume-dropdown {
+    display: none;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--background-color);
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    margin-bottom: 10px;
+    z-index: 1001;
+    width: 60px; /* Adjusted width for vertical slider */
+}
+
+.volume-dropdown.show {
+    display: block;
+}
+
+.volume-dropdown::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid var(--background-color);
+}
+
+.volume-slider-container {
+    display: flex;
+    flex-direction: column; /* Changed back to column for vertical slider */
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    height: 120px; /* Set a height for the vertical slider container */
+    justify-content: center;
+}
+
+.volume-slider {
+    -webkit-appearance: none;
+    width: 100px; /* This will be the height when rotated */
+    height: 6px; /* Increased thickness for better appearance */
+    background: var(--border-color);
+    border-radius: 3px; /* Adjusted border-radius for thicker slider */
+    outline: none;
+    transition: background 0.3s ease;
+    transform: rotate(-90deg); /* Rotate for vertical orientation */
+    margin: 0; /* Remove margin */
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px; /* Larger thumb for better control */
+    height: 16px; /* Larger thumb for better control */
+    background: #1db954;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+.volume-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1); /* Slightly smaller hover scale */
+    background-color: #1ed760; /* Darker green on hover */
+}
+
+.volume-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: #1db954;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+.volume-slider::-moz-range-thumb:hover {
+    transform: scale(1.1);
+    background-color: #1ed760;
+}
+
+/* Media query for mobile responsiveness */
+@media (max-width: 768px) {
+    .volume-container {
+        position: static;
+        width: auto; /* Allow width to be auto for mobile */
+        flex-shrink: 1;
+    }
+
+    .volume-dropdown {
+        position: fixed;
+        bottom: 100px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+    }
+
+    .volume-dropdown::after {
+        display: none;
+    }
+
+    .volume-btn {
+        font-size: 1.1em; /* Slightly smaller font size for mobile */
+        padding: 6px; /* Adjusted padding for mobile */
+    }
+
+    .volume-btn i {
+        width: 18px; /* Slightly smaller fixed width for mobile icon */
+    }
 }
