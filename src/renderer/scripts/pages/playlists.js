@@ -109,9 +109,21 @@ export class PlaylistsPage {
         document.body.appendChild(modal);
         requestAnimationFrame(() => modal.classList.add('show'));
 
+        // Add ESC key handler
+        const handleEscKey = (e) => {
+            if (e.key === 'Escape') {
+                this.closePlaylistContentsModal(modal);
+                document.removeEventListener('keydown', handleEscKey);
+            }
+        };
+        document.addEventListener('keydown', handleEscKey);
+
         // Add event listeners
         const closeBtn = modal.querySelector('.close-btn');
-        closeBtn.addEventListener('click', () => this.closePlaylistContentsModal(modal));
+        closeBtn.addEventListener('click', () => {
+            this.closePlaylistContentsModal(modal);
+            document.removeEventListener('keydown', handleEscKey);
+        });
 
         const playAllBtn = modal.querySelector('.play-all-btn');
         if (playAllBtn) {
@@ -124,6 +136,7 @@ export class PlaylistsPage {
                 if (confirm('Are you sure you want to remove all tracks from this playlist?')) {
                     this.removeAllTracks(playlistIndex);
                     this.closePlaylistContentsModal(modal);
+                    document.removeEventListener('keydown', handleEscKey);
                 }
             });
         }
