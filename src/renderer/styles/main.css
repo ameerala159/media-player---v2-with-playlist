@@ -21,6 +21,26 @@ html, body {
     --hover-color: #f5f5f5;
     --sidebar-bg: #f8f9fa;
     --player-bg: #ffffff;
+    
+    /* Color Variables */
+    --primary-color: #1db954;
+    --primary-hover: #1ed760;
+    --danger-color: #e74c3c;
+    --danger-hover: #c0392b;
+    --paypal-color: #0070ba;
+    --paypal-hover: #005ea6;
+    --patreon-color: #f96854;
+    --patreon-hover: #e85a47;
+    --success-bg: #e3f5e9;
+    --success-hover: #d1f0db;
+    --warning-color: #ffd700;
+    --text-muted: #666666;
+    --text-secondary: #888888;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --shadow-color-dark: rgba(0, 0, 0, 0.2);
+    --shadow-color-darker: rgba(0, 0, 0, 0.3);
+    --modal-overlay: rgba(0, 0, 0, 0.7);
+    --modal-overlay-light: rgba(0, 0, 0, 0.5);
 }
 
 body {
@@ -81,8 +101,8 @@ body {
 }
 
 .menu-button:hover {
-    background-color: #e3f5e9;
-    color: #1db954;
+    background-color: var(--success-bg);
+    color: var(--primary-color);
 }
 
 .menu-dropdown {
@@ -113,8 +133,8 @@ body {
 }
 
 .menu-option:hover {
-    background-color: #e3f5e9;
-    color: #1db954;
+    background-color: var(--hover-color);
+    color: var(--primary-color);
 }
 
 .menu-option i {
@@ -171,12 +191,12 @@ body {
 
 .nav-item:hover {
     background-color: var(--hover-color);
-    color: #1db954;
+    color: var(--primary-color);
 }
 
 .nav-item.active {
-    background-color: #e3f5e9;
-    color: #1db954;
+    background-color: var(--success-bg);
+    color: var(--primary-color);
     font-weight: 600;
 }
 
@@ -241,7 +261,7 @@ body {
 
 .search-input:focus {
     outline: none;
-    border-color: #1db954;
+    border-color: var(--primary-color);
     box-shadow: 0 0 0 2px rgba(29, 185, 84, 0.1);
 }
 
@@ -277,7 +297,7 @@ body {
 
 .sort-select:focus {
     outline: none;
-    border-color: #1db954;
+    border-color: var(--primary-color);
     box-shadow: 0 0 0 2px rgba(29, 185, 84, 0.1);
 }
 
@@ -303,7 +323,7 @@ body {
 }
 
 .select-folder-btn {
-    background-color: #1db954;
+    background-color: var(--primary-color);
     color: white;
     border: none;
     padding: 15px 30px;
@@ -314,13 +334,13 @@ body {
     align-items: center;
     gap: 10px;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px var(--shadow-color);
     min-width: 200px;
     justify-content: center;
 }
 
 .select-folder-btn:hover {
-    background-color: #1ed760;
+    background-color: var(--primary-hover);
     transform: scale(1.05);
 }
 
@@ -341,7 +361,7 @@ body {
     width: 50px;
     height: 50px;
     border: 5px solid #f3f3f3;
-    border-top: 5px solid #1db954;
+    border-top: 5px solid var(--primary-color);
     border-radius: 50%;
     animation: spin 1s linear infinite;
     margin-bottom: 15px;
@@ -365,7 +385,7 @@ body {
 
 .error-message {
     text-align: center;
-    color: #ff4444;
+    color: var(--danger-color);
     padding: 20px;
     background-color: #ffeeee;
     border-radius: 8px;
@@ -464,7 +484,7 @@ body {
 
 .play-btn {
     font-size: 1.5em;
-    background-color: #1db954;
+    background-color: var(--primary-color);
     color: white;
     width: 50px;
     height: 50px;
@@ -474,7 +494,7 @@ body {
 }
 
 .play-btn:hover {
-    background-color: #1ed760;
+    background-color: var(--primary-hover);
     transform: scale(1.05);
 }
 
@@ -499,7 +519,7 @@ body {
     left: 0;
     top: 0;
     height: 100%;
-    background-color: #1db954;
+    background-color: var(--primary-color);
     border-radius: 2px;
     width: 0%;
 }
@@ -610,14 +630,14 @@ body {
 
 .add-to-playlist-btn:hover {
     background-color: var(--hover-color);
-    color: #1db954;
+    color: var(--primary-color);
     opacity: 1;
     transform: scale(1.1) translateY(-50%);
 }
 
 .add-to-playlist-btn i {
     font-size: 1.2em;
-    color: #1db954;
+    color: var(--primary-color);
 }
 
 .playlist-dropdown {
@@ -654,7 +674,7 @@ body {
 }
 
 .playlist-option i {
-    color: #1db954;
+    color: var(--primary-color);
     flex-shrink: 0;
 }
 
@@ -725,7 +745,7 @@ body {
 
 .create-playlist-form input:focus {
     outline: none;
-    border-color: var(--accent-color);
+    border-color: var(--primary-color);
 }
 
 .create-playlist-actions {
@@ -750,7 +770,7 @@ body {
 }
 
 .create-playlist-actions .create-btn {
-    background-color: var(--accent-color);
+    background-color: var(--primary-color);
     color: white;
 }
 
@@ -763,7 +783,7 @@ body {
 }
 
 .create-playlist-actions .create-btn:hover {
-    background-color: var(--accent-hover-color);
+    background-color: var(--primary-hover);
 }
 
 .window-controls {
@@ -788,7 +808,7 @@ body {
 }
 
 .close-btn:hover {
-    background-color: #ff4444;
+    background-color: var(--danger-color);
     color: white;
 }
 
@@ -829,7 +849,7 @@ body {
 }
 
 .skip-duration-option.active {
-    background-color: #1db954;
+    background-color: var(--primary-color);
     color: white;
 }
 
@@ -1018,7 +1038,7 @@ body {
 }
 
 .track-selection-option.active {
-    background-color: #1db954;
+    background-color: var(--primary-color);
     color: white;
 }
 
@@ -1055,7 +1075,7 @@ body {
 }
 
 .sleep-timer-option.active {
-    background-color: #1db954;
+    background-color: var(--primary-color);
     color: white;
 }
 
@@ -1076,7 +1096,7 @@ body {
 }
 
 .custom-timer-btn {
-    background-color: #1db954;
+    background-color: var(--primary-color);
     color: white;
     border: none;
     padding: 5px 10px;
@@ -1086,16 +1106,16 @@ body {
 }
 
 .custom-timer-btn:hover {
-    background-color: #1ed760;
+    background-color: var(--primary-hover);
 }
 
 .sleep-timer-option.cancel {
-    color: #ff4444;
+    color: var(--danger-color);
     font-weight: 500;
 }
 
 .sleep-timer-option.cancel:hover {
-    background-color: #ffeeee;
+    background-color: var(--danger-hover);
 }
 
 .track-details-modal {
@@ -1171,7 +1191,7 @@ body {
 }
 
 .track-stat i {
-    color: #1db954;
+    color: var(--primary-color);
 }
 
 .track-details-description {
@@ -1201,7 +1221,7 @@ body {
 .rating-square {
     width: 30px;
     height: 30px;
-    border: 2px solid #1db954;
+    border: 2px solid var(--primary-color);
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -1214,7 +1234,7 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    color: #1db954;
+    color: var(--primary-color);
     font-size: 18px;
 }
 
@@ -1223,7 +1243,7 @@ body {
 }
 
 .rating-square.active {
-    background-color: #1db954;
+    background-color: var(--primary-color);
 }
 
 .rating-square.active::after {
@@ -1236,21 +1256,21 @@ body {
 }
 
 .track-action-btn.favorite-btn {
-    background-color: #e3f5e9;
-    color: #1db954;
+    background-color: var(--success-bg);
+    color: var(--primary-color);
 }
 
 .track-action-btn.favorite-btn.active {
-    background-color: #ff6b6b;
+    background-color: var(--danger-color);
     color: white;
 }
 
 .track-action-btn.favorite-btn:hover {
-    background-color: #d1f0db;
+    background-color: var(--success-hover);
 }
 
 .track-action-btn.favorite-btn.active:hover {
-    background-color: #ff5252;
+    background-color: var(--danger-hover);
 }
 
 .track-action-btn {
@@ -1267,13 +1287,13 @@ body {
 }
 
 .track-action-btn.primary {
-    background-color: #1db954;
+    background-color: var(--primary-color);
     color: white;
 }
 
 .track-action-btn.secondary {
-    background-color: #e3f5e9;
-    color: #1db954;
+    background-color: var(--success-bg);
+    color: var(--primary-color);
 }
 
 .track-action-btn:hover {
@@ -1282,11 +1302,11 @@ body {
 }
 
 .track-action-btn.primary:hover {
-    background-color: #1ed760;
+    background-color: var(--primary-hover);
 }
 
 .track-action-btn.secondary:hover {
-    background-color: #d1f0db;
+    background-color: var(--success-hover);
 }
 
 .close-track-details {
@@ -1384,12 +1404,12 @@ body {
 
 .nav-item:hover {
     background-color: var(--hover-color);
-    color: #1db954;
+    color: var(--primary-color);
 }
 
 .nav-item.active {
-    background-color: #e3f5e9;
-    color: #1db954;
+    background-color: var(--success-bg);
+    color: var(--primary-color);
     font-weight: 600;
 }
 
@@ -1440,7 +1460,7 @@ body {
 }
 
 .favorite-indicator {
-    color: var(--accent-color);
+    color: var(--primary-color);
     margin-left: 10px;
 }
 
@@ -1793,7 +1813,7 @@ html, body {
 }
 
 input:checked + .slider {
-    background-color: #1db954;
+    background-color: var(--primary-color);
 }
 
 input:checked + .slider:before {
@@ -1817,7 +1837,12 @@ input:checked + .slider:before {
     --sidebar-bg: #242424;
     --player-bg: #1a1a1a;
     --music-item-bg: #2d2d2d; /* New variable for music item background in dark mode */
-    --active-nav-item-bg: #1db954; /* Green for selected nav item in dark mode */
+    --active-nav-item-bg: var(--primary-color); /* Green for selected nav item in dark mode */
+    --shadow-color: rgba(0, 0, 0, 0.2);
+    --shadow-color-dark: rgba(0, 0, 0, 0.3);
+    --shadow-color-darker: rgba(0, 0, 0, 0.4);
+    --modal-overlay: rgba(0, 0, 0, 0.8);
+    --modal-overlay-light: rgba(0, 0, 0, 0.6);
 }
 
 /* Apply dark mode styles to existing elements */
@@ -1921,7 +1946,7 @@ body[data-theme="dark"] .track-details-content {
 }
 
 .create-playlist-btn {
-    background-color: #1db954;
+    background-color: var(--primary-color);
     color: white;
     border: none;
     padding: 8px 16px;
@@ -1935,7 +1960,7 @@ body[data-theme="dark"] .track-details-content {
 }
 
 .create-playlist-btn:hover {
-    background-color: #1ed760;
+    background-color: var(--primary-hover);
     transform: scale(1.05);
 }
 
@@ -1965,7 +1990,7 @@ body[data-theme="dark"] .track-details-content {
     left: 0;
     width: 100%;
     height: 4px;
-    background: linear-gradient(90deg, #1db954, #1ed760);
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-hover));
     opacity: 0;
     transition: opacity 0.3s ease;
 }
@@ -1973,7 +1998,7 @@ body[data-theme="dark"] .track-details-content {
 .playlist-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-    border-color: #1db954;
+    border-color: var(--primary-color);
 }
 
 .playlist-card:hover::before {
@@ -1999,7 +2024,7 @@ body[data-theme="dark"] .track-details-content {
     content: '\f001';
     font-family: 'Font Awesome 5 Free';
     font-weight: 900;
-    color: #1db954;
+    color: var(--primary-color);
 }
 
 /* Playlist Modal Styles */
@@ -2079,23 +2104,23 @@ body[data-theme="dark"] .track-details-content {
 }
 
 .play-all-btn {
-    background-color: #1db954;
+    background-color: var(--primary-color);
     color: white;
 }
 
 .play-all-btn:hover {
-    background-color: #1ed760;
+    background-color: var(--primary-hover);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(29, 185, 84, 0.2);
 }
 
 .remove-all-btn {
-    background-color: #e74c3c;
+    background-color: var(--danger-color);
     color: white;
 }
 
 .remove-all-btn:hover {
-    background-color: #c0392b;
+    background-color: var(--danger-hover);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(231, 76, 60, 0.2);
 }
@@ -2115,7 +2140,7 @@ body[data-theme="dark"] .track-details-content {
 .playlist-track-item:hover {
     background-color: var(--hover-color);
     transform: translateX(4px);
-    border-color: #1db954;
+    border-color: var(--primary-color);
 }
 
 .track-actions {
@@ -2134,13 +2159,13 @@ body[data-theme="dark"] .track-details-content {
 }
 
 .track-actions .play-track-btn:hover {
-    background-color: #1db954;
+    background-color: var(--primary-color);
     color: white;
     transform: scale(1.1);
 }
 
 .track-actions .remove-track-btn:hover {
-    background-color: #e74c3c;
+    background-color: var(--danger-color);
     color: white;
     transform: scale(1.1);
 }
@@ -2153,7 +2178,7 @@ body[data-theme="dark"] .playlist-card {
 }
 
 body[data-theme="dark"] .playlist-card:hover {
-    border-color: #1db954;
+    border-color: var(--primary-color);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
@@ -2175,7 +2200,7 @@ body[data-theme="dark"] .playlist-track-item {
 
 body[data-theme="dark"] .playlist-track-item:hover {
     background-color: #2a2a2a;
-    border-color: #1db954;
+    border-color: var(--primary-color);
 }
 
 body[data-theme="dark"] .track-actions button {
@@ -2183,12 +2208,12 @@ body[data-theme="dark"] .track-actions button {
 }
 
 body[data-theme="dark"] .track-actions .play-track-btn:hover {
-    background-color: #1db954;
+    background-color: var(--primary-color);
     color: white;
 }
 
 body[data-theme="dark"] .track-actions .remove-track-btn:hover {
-    background-color: #e74c3c;
+    background-color: var(--danger-color);
     color: white;
 }
 
@@ -2232,7 +2257,7 @@ body[data-theme="dark"] .playlist-contents-footer .close-btn:hover {
 }
 
 .volume-btn:hover {
-    color: #1db954;
+    color: var(--primary-color);
 }
 
 .volume-dropdown {
@@ -2292,7 +2317,7 @@ body[data-theme="dark"] .playlist-contents-footer .close-btn:hover {
     appearance: none;
     width: 16px; /* Larger thumb for better control */
     height: 16px; /* Larger thumb for better control */
-    background: #1db954;
+    background: var(--primary-color);
     border-radius: 50%;
     cursor: pointer;
     transition: transform 0.2s ease, background-color 0.3s ease;
@@ -2300,13 +2325,13 @@ body[data-theme="dark"] .playlist-contents-footer .close-btn:hover {
 
 .volume-slider::-webkit-slider-thumb:hover {
     transform: scale(1.1); /* Slightly smaller hover scale */
-    background-color: #1ed760; /* Darker green on hover */
+    background-color: var(--primary-hover); /* Darker green on hover */
 }
 
 .volume-slider::-moz-range-thumb {
     width: 16px;
     height: 16px;
-    background: #1db954;
+    background: var(--primary-color);
     border-radius: 50%;
     cursor: pointer;
     border: none;
@@ -2315,7 +2340,7 @@ body[data-theme="dark"] .playlist-contents-footer .close-btn:hover {
 
 .volume-slider::-moz-range-thumb:hover {
     transform: scale(1.1);
-    background-color: #1ed760;
+    background-color: var(--primary-hover);
 }
 
 /* Media query for mobile responsiveness */
@@ -2382,7 +2407,7 @@ body[data-theme="dark"] .playlist-contents-footer .close-btn:hover {
 
 .profile-image i {
     font-size: 100px;
-    color: #1db954;
+    color: var(--primary-color);
 }
 
 .profile-info h3 {
@@ -2392,7 +2417,7 @@ body[data-theme="dark"] .playlist-contents-footer .close-btn:hover {
 }
 
 .nationality {
-    color: #666;
+    color: var(--text-muted);
     margin: 0 0 10px 0;
     font-size: 16px;
 }
@@ -2439,21 +2464,21 @@ body[data-theme="dark"] .playlist-contents-footer .close-btn:hover {
 }
 
 .paypal-btn {
-    background-color: #0070ba;
+    background-color: var(--paypal-color);
     color: white;
 }
 
 .paypal-btn:hover {
-    background-color: #005ea6;
+    background-color: var(--paypal-hover);
 }
 
 .patreon-btn {
-    background-color: #f96854;
+    background-color: var(--patreon-color);
     color: white;
 }
 
 .patreon-btn:hover {
-    background-color: #e85a47;
+    background-color: var(--patreon-hover);
 }
 
 /* Media queries for responsive design */
