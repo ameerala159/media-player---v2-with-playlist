@@ -5,8 +5,11 @@ export class HomePage {
         this.selectFolderBtn = document.getElementById('selectFolderBtn');
         this.folderSelectContainer = document.getElementById('folderSelectContainer');
         this.loadingIndicator = document.getElementById('loadingIndicator');
+        this.searchInput = document.getElementById('searchInput');
+        this.sortSelect = document.getElementById('sortSelect');
         this.currentPlaylist = [];
         this.trackShapes = new Map(); // Store shapes for each track
+        this.allTracks = []; // Store all tracks for filtering and sorting
     }
 
     // Initialize home page
@@ -18,6 +21,12 @@ export class HomePage {
     // Setup event listeners
     setupEventListeners() {
         this.selectFolderBtn.addEventListener('click', () => this.handleFolderSelection());
+        
+        // Add search input listener
+        this.searchInput.addEventListener('input', () => this.filterAndSortTracks());
+        
+        // Add sort select listener
+        this.sortSelect.addEventListener('change', () => this.filterAndSortTracks());
     }
 
     // Load saved folder if available
@@ -42,7 +51,40 @@ export class HomePage {
     // Load music from folder
     async loadMusicFromFolder(folderPath) {
         const tracks = await window.api.getMusicFiles(folderPath);
-        this.updateMusicList(tracks);
+        this.allTracks = tracks; // Store all tracks
+        this.filterAndSortTracks(); // Initial display with default sorting
+    }
+
+    // Filter and sort tracks based on search input and sort selection
+    filterAndSortTracks() {
+        const searchTerm = this.searchInput.value.toLowerCase();
+        const sortBy = this.sortSelect.value;
+        
+        // Filter tracks based on search term
+        let filteredTracks = this.allTracks.filter(track => {
+            const title = (track.name || '').toLowerCase();
+            const artist = (track.artist || '').toLowerCase();
+            return title.includes(searchTerm) || artist.includes(searchTerm);
+        });
+        
+        // Sort tracks based on selected option
+        filteredTracks.sort((a, b) => {
+            switch (sortBy) {
+                case 'title':
+                    return (a.name || '').localeCompare(b.name || '');
+                case 'rating':
+                    const ratings = JSON.parse(localStorage.getItem('trackRatings') || '{}');
+                    const ratingA = ratings[a.path] || 0;
+                    const ratingB = ratings[b.path] || 0;
+                    return ratingB - ratingA; // Sort by highest rating first
+                case 'date':
+                    return (b.modifiedTime || 0) - (a.modifiedTime || 0); // Sort by most recent first
+                default:
+                    return 0;
+            }
+        });
+        
+        this.updateMusicList(filteredTracks);
     }
 
     // Show loading state

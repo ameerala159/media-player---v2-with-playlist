@@ -75,6 +75,21 @@
                         </button>
                     </div>
                     
+                    <!-- Add search and sort controls -->
+                    <div class="search-sort-container">
+                        <div class="search-container">
+                            <input type="text" id="searchInput" placeholder="Search music..." class="search-input">
+                            <i class="fas fa-search search-icon"></i>
+                        </div>
+                        <div class="sort-container">
+                            <select id="sortSelect" class="sort-select">
+                                <option value="title">Sort by Title</option>
+                                <option value="rating">Sort by Rating</option>
+                                <option value="date">Sort by Date Modified</option>
+                            </select>
+                        </div>
+                    </div>
+                    
                     <!-- Add loading indicator -->
                     <div id="loadingIndicator" class="loading-container" style="display: none;">
                         <div class="loading-spinner"></div>
