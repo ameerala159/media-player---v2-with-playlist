@@ -10,6 +10,7 @@ export class TrackDetails {
         this.ratingSquares = document.querySelectorAll('.rating-square');
         this.favoriteBtn = document.getElementById('favoriteTrackBtn');
         this.addToPlaylistBtn = document.getElementById('addToPlaylistBtn');
+        this.removeRatingBtn = document.getElementById('removeRatingBtn');
         this.currentTrack = null;
         this.currentRating = 0;
     }
@@ -45,6 +46,9 @@ export class TrackDetails {
             square.addEventListener('mouseout', () => this.handleRatingOut());
         });
 
+        // Remove rating button
+        this.removeRatingBtn.addEventListener('click', () => this.removeRating());
+
         // Favorite button
         this.favoriteBtn.addEventListener('click', () => this.handleFavoriteClick());
 
@@ -71,8 +75,9 @@ export class TrackDetails {
         const trackRatings = JSON.parse(localStorage.getItem('trackRatings') || '{}');
         this.currentRating = trackRatings[track.path] || 0;
         
-        // Update rating squares
+        // Update rating squares and remove rating button
         this.updateRatingSquares();
+        this.updateRemoveRatingButton();
 
         // Load favorite status
         const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
@@ -95,6 +100,35 @@ export class TrackDetails {
         }, 300);
     }
 
+    // Remove rating
+    removeRating() {
+        if (this.currentTrack) {
+            this.currentRating = 0;
+            this.updateRatingSquares();
+            
+            // Remove rating from localStorage
+            const trackRatings = JSON.parse(localStorage.getItem('trackRatings') || '{}');
+            delete trackRatings[this.currentTrack.path];
+            localStorage.setItem('trackRatings', JSON.stringify(trackRatings));
+            
+            // Update remove rating button
+            this.updateRemoveRatingButton();
+            
+            // Dispatch event for rating update
+            window.dispatchEvent(new CustomEvent('trackRatingUpdated', {
+                detail: { track: this.currentTrack, rating: 0 }
+            }));
+
+            // Dispatch event to update the music list
+            window.dispatchEvent(new CustomEvent('updateMusicList'));
+        }
+    }
+
+    // Update remove rating button visibility
+    updateRemoveRatingButton() {
+        this.removeRatingBtn.style.display = this.currentRating > 0 ? 'flex' : 'none';
+    }
+
     // Handle rating click
     handleRatingClick(square) {
         const rating = parseInt(square.dataset.rating);
@@ -108,43 +142,49 @@ export class TrackDetails {
             const trackRatings = JSON.parse(localStorage.getItem('trackRatings') || '{}');
             trackRatings[this.currentTrack.path] = rating;
             localStorage.setItem('trackRatings', JSON.stringify(trackRatings));
+            
+            // Update remove rating button
+            this.updateRemoveRatingButton();
 
             // Dispatch event for rating update
             window.dispatchEvent(new CustomEvent('trackRatingUpdated', {
                 detail: { track: this.currentTrack, rating }
             }));
+
+            // Dispatch event to update the music list
+            window.dispatchEvent(new CustomEvent('updateMusicList'));
         }
+    }
+
+    // Update rating squares visual state
+    updateRatingSquares() {
+        this.ratingSquares.forEach(square => {
+            const rating = parseInt(square.dataset.rating);
+            if (rating <= this.currentRating) {
+                square.classList.add('active');
+            } else {
+                square.classList.remove('active');
+            }
+            square.style.backgroundColor = '';
+        });
     }
 
     // Handle rating hover
     handleRatingHover(square) {
         const rating = parseInt(square.dataset.rating);
         this.ratingSquares.forEach(s => {
-            if (parseInt(s.dataset.rating) <= rating) {
-                s.style.backgroundColor = '#e3f5e9';
+            const r = parseInt(s.dataset.rating);
+            if (r <= rating) {
+                s.style.backgroundColor = 'var(--primary-hover)';
             } else {
                 s.style.backgroundColor = '';
             }
         });
     }
 
-    // Handle rating mouse out
+    // Handle rating hover out
     handleRatingOut() {
-        this.ratingSquares.forEach(s => {
-            if (!s.classList.contains('active')) {
-                s.style.backgroundColor = '';
-            }
-        });
-    }
-
-    // Update rating squares
-    updateRatingSquares() {
         this.ratingSquares.forEach(square => {
-            if (parseInt(square.dataset.rating) <= this.currentRating) {
-                square.classList.add('active');
-            } else {
-                square.classList.remove('active');
-            }
             square.style.backgroundColor = '';
         });
     }

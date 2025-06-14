@@ -68,6 +68,9 @@ export class FavoritesPage {
                 <div class="music-artist">${artist}</div>
             </div>
             <div class="music-duration">${duration}</div>
+            <button class="remove-favorite-btn" title="Remove from Favorites">
+                <i class="fas fa-times"></i>
+            </button>
         `;
 
         // Add favorite indicator
@@ -86,7 +89,11 @@ export class FavoritesPage {
         }
 
         // Add click handler for playing track
-        item.addEventListener('click', () => {
+        item.addEventListener('click', (e) => {
+            // Don't trigger if clicking the remove button
+            if (e.target.closest('.remove-favorite-btn')) {
+                return;
+            }
             // Remove active class from all items
             document.querySelectorAll('.music-item').forEach(el => {
                 el.classList.remove('active');
@@ -101,6 +108,24 @@ export class FavoritesPage {
                     shape: coverUrl
                 }
             }));
+        });
+
+        // Add click handler for remove button
+        const removeBtn = item.querySelector('.remove-favorite-btn');
+        removeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+            const index = favorites.indexOf(track.path);
+            if (index !== -1) {
+                favorites.splice(index, 1);
+                localStorage.setItem('favorites', JSON.stringify(favorites));
+                
+                // Dispatch event for favorite status change
+                window.dispatchEvent(new CustomEvent('favoriteStatusChanged'));
+                
+                // Show notification
+                this.showNotification(`${title} removed from favorites`);
+            }
         });
 
         return item;
@@ -127,5 +152,26 @@ export class FavoritesPage {
         const shape = shapes[Math.floor(Math.random() * shapes.length)];
         const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">${shape}</svg>`;
         return `data:image/svg+xml;base64,${btoa(svg)}`;
+    }
+
+    // Show notification
+    showNotification(message) {
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        // Show notification
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 100);
+
+        // Remove notification after 3 seconds
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }, 3000);
     }
 } 

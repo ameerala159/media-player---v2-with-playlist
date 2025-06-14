@@ -27,6 +27,23 @@ export class HomePage {
         
         // Add sort select listener
         this.sortSelect.addEventListener('change', () => this.filterAndSortTracks());
+
+        // Listen for track list updates
+        window.addEventListener('trackListUpdated', (event) => {
+            this.currentPlaylist = event.detail.tracks;
+            this.allTracks = [...this.currentPlaylist];
+            this.filterAndSortTracks();
+        });
+
+        // Listen for rating updates
+        window.addEventListener('trackRatingUpdated', () => {
+            this.filterAndSortTracks();
+        });
+
+        // Listen for music list update events
+        window.addEventListener('updateMusicList', () => {
+            this.filterAndSortTracks();
+        });
     }
 
     // Load saved folder if available
