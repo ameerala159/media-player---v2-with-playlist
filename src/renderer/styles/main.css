@@ -25,6 +25,8 @@ html, body {
     /* Color Variables */
     --primary-color: #1db954;
     --primary-hover: #1ed760;
+    --primary-light: rgba(29, 185, 84, 0.1);
+    --primary-dark: #169c46;
     --danger-color: #e74c3c;
     --danger-hover: #c0392b;
     --paypal-color: #0070ba;
@@ -2855,4 +2857,99 @@ body {
 .notification.show {
     transform: translateY(0);
     opacity: 1;
+}
+
+/* Color Picker Styles */
+.color-picker-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.theme-color-picker {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 40px;
+    padding: 0;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    background: none;
+    transition: border-color 0.2s ease;
+}
+
+.theme-color-picker:hover {
+    border-color: var(--primary-color);
+}
+
+.theme-color-picker::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.theme-color-picker::-webkit-color-swatch {
+    border: none;
+    border-radius: 6px;
+}
+
+.preset-colors {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.color-preset {
+    width: 30px;
+    height: 30px;
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.color-preset::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+    border-radius: 4px;
+}
+
+.color-preset:hover {
+    transform: scale(1.1);
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.color-preset.active {
+    border-color: var(--primary-color);
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* Dark mode adjustments for color picker */
+body[data-theme="dark"] .theme-color-picker {
+    border-color: var(--text-color);
+}
+
+body[data-theme="dark"] .theme-color-picker:hover {
+    border-color: var(--primary-color);
+}
+
+body[data-theme="dark"] .color-preset {
+    border-color: var(--text-color);
+}
+
+body[data-theme="dark"] .color-preset:hover,
+body[data-theme="dark"] .color-preset.active {
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+body[data-theme="dark"] .color-preset::after {
+    background: linear-gradient(45deg, rgba(0,0,0,0.1), rgba(0,0,0,0));
 }
