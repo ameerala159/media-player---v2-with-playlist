@@ -699,6 +699,8 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('musicFolderPath', folderPath);
             const tracks = await window.api.getMusicFiles(folderPath);
             updateMusicList(tracks);
+            // Restart the app after changing folder
+            window.api.send('toMain', { action: 'restart' });
         } else {
             console.log('Folder selection cancelled.');
         }

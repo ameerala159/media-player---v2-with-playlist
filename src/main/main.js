@@ -36,6 +36,10 @@ ipcMain.on('toMain', (event, data) => {
     case 'close':
       mainWindow.close();
       break;
+    case 'restart':
+      app.relaunch();
+      app.exit(0);
+      break;
   }
 });
 
