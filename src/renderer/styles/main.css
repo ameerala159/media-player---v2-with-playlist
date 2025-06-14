@@ -2573,3 +2573,129 @@ body[data-theme="dark"] .playlist-tracks-list .empty-state {
         width: 18px; /* Slightly smaller fixed width for mobile icon */
     }
 }
+
+/* About Developer Page Styles */
+.about-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.about-header h2 {
+    margin: 0;
+    color: var(--text-color);
+}
+
+.about-content {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.developer-profile {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 40px;
+    padding: 30px;
+    background-color: var(--sidebar-bg);
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.profile-image {
+    flex-shrink: 0;
+}
+
+.profile-image i {
+    font-size: 100px;
+    color: #1db954;
+}
+
+.profile-info h3 {
+    margin: 0 0 10px 0;
+    font-size: 24px;
+    color: var(--text-color);
+}
+
+.nationality {
+    color: #666;
+    margin: 0 0 10px 0;
+    font-size: 16px;
+}
+
+.bio {
+    color: var(--text-color);
+    margin: 0;
+    font-size: 16px;
+}
+
+.support-section {
+    padding: 30px;
+    background-color: var(--sidebar-bg);
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.support-section h3 {
+    margin: 0 0 20px 0;
+    color: var(--text-color);
+}
+
+.support-buttons {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.support-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.support-btn i {
+    font-size: 20px;
+}
+
+.paypal-btn {
+    background-color: #0070ba;
+    color: white;
+}
+
+.paypal-btn:hover {
+    background-color: #005ea6;
+}
+
+.patreon-btn {
+    background-color: #f96854;
+    color: white;
+}
+
+.patreon-btn:hover {
+    background-color: #e85a47;
+}
+
+/* Media queries for responsive design */
+@media (max-width: 768px) {
+    .developer-profile {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+    }
+
+    .support-buttons {
+        flex-direction: column;
+    }
+
+    .support-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
