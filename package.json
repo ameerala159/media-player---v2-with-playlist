@@ -1,0 +1,62 @@
+{
+  "name": "modern-music-player",
+  "version": "1.0.0",
+  "description": "A modern music player built with Electron",
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --debug",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win"
+  },
+  "build": {
+    "appId": "com.musicplayer.app",
+    "productName": "Modern Music Player",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "src/renderer/assets/icon.ico",
+      "signingHashAlgorithms": null,
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Modern Music Player",
+      "installerIcon": "src/renderer/assets/icon.ico",
+      "uninstallerIcon": "src/renderer/assets/icon.ico",
+      "installerHeaderIcon": "src/renderer/assets/icon.ico"
+    },
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "src/renderer/assets",
+        "to": "assets"
+      }
+    ],
+    "asar": true
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "music-metadata": "^11.2.3"
+  },
+  "devDependencies": {
+    "electron": "^36.4.0",
+    "electron-builder": "^24.9.1"
+  }
+}
