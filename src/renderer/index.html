@@ -6,6 +6,10 @@
     <link rel="stylesheet" href="styles/main.css">
     <!-- Add Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Add Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&family=Quicksand:wght@400;500&family=Nunito:wght@400;500&family=Comfortaa:wght@400;500&family=Space+Grotesk:wght@400;500&family=Outfit:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500&family=Sora:wght@400;500&family=Inter:wght@400;500&family=DM+Sans:wght@400;500&family=Lexend:wght@400;500&family=Manrope:wght@400;500&family=Work+Sans:wght@400;500&family=Rubik:wght@400;500&family=Urbanist:wght@400;500&family=Figtree:wght@400;500&family=Onest:wght@400;500&family=Switzer:wght@400;500&family=Chillax:wght@400;500&family=Satoshi:wght@400;500&family=Gambarino:wght@400;500&family=Bungee+Shade&family=Monoton&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <!-- Add Settings Script -->
+    <script src="scripts/settings.js"></script>
 </head>
 <body>
     <div id="root">
@@ -146,6 +150,49 @@
                                     <input type="checkbox" id="darkModeToggle">
                                     <span class="slider round"></span>
                                 </label>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-label">
+                                    <i class="fas fa-font"></i>
+                                    <span>Font Size</span>
+                                </div>
+                                <select id="fontSizeSelect" class="settings-select">
+                                    <option value="small">Small</option>
+                                    <option value="medium" selected>Medium</option>
+                                    <option value="large">Large</option>
+                                </select>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-label">
+                                    <i class="fas fa-text-height"></i>
+                                    <span>Font Family</span>
+                                </div>
+                                <select id="fontFamilySelect" class="settings-select">
+                                    <option value="'Poppins', sans-serif" style="font-family: 'Poppins', sans-serif">Poppins - Clean & Modern</option>
+                                    <option value="'Quicksand', sans-serif" style="font-family: 'Quicksand', sans-serif">Quicksand - Rounded & Friendly</option>
+                                    <option value="'Nunito', sans-serif" style="font-family: 'Nunito', sans-serif">Nunito - Balanced & Readable</option>
+                                    <option value="'Comfortaa', cursive" style="font-family: 'Comfortaa', cursive">Comfortaa - Playful & Unique</option>
+                                    <option value="'Space Grotesk', sans-serif" style="font-family: 'Space Grotesk', sans-serif">Space Grotesk - Tech & Modern</option>
+                                    <option value="'Outfit', sans-serif" style="font-family: 'Outfit', sans-serif">Outfit - Clean & Professional</option>
+                                    <option value="'Plus Jakarta Sans', sans-serif" style="font-family: 'Plus Jakarta Sans', sans-serif">Plus Jakarta Sans - Modern & Elegant</option>
+                                    <option value="'Sora', sans-serif" style="font-family: 'Sora', sans-serif">Sora - Unique & Contemporary</option>
+                                    <option value="'Inter', sans-serif" style="font-family: 'Inter', sans-serif">Inter - Screen Optimized</option>
+                                    <option value="'DM Sans', sans-serif" style="font-family: 'DM Sans', sans-serif">DM Sans - Modern & Clean</option>
+                                    <option value="'Lexend', sans-serif" style="font-family: 'Lexend', sans-serif">Lexend - Enhanced Readability</option>
+                                    <option value="'Manrope', sans-serif" style="font-family: 'Manrope', sans-serif">Manrope - Modern Geometric</option>
+                                    <option value="'Work Sans', sans-serif" style="font-family: 'Work Sans', sans-serif">Work Sans - Professional & Clean</option>
+                                    <option value="'Rubik', sans-serif" style="font-family: 'Rubik', sans-serif">Rubik - Rounded & Modern</option>
+                                    <option value="'Urbanist', sans-serif" style="font-family: 'Urbanist', sans-serif">Urbanist - Contemporary & Clean</option>
+                                    <option value="'Figtree', sans-serif" style="font-family: 'Figtree', sans-serif">Figtree - Friendly & Modern</option>
+                                    <option value="'Onest', sans-serif" style="font-family: 'Onest', sans-serif">Onest - Clean & Versatile</option>
+                                    <option value="'Switzer', sans-serif" style="font-family: 'Switzer', sans-serif">Switzer - Modern & Professional</option>
+                                    <option value="'Chillax', sans-serif" style="font-family: 'Chillax', sans-serif">Chillax - Modern & Unique</option>
+                                    <option value="'Satoshi', sans-serif" style="font-family: 'Satoshi', sans-serif">Satoshi - Clean & Modern</option>
+                                    <option value="'Gambarino', serif" style="font-family: 'Gambarino', serif">Gambarino - Modern Serif</option>
+                                    <option value="'Bungee Shade', cursive" style="font-family: 'Bungee Shade', cursive">Bungee Shade - Bold & Playful</option>
+                                    <option value="'Monoton', cursive" style="font-family: 'Monoton', cursive">Monoton - Retro & Unique</option>
+                                    <option value="'Press Start 2P', cursive" style="font-family: 'Press Start 2P', cursive">Press Start 2P - Pixel Art Style</option>
+                                </select>
                             </div>
                         </div>
                     </div>

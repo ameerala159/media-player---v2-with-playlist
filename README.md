@@ -11,6 +11,10 @@ A sleek and feature-rich desktop music player built with Electron, offering a mo
 - 🎧 Full playback controls (play/pause, next/previous, seek)
 - ⏪⏩ Skip forward/backward with customizable durations
 - 📱 Responsive design for different screen sizes
+- 📋 Playlist management system
+- ⭐ Track rating system
+- ❤️ Favorites functionality
+- 🔍 Search and sort capabilities
 
 ### Advanced Controls
 - **Smart Skip Controls**
@@ -29,12 +33,23 @@ A sleek and feature-rich desktop music player built with Electron, offering a mo
   - Now playing information with track name and artist
   - Dynamic album art generation
 
+### Playlist Features
+- Create and manage multiple playlists
+- Add tracks to playlists with a single click
+- Play entire playlists with one button
+- Duplicate track prevention in playlists
+- Visual playlist management interface
+- Quick access to playlist controls
+
 ### User Interface
 - Custom window controls (minimize, maximize, close)
 - File menu for folder selection
 - Responsive layout that adapts to window size
 - Modern dropdown menus with smooth animations
 - Loading indicators for better user experience
+- Track rating system with visual indicators
+- Favorites page for quick access to favorite tracks
+- Search and sort functionality for music library
 
 ## Technical Requirements
 

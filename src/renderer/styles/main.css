@@ -41,6 +41,9 @@ html, body {
     --shadow-color-darker: rgba(0, 0, 0, 0.3);
     --modal-overlay: rgba(0, 0, 0, 0.7);
     --modal-overlay-light: rgba(0, 0, 0, 0.5);
+    --font-size-small: 14px;
+    --font-size-medium: 16px;
+    --font-size-large: 18px;
 }
 
 body {
@@ -48,6 +51,8 @@ body {
     flex-direction: column;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     background-color: var(--background-color);
+    font-size: var(--font-size-medium);
+    transition: font-size 0.3s ease, font-family 0.3s ease;
 }
 
 #root {
@@ -2611,4 +2616,171 @@ body[data-theme="dark"] .track-action-btn.playlist-btn {
 
 body[data-theme="dark"] .track-action-btn.playlist-btn:hover {
     color: #ffffff;
+}
+
+.settings-select {
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    background: var(--background-color);
+    color: var(--text-color);
+    min-width: 200px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.settings-select option {
+    padding: 12px 8px;
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 4px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.settings-select option:last-child {
+    border-bottom: none;
+}
+
+.settings-select option:hover {
+    background-color: var(--hover-color);
+}
+
+.settings-select option:checked {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Add a custom scrollbar for the dropdown */
+.settings-select::-webkit-scrollbar {
+    width: 8px;
+}
+
+.settings-select::-webkit-scrollbar-track {
+    background: var(--background-color);
+    border-radius: 4px;
+}
+
+.settings-select::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+.settings-select::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+
+/* Font Size Classes */
+body[data-font-size="small"] {
+    font-size: var(--font-size-small);
+}
+
+body[data-font-size="medium"] {
+    font-size: var(--font-size-medium);
+}
+
+body[data-font-size="large"] {
+    font-size: var(--font-size-large);
+}
+
+/* Font Family Classes */
+body[data-font-family="'Poppins', sans-serif"] {
+    font-family: 'Poppins', sans-serif;
+}
+
+body[data-font-family="'Quicksand', sans-serif"] {
+    font-family: 'Quicksand', sans-serif;
+}
+
+body[data-font-family="'Nunito', sans-serif"] {
+    font-family: 'Nunito', sans-serif;
+}
+
+body[data-font-family="'Comfortaa', cursive"] {
+    font-family: 'Comfortaa', cursive;
+}
+
+body[data-font-family="'Space Grotesk', sans-serif"] {
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+body[data-font-family="'Outfit', sans-serif"] {
+    font-family: 'Outfit', sans-serif;
+}
+
+body[data-font-family="'Plus Jakarta Sans', sans-serif"] {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+body[data-font-family="'Sora', sans-serif"] {
+    font-family: 'Sora', sans-serif;
+}
+
+body[data-font-family="'Inter', sans-serif"] {
+    font-family: 'Inter', sans-serif;
+}
+
+body[data-font-family="'DM Sans', sans-serif"] {
+    font-family: 'DM Sans', sans-serif;
+}
+
+body[data-font-family="'Lexend', sans-serif"] {
+    font-family: 'Lexend', sans-serif;
+}
+
+body[data-font-family="'Manrope', sans-serif"] {
+    font-family: 'Manrope', sans-serif;
+}
+
+body[data-font-family="'Work Sans', sans-serif"] {
+    font-family: 'Work Sans', sans-serif;
+}
+
+body[data-font-family="'Rubik', sans-serif"] {
+    font-family: 'Rubik', sans-serif;
+}
+
+body[data-font-family="'Urbanist', sans-serif"] {
+    font-family: 'Urbanist', sans-serif;
+}
+
+body[data-font-family="'Figtree', sans-serif"] {
+    font-family: 'Figtree', sans-serif;
+}
+
+body[data-font-family="'Onest', sans-serif"] {
+    font-family: 'Onest', sans-serif;
+}
+
+body[data-font-family="'Switzer', sans-serif"] {
+    font-family: 'Switzer', sans-serif;
+}
+
+body[data-font-family="'Chillax', sans-serif"] {
+    font-family: 'Chillax', sans-serif;
+}
+
+body[data-font-family="'Satoshi', sans-serif"] {
+    font-family: 'Satoshi', sans-serif;
+}
+
+body[data-font-family="'Gambarino', serif"] {
+    font-family: 'Gambarino', serif;
+}
+
+body[data-font-family="'Bungee Shade', cursive"] {
+    font-family: 'Bungee Shade', cursive;
+}
+
+body[data-font-family="'Monoton', cursive"] {
+    font-family: 'Monoton', cursive;
+}
+
+body[data-font-family="'Press Start 2P', cursive"] {
+    font-family: 'Press Start 2P', cursive;
+}
+
+/* Default font */
+body {
+    font-family: 'Comfortaa', cursive;
 }
