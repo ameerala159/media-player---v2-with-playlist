@@ -69,6 +69,10 @@ export class PlaylistsPage {
                 <div class="playlist-contents-header">
                     <h2>${playlist.name}</h2>
                     <div class="playlist-contents-actions">
+                        <button class="shuffle-btn">
+                            <i class="fas fa-random"></i>
+                            Shuffle
+                        </button>
                         <button class="play-all-btn">
                             <i class="fas fa-play"></i>
                             Play All
@@ -130,6 +134,11 @@ export class PlaylistsPage {
             playAllBtn.addEventListener('click', () => this.playAllTracks(playlist.tracks));
         }
 
+        const shuffleBtn = modal.querySelector('.shuffle-btn');
+        if (shuffleBtn) {
+            shuffleBtn.addEventListener('click', () => this.shuffleAndPlayTracks(playlist.tracks));
+        }
+
         const removeAllBtn = modal.querySelector('.remove-all-btn');
         if (removeAllBtn) {
             removeAllBtn.addEventListener('click', () => {
@@ -171,6 +180,25 @@ export class PlaylistsPage {
                 detail: { 
                     index: 0,
                     tracks: tracks,
+                    isPlaylist: true
+                }
+            }));
+        }
+    }
+
+    shuffleAndPlayTracks(tracks) {
+        if (tracks.length > 0) {
+            // Create a copy of the tracks array to avoid modifying the original
+            const shuffledTracks = [...tracks];
+            // Fisher-Yates shuffle algorithm
+            for (let i = shuffledTracks.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledTracks[i], shuffledTracks[j]] = [shuffledTracks[j], shuffledTracks[i]];
+            }
+            window.dispatchEvent(new CustomEvent('playTrack', {
+                detail: { 
+                    index: 0,
+                    tracks: shuffledTracks,
                     isPlaylist: true
                 }
             }));

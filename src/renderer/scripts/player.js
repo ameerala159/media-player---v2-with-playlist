@@ -86,9 +86,18 @@ export class Player {
             if (event.detail.isPlaylist) {
                 // If it's a playlist, update the current playlist and play the track
                 this.currentPlaylist = event.detail.tracks;
+                this.currentPlaylist.isPlaylist = true;  // Mark as playlist
                 this.playTrack(event.detail.index, event.detail.shape);
+                // Disable shuffle for playlist playback
+                this.isShuffled = false;
             } else {
-                // If it's a single track, just play it
+                // If it's a single track from home screen, respect shuffle setting
+                this.currentPlaylist = event.detail.tracks;
+                this.currentPlaylist.isPlaylist = false;  // Mark as not playlist
+                this.isShuffled = window.settingsManager.settings.shuffle;
+                if (this.isShuffled) {
+                    this.initializeShuffleQueue();
+                }
                 this.playTrack(event.detail.index, event.detail.shape);
             }
         });
@@ -435,7 +444,8 @@ export class Player {
     getNextTrackIndex() {
         if (this.currentPlaylist.length === 0) return -1;
         
-        if (this.isShuffled) {
+        // Only apply shuffle if we're not playing from a playlist
+        if (this.isShuffled && !this.currentPlaylist.isPlaylist) {
             if (this.shuffleQueue.length === 0) {
                 this.initializeShuffleQueue();
             }
@@ -454,7 +464,8 @@ export class Player {
     getPreviousTrackIndex() {
         if (this.currentPlaylist.length === 0) return -1;
         
-        if (this.isShuffled) {
+        // Only apply shuffle if we're not playing from a playlist
+        if (this.isShuffled && !this.currentPlaylist.isPlaylist) {
             // In shuffle mode, we'll just go back to the previous track in the playlist
             let newIndex = this.currentTrackIndex - 1;
             if (newIndex < 0) {

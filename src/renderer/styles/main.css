@@ -2139,6 +2139,17 @@ body[data-theme="dark"] .track-details-content {
     font-size: 0.95em;
 }
 
+.shuffle-btn {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.shuffle-btn:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(29, 185, 84, 0.2);
+}
+
 .play-all-btn {
     background-color: var(--primary-color);
     color: white;

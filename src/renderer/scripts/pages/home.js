@@ -184,6 +184,7 @@ export class HomePage {
             window.dispatchEvent(new CustomEvent('playTrack', {
                 detail: { 
                     index,
+                    tracks: this.currentPlaylist,
                     shape: coverUrl
                 }
             }));
