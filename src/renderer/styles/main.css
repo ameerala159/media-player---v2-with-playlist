@@ -955,9 +955,7 @@ body {
     }
 
     .album-art {
-        width: 40px;
-        height: 40px;
-        margin-right: 10px;
+        display: none; /* Hide album art on smaller screens */
     }
 
     .artist-name {
@@ -1727,9 +1725,7 @@ html, body {
     }
 
     .album-art {
-        width: 40px;
-        height: 40px;
-        margin-right: 10px;
+        display: none; /* Hide album art on smaller screens */
     }
 
     .artist-name {
