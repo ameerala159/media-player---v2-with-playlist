@@ -213,7 +213,19 @@ export class HomePage {
                 requestAnimationFrame(() => {
                     const rect = item.querySelector('.add-to-playlist-btn').getBoundingClientRect();
                     dropdown.style.position = 'fixed'; // Use fixed position to escape overflow
-                    dropdown.style.top = `${rect.bottom + 5}px`; // 5px below the button
+                    
+                    // Check if there's enough space below the button
+                    const spaceBelow = window.innerHeight - rect.bottom;
+                    const dropdownHeight = dropdown.offsetHeight;
+                    
+                    if (spaceBelow < dropdownHeight && rect.top > dropdownHeight) {
+                        // If not enough space below but enough space above, position above
+                        dropdown.style.top = `${rect.top - dropdownHeight - 5}px`; // 5px above the button
+                    } else {
+                        // Otherwise position below
+                        dropdown.style.top = `${rect.bottom + 5}px`; // 5px below the button
+                    }
+                    
                     // Position dropdown to align its right edge with the button's right edge
                     dropdown.style.left = `${rect.right - dropdown.offsetWidth}px`; 
                     

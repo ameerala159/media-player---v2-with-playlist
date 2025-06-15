@@ -719,16 +719,14 @@ body {
 }
 
 .playlist-dropdown {
+    display: none;
     position: fixed;
     background-color: var(--background-color);
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    padding: 8px 0;
     min-width: 200px;
-    z-index: 2147483647; /* Max z-index to ensure it's always on top */
-    display: none;
-    pointer-events: auto; /* Ensure interactivity */
-    isolation: isolate; /* Create a new stacking context */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    z-index: 2000; /* Increased z-index to be above player controls */
+    pointer-events: all;
 }
 
 .playlist-dropdown.show {
