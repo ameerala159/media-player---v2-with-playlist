@@ -8,7 +8,8 @@ class SettingsManager {
             autoShuffle: false,
             repeatMode: 'none',
             trackNotifications: true,
-            themeColor: '#1db954' // Default theme color
+            themeColor: '#1db954', // Default theme color
+            shuffle: false // Add shuffle setting
         };
         
         this.init();
@@ -44,13 +45,17 @@ class SettingsManager {
             const savedSettings = localStorage.getItem('musicPlayerSettings');
             if (savedSettings) {
                 const parsedSettings = JSON.parse(savedSettings);
-                // Ensure themeColor is included in the loaded settings
-                if (parsedSettings.themeColor) {
-                    this.settings = { ...this.settings, ...parsedSettings };
-                } else {
-                    // If themeColor is missing, add it with the default value
-                    this.settings = { ...this.settings, ...parsedSettings, themeColor: '#1db954' };
-                }
+                // Merge saved settings with defaults, ensuring all properties exist
+                this.settings = {
+                    darkMode: parsedSettings.darkMode ?? false,
+                    fontSize: parsedSettings.fontSize ?? 'medium',
+                    fontFamily: parsedSettings.fontFamily ?? "'Comfortaa', cursive",
+                    autoShuffle: parsedSettings.autoShuffle ?? false,
+                    repeatMode: parsedSettings.repeatMode ?? 'none',
+                    trackNotifications: parsedSettings.trackNotifications ?? true,
+                    themeColor: parsedSettings.themeColor ?? '#1db954',
+                    shuffle: parsedSettings.shuffle ?? false
+                };
             }
         } catch (error) {
             console.error('Error loading settings:', error);
@@ -162,6 +167,20 @@ class SettingsManager {
             trackNotificationsToggle.addEventListener('change', (e) => {
                 this.settings.trackNotifications = e.target.checked;
                 this.saveSettings();
+            });
+        }
+
+        // Shuffle Toggle
+        const shuffleToggle = document.getElementById('shuffleToggle');
+        if (shuffleToggle) {
+            shuffleToggle.checked = this.settings.shuffle;
+            shuffleToggle.addEventListener('change', (e) => {
+                this.settings.shuffle = e.target.checked;
+                this.saveSettings();
+                // Dispatch event to notify player of shuffle state change
+                window.dispatchEvent(new CustomEvent('shuffleStateChanged', {
+                    detail: { shuffle: this.settings.shuffle }
+                }));
             });
         }
 

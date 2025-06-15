@@ -27,11 +27,20 @@ export class Player {
         this.lastSkipTime = 0;
         this.isMuted = false;
         this.lastVolume = 100;
+        this.shuffleQueue = [];
+        this.isShuffled = false;
     }
 
     // Initialize player
     init() {
         this.setupEventListeners();
+        this.audioPlayer.volume = 1;
+        
+        // Initialize shuffle state from settings
+        this.isShuffled = window.settingsManager.settings.shuffle;
+        if (this.isShuffled) {
+            this.initializeShuffleQueue();
+        }
     }
 
     // Setup event listeners
@@ -97,6 +106,14 @@ export class Player {
                 this.volumeDropdown.classList.remove('show');
             }
         });
+
+        // Listen for shuffle state changes
+        window.addEventListener('shuffleStateChanged', (event) => {
+            this.isShuffled = event.detail.shuffle;
+            if (this.isShuffled) {
+                this.initializeShuffleQueue();
+            }
+        });
     }
 
     // Play a track
@@ -159,22 +176,20 @@ export class Player {
     playPrevious() {
         if (this.currentPlaylist.length === 0) return;
         
-        let newIndex = this.currentTrackIndex - 1;
-        if (newIndex < 0) {
-            newIndex = this.currentPlaylist.length - 1;
+        const newIndex = this.getPreviousTrackIndex();
+        if (newIndex !== -1) {
+            this.playTrack(newIndex);
         }
-        this.playTrack(newIndex);
     }
 
     // Play next track
     playNext() {
         if (this.currentPlaylist.length === 0) return;
         
-        let newIndex = this.currentTrackIndex + 1;
-        if (newIndex >= this.currentPlaylist.length) {
-            newIndex = 0;
+        const newIndex = this.getNextTrackIndex();
+        if (newIndex !== -1) {
+            this.playTrack(newIndex);
         }
-        this.playTrack(newIndex);
     }
 
     // Skip backward with debounce
@@ -234,17 +249,19 @@ export class Player {
                 break;
             case 'all':
                 // Play next track, loop back to start if at end
-                let newIndex = this.currentTrackIndex + 1;
-                if (newIndex >= this.currentPlaylist.length) {
-                    newIndex = 0;
+                const newIndex = this.getNextTrackIndex();
+                if (newIndex !== -1) {
+                    this.playTrack(newIndex);
                 }
-                this.playTrack(newIndex);
                 break;
             case 'none':
             default:
                 // Play next track, stop if at end
-                if (this.currentTrackIndex < this.currentPlaylist.length - 1) {
-                    this.playTrack(this.currentTrackIndex + 1);
+                if (this.currentTrackIndex < this.currentPlaylist.length - 1 || this.isShuffled) {
+                    const nextIndex = this.getNextTrackIndex();
+                    if (nextIndex !== -1) {
+                        this.playTrack(nextIndex);
+                    }
                 } else {
                     // Stop playback at the end
                     this.audioPlayer.pause();
@@ -394,6 +411,62 @@ export class Player {
             icon.className = 'fas fa-volume-down';
         } else {
             icon.className = 'fas fa-volume-up';
+        }
+    }
+
+    // Initialize shuffle queue
+    initializeShuffleQueue() {
+        if (this.currentPlaylist.length === 0) return;
+        
+        // Create a copy of the playlist excluding the current track
+        this.shuffleQueue = [...this.currentPlaylist];
+        if (this.currentTrackIndex !== -1) {
+            this.shuffleQueue.splice(this.currentTrackIndex, 1);
+        }
+        
+        // Shuffle the queue
+        for (let i = this.shuffleQueue.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [this.shuffleQueue[i], this.shuffleQueue[j]] = [this.shuffleQueue[j], this.shuffleQueue[i]];
+        }
+    }
+
+    // Get next track index based on shuffle state
+    getNextTrackIndex() {
+        if (this.currentPlaylist.length === 0) return -1;
+        
+        if (this.isShuffled) {
+            if (this.shuffleQueue.length === 0) {
+                this.initializeShuffleQueue();
+            }
+            const nextTrack = this.shuffleQueue.shift();
+            return this.currentPlaylist.indexOf(nextTrack);
+        } else {
+            let newIndex = this.currentTrackIndex + 1;
+            if (newIndex >= this.currentPlaylist.length) {
+                newIndex = 0;
+            }
+            return newIndex;
+        }
+    }
+
+    // Get previous track index based on shuffle state
+    getPreviousTrackIndex() {
+        if (this.currentPlaylist.length === 0) return -1;
+        
+        if (this.isShuffled) {
+            // In shuffle mode, we'll just go back to the previous track in the playlist
+            let newIndex = this.currentTrackIndex - 1;
+            if (newIndex < 0) {
+                newIndex = this.currentPlaylist.length - 1;
+            }
+            return newIndex;
+        } else {
+            let newIndex = this.currentTrackIndex - 1;
+            if (newIndex < 0) {
+                newIndex = this.currentPlaylist.length - 1;
+            }
+            return newIndex;
         }
     }
 } 
