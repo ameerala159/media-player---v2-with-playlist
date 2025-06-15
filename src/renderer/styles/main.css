@@ -422,6 +422,7 @@ body {
     transition: transform 0.3s ease;
     width: 200px;
     flex-shrink: 0;
+    margin-right: auto; /* Push to the left */
 }
 
 .now-playing:hover {
@@ -466,6 +467,7 @@ body {
     align-items: center;
     gap: 20px;
     flex-shrink: 0;
+    margin-left: auto; /* Push to the right */
 }
 
 .control-btn {
@@ -515,12 +517,12 @@ body {
 }
 
 .progress-container {
-    flex: 1;
+    flex: 0 1 400px; /* Reduced from flex: 1 and added max-width */
     display: flex;
     align-items: center;
     gap: 10px;
     min-width: 0;
-    max-width: 600px;
+    max-width: 400px; /* Added max-width */
 }
 
 .progress-bar {
@@ -949,6 +951,7 @@ body {
         text-align: center;
         min-width: 0;
         max-width: none;
+        margin-right: 0; /* Reset margin for mobile */
     }
 
     .album-art {
@@ -981,6 +984,7 @@ body {
         margin: 10px 0;
         padding: 0 10px;
         max-width: none;
+        flex: 1; /* Reset flex for mobile */
     }
 
     .controls {
@@ -989,7 +993,8 @@ body {
         order: 3;
         gap: 15px;
         margin-top: 5px;
-        flex-wrap: wrap; /* Allow controls to wrap to the next line on smaller screens */
+        flex-wrap: wrap;
+        margin-left: 0; /* Reset margin for mobile */
     }
 
     .control-btn {
@@ -1718,6 +1723,7 @@ html, body {
         text-align: center;
         min-width: 0;
         max-width: none;
+        margin-right: 0; /* Reset margin for mobile */
     }
 
     .album-art {
@@ -1750,6 +1756,7 @@ html, body {
         margin: 10px 0;
         padding: 0 10px;
         max-width: none;
+        flex: 1; /* Reset flex for mobile */
     }
 
     .controls {
@@ -1758,7 +1765,8 @@ html, body {
         order: 3;
         gap: 15px;
         margin-top: 5px;
-        flex-wrap: wrap; /* Allow controls to wrap to the next line on smaller screens */
+        flex-wrap: wrap;
+        margin-left: 0; /* Reset margin for mobile */
     }
 
     .control-btn {
