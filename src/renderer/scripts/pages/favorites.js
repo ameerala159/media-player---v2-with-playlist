@@ -73,12 +73,6 @@ export class FavoritesPage {
             </button>
         `;
 
-        // Add favorite indicator
-        const favoriteIndicator = document.createElement('div');
-        favoriteIndicator.className = 'favorite-indicator';
-        favoriteIndicator.innerHTML = '<i class="fas fa-heart"></i>';
-        item.querySelector('.music-info').appendChild(favoriteIndicator);
-
         // Add rating indicator if track has a rating
         const trackRatings = JSON.parse(localStorage.getItem('trackRatings') || '{}');
         if (trackRatings[track.path]) {
