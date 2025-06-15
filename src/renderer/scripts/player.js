@@ -107,7 +107,10 @@ export class Player {
             
             // Update audio source and play
             this.audioPlayer.src = track.path;
-            this.audioPlayer.play();
+            this.audioPlayer.play().catch(error => {
+                console.error('Error playing track:', error);
+                this.handlePlaybackError(error);
+            });
             this.isPlaying = true;
             
             // Update UI
@@ -219,8 +222,48 @@ export class Player {
 
     // Handle track end
     handleTrackEnd() {
-        if (this.currentPlaylist.length > 0) {
-            this.playNext();
+        if (this.currentPlaylist.length === 0) return;
+
+        const repeatMode = window.settingsManager.settings.repeatMode;
+        
+        switch (repeatMode) {
+            case 'one':
+                // Repeat the current track
+                this.audioPlayer.currentTime = 0;
+                this.audioPlayer.play();
+                break;
+            case 'all':
+                // Play next track, loop back to start if at end
+                let newIndex = this.currentTrackIndex + 1;
+                if (newIndex >= this.currentPlaylist.length) {
+                    newIndex = 0;
+                }
+                this.playTrack(newIndex);
+                break;
+            case 'none':
+            default:
+                // Play next track, stop if at end
+                if (this.currentTrackIndex < this.currentPlaylist.length - 1) {
+                    this.playTrack(this.currentTrackIndex + 1);
+                } else {
+                    // Stop playback at the end
+                    this.audioPlayer.pause();
+                    this.audioPlayer.currentTime = 0;
+                    this.isPlaying = false;
+                    const icon = this.playBtn.querySelector('i');
+                    icon.classList.remove('fa-pause');
+                    icon.classList.add('fa-play');
+                    clearInterval(this.updateProgressInterval);
+                    this.progress.style.width = '0%';
+                    this.currentTimeEl.textContent = '0:00';
+                    this.totalTimeEl.textContent = '0:00';
+                    
+                    // Remove active state from the current track
+                    document.querySelectorAll('.music-item').forEach(el => {
+                        el.classList.remove('active');
+                    });
+                }
+                break;
         }
     }
 
