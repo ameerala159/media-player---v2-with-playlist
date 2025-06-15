@@ -422,7 +422,6 @@ body {
     transition: transform 0.3s ease;
     width: 200px;
     flex-shrink: 0;
-    margin-right: auto; /* Push to the left */
 }
 
 .now-playing:hover {
@@ -467,7 +466,9 @@ body {
     align-items: center;
     gap: 20px;
     flex-shrink: 0;
-    margin-left: auto; /* Push to the right */
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .control-btn {
@@ -517,12 +518,13 @@ body {
 }
 
 .progress-container {
-    flex: 0 1 400px; /* Reduced from flex: 1 and added max-width */
+    flex: 0 1 400px;
     display: flex;
     align-items: center;
     gap: 10px;
     min-width: 0;
-    max-width: 400px; /* Added max-width */
+    max-width: 400px;
+    margin-left: auto;
 }
 
 .progress-bar {
