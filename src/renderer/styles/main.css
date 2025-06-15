@@ -2101,6 +2101,46 @@ body[data-theme="dark"] .track-details-content {
     border: 1px solid var(--border-color);
     position: relative;
     overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.playlist-card-content {
+    flex: 1;
+    cursor: pointer;
+}
+
+.delete-playlist-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    opacity: 0;
+    margin-left: 10px;
+}
+
+.delete-playlist-btn:hover {
+    background-color: var(--danger-color);
+    color: white;
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.playlist-card:hover .delete-playlist-btn {
+    opacity: 0.7;
+}
+
+.playlist-card:hover .delete-playlist-btn:hover {
+    opacity: 1;
 }
 
 .playlist-card::before {
@@ -3047,4 +3087,118 @@ body[data-theme="dark"] .color-preset.active {
 
 body[data-theme="dark"] .color-preset::after {
     background: linear-gradient(45deg, rgba(0,0,0,0.1), rgba(0,0,0,0));
+}
+
+/* Delete Confirmation Modal Styles */
+.delete-confirmation-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.delete-confirmation-modal.show {
+    opacity: 1;
+}
+
+.delete-confirmation-content {
+    background-color: var(--background-color);
+    border-radius: 12px;
+    width: 400px;
+    max-width: 90%;
+    padding: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+    border: 1px solid var(--border-color);
+}
+
+.delete-confirmation-modal.show .delete-confirmation-content {
+    transform: translateY(0);
+}
+
+.delete-confirmation-content h3 {
+    margin: 0 0 16px 0;
+    color: var(--text-color);
+    font-size: 1.5em;
+    font-weight: 600;
+}
+
+.delete-confirmation-content p {
+    margin: 0 0 12px 0;
+    color: var(--text-color);
+    font-size: 1.1em;
+    line-height: 1.4;
+}
+
+.delete-confirmation-content .warning-text {
+    color: var(--danger-color);
+    font-size: 0.9em;
+    margin-top: 8px;
+}
+
+.delete-confirmation-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.delete-confirmation-actions button {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.95em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.delete-confirmation-actions .cancel-btn {
+    background-color: var(--hover-color);
+    color: var(--text-color);
+}
+
+.delete-confirmation-actions .cancel-btn:hover {
+    background-color: var(--border-color);
+    transform: translateY(-2px);
+}
+
+.delete-confirmation-actions .delete-btn {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.delete-confirmation-actions .delete-btn:hover {
+    background-color: var(--danger-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.2);
+}
+
+/* Dark mode styles for delete confirmation modal */
+body[data-theme="dark"] .delete-confirmation-content {
+    background-color: #1a1a1a;
+    border-color: #333;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+body[data-theme="dark"] .delete-confirmation-actions .cancel-btn {
+    background-color: #2a2a2a;
+    color: #fff;
+}
+
+body[data-theme="dark"] .delete-confirmation-actions .cancel-btn:hover {
+    background-color: #333;
 }

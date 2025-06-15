@@ -51,11 +51,25 @@ export class PlaylistsPage {
         const card = document.createElement('div');
         card.className = 'playlist-card';
         card.innerHTML = `
-            <h3>${playlist.name}</h3>
-            <div class="track-count">${playlist.tracks.length} tracks</div>
+            <div class="playlist-card-content">
+                <h3>${playlist.name}</h3>
+                <div class="track-count">${playlist.tracks.length} tracks</div>
+            </div>
+            <button class="delete-playlist-btn" title="Delete Playlist">
+                <i class="fas fa-trash"></i>
+            </button>
         `;
 
-        card.addEventListener('click', () => this.showPlaylistContents(index));
+        // Add click handler for the main card area
+        card.querySelector('.playlist-card-content').addEventListener('click', () => this.showPlaylistContents(index));
+        
+        // Add click handler for delete button
+        const deleteBtn = card.querySelector('.delete-playlist-btn');
+        deleteBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent triggering the card click
+            this.showDeleteConfirmationModal(playlist.name, index);
+        });
+
         return card;
     }
 
@@ -317,5 +331,73 @@ export class PlaylistsPage {
 
     savePlaylists() {
         localStorage.setItem('playlists', JSON.stringify(this.playlists));
+    }
+
+    deletePlaylist(index) {
+        this.playlists.splice(index, 1);
+        this.savePlaylists();
+        this.renderPlaylists();
+        
+        // Dispatch event for playlist update
+        window.dispatchEvent(new CustomEvent('playlistUpdated'));
+    }
+
+    showDeleteConfirmationModal(playlistName, playlistIndex) {
+        const modal = document.createElement('div');
+        modal.className = 'delete-confirmation-modal';
+        modal.innerHTML = `
+            <div class="delete-confirmation-content">
+                <h3>Delete Playlist</h3>
+                <p>Are you sure you want to delete "${playlistName}"?</p>
+                <p class="warning-text">This action cannot be undone.</p>
+                <div class="delete-confirmation-actions">
+                    <button class="cancel-btn">Cancel</button>
+                    <button class="delete-btn">
+                        <i class="fas fa-trash"></i>
+                        Delete
+                    </button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+        requestAnimationFrame(() => modal.classList.add('show'));
+
+        // Add ESC key handler
+        const handleEscKey = (e) => {
+            if (e.key === 'Escape') {
+                this.closeDeleteConfirmationModal(modal);
+                document.removeEventListener('keydown', handleEscKey);
+            }
+        };
+        document.addEventListener('keydown', handleEscKey);
+
+        // Add click handlers
+        const cancelBtn = modal.querySelector('.cancel-btn');
+        const deleteBtn = modal.querySelector('.delete-btn');
+
+        cancelBtn.addEventListener('click', () => {
+            this.closeDeleteConfirmationModal(modal);
+            document.removeEventListener('keydown', handleEscKey);
+        });
+
+        deleteBtn.addEventListener('click', () => {
+            this.deletePlaylist(playlistIndex);
+            this.closeDeleteConfirmationModal(modal);
+            document.removeEventListener('keydown', handleEscKey);
+        });
+
+        // Close on outside click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                this.closeDeleteConfirmationModal(modal);
+                document.removeEventListener('keydown', handleEscKey);
+            }
+        });
+    }
+
+    closeDeleteConfirmationModal(modal) {
+        modal.classList.remove('show');
+        setTimeout(() => modal.remove(), 300);
     }
 } 
