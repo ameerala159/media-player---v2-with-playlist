@@ -1013,5 +1013,25 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             player.skipForward();
         }
+
+        // Ctrl + F for shuffle
+        if (e.ctrlKey && e.key.toLowerCase() === 'f') {
+            e.preventDefault();
+            const shuffleToggle = document.getElementById('shuffleToggle');
+            if (shuffleToggle) {
+                shuffleToggle.checked = !shuffleToggle.checked;
+                shuffleToggle.dispatchEvent(new Event('change'));
+            }
+        }
+
+        // Ctrl + R for repeat once
+        if (e.ctrlKey && e.key.toLowerCase() === 'r') {
+            e.preventDefault();
+            const repeatModeSelect = document.getElementById('repeatModeSelect');
+            if (repeatModeSelect) {
+                repeatModeSelect.value = 'one';
+                repeatModeSelect.dispatchEvent(new Event('change'));
+            }
+        }
     });
 });
