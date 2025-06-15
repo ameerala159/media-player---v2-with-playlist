@@ -105,6 +105,7 @@ export class FavoritesPage {
             window.dispatchEvent(new CustomEvent('playTrack', {
                 detail: { 
                     index,
+                    tracks: this.currentPlaylist,
                     shape: coverUrl
                 }
             }));
