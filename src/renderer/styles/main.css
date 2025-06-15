@@ -503,6 +503,15 @@ body {
     transition: color 0.2s ease;
 }
 
+.total-time {
+    cursor: pointer;
+    user-select: none;
+}
+
+.total-time:hover {
+    color: var(--text-color);
+}
+
 .progress-bar:hover ~ .current-time,
 .progress-bar:hover ~ .total-time {
     color: var(--text-color);

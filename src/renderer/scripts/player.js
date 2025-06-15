@@ -29,6 +29,13 @@ export class Player {
         this.lastVolume = 100;
         this.shuffleQueue = [];
         this.isShuffled = false;
+        this.showRemainingTime = false;
+
+        // Add click handler for total time display
+        this.totalTimeEl.addEventListener('click', () => {
+            this.showRemainingTime = !this.showRemainingTime;
+            this.updateProgress();
+        });
     }
 
     // Initialize player
@@ -313,7 +320,13 @@ export class Player {
             const progressPercent = (this.audioPlayer.currentTime / this.audioPlayer.duration) * 100;
             this.progress.style.width = `${progressPercent}%`;
             this.currentTimeEl.textContent = this.formatTime(this.audioPlayer.currentTime);
-            this.totalTimeEl.textContent = this.formatTime(this.audioPlayer.duration);
+            
+            if (this.showRemainingTime) {
+                const remainingTime = this.audioPlayer.duration - this.audioPlayer.currentTime;
+                this.totalTimeEl.textContent = `-${this.formatTime(remainingTime)}`;
+            } else {
+                this.totalTimeEl.textContent = this.formatTime(this.audioPlayer.duration);
+            }
         }
     }
 
