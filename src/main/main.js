@@ -18,6 +18,8 @@ function createWindow() {
   });
 
   mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
+  mainWindow.setSize(1200, 800);
+  mainWindow.setResizable(true);
 }
 
 // Handle window control actions
@@ -138,3 +140,15 @@ async function scanDirectoryRecursively(dirPath) {
     await scan(dirPath);
     return musicFiles;
 }
+
+ipcMain.on('set-mini-player-size', (event, isMini) => {
+  if (mainWindow) {
+    if (isMini) {
+      mainWindow.setSize(370, 120);
+      mainWindow.setResizable(false);
+    } else {
+      mainWindow.setSize(1200, 800);
+      mainWindow.setResizable(true);
+    }
+  }
+});

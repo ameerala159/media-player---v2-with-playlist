@@ -20,6 +20,7 @@ contextBridge.exposeInMainWorld(
     },
     // Add new methods for folder selection and music files
     selectFolder: () => ipcRenderer.invoke('select-folder'),
-    getMusicFiles: (folderPath) => ipcRenderer.invoke('get-music-files', folderPath)
+    getMusicFiles: (folderPath) => ipcRenderer.invoke('get-music-files', folderPath),
+    setMiniPlayerSize: (isMini) => ipcRenderer.send('set-mini-player-size', isMini)
   }
 );

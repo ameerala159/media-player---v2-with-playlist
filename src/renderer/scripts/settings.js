@@ -9,7 +9,8 @@ class SettingsManager {
             repeatMode: 'none',
             trackNotifications: true,
             themeColor: '#1db954', // Default theme color
-            shuffle: false // Add shuffle setting
+            shuffle: false, // Add shuffle setting
+            miniPlayerMode: false // Add mini player mode setting
         };
         
         this.init();
@@ -38,6 +39,25 @@ class SettingsManager {
                 preset.classList.add('active');
             }
         });
+
+        // Set initial mini player mode
+        const miniPlayerToggle = document.getElementById('miniPlayerToggle');
+        if (miniPlayerToggle) {
+            miniPlayerToggle.checked = this.settings.miniPlayerMode;
+            this.toggleMiniPlayer(this.settings.miniPlayerMode);
+        }
+
+        // Listen for beforeunload event to ensure mini player mode is off on close
+        window.addEventListener('beforeunload', () => {
+            if (this.settings.miniPlayerMode) {
+                this.settings.miniPlayerMode = false;
+                this.saveSettings();
+                // Optionally, also send IPC to main process to ensure window size is reset
+                if (window.api && window.api.setMiniPlayerSize) {
+                    window.api.setMiniPlayerSize(false);
+                }
+            }
+        });
     }
 
     loadSettings() {
@@ -54,7 +74,8 @@ class SettingsManager {
                     repeatMode: parsedSettings.repeatMode ?? 'none',
                     trackNotifications: parsedSettings.trackNotifications ?? true,
                     themeColor: parsedSettings.themeColor ?? '#1db954',
-                    shuffle: parsedSettings.shuffle ?? false
+                    shuffle: parsedSettings.shuffle ?? false,
+                    miniPlayerMode: parsedSettings.miniPlayerMode ?? false
                 };
             }
         } catch (error) {
@@ -262,6 +283,29 @@ class SettingsManager {
             });
         }
 
+        // Mini Player Mode Toggle
+        const miniPlayerToggle = document.getElementById('miniPlayerToggle');
+        if (miniPlayerToggle) {
+            miniPlayerToggle.addEventListener('change', (e) => {
+                this.settings.miniPlayerMode = e.target.checked;
+                this.toggleMiniPlayer(this.settings.miniPlayerMode);
+                this.saveSettings();
+            });
+        }
+
+        // Expand Player Button
+        const expandPlayerBtn = document.getElementById('expandPlayerBtn');
+        if (expandPlayerBtn) {
+            expandPlayerBtn.addEventListener('click', () => {
+                this.settings.miniPlayerMode = false;
+                this.toggleMiniPlayer(false);
+                if (miniPlayerToggle) {
+                    miniPlayerToggle.checked = false;
+                }
+                this.saveSettings();
+            });
+        }
+
         // Clear Cache Button
         const clearCacheBtn = document.getElementById('clearCacheBtn');
         if (clearCacheBtn) {
@@ -269,6 +313,18 @@ class SettingsManager {
                 this.clearCache();
             });
         }
+
+        // Keyboard shortcut for mini player mode (Ctrl+M)
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key.toLowerCase() === 'm') {
+                e.preventDefault();
+                this.settings.miniPlayerMode = !this.settings.miniPlayerMode;
+                const miniPlayerToggle = document.getElementById('miniPlayerToggle');
+                if (miniPlayerToggle) miniPlayerToggle.checked = this.settings.miniPlayerMode;
+                this.toggleMiniPlayer(this.settings.miniPlayerMode);
+                this.saveSettings();
+            }
+        });
     }
 
     applySettings() {
@@ -353,6 +409,22 @@ class SettingsManager {
         setTimeout(() => {
             notification.remove();
         }, 3000);
+    }
+
+    toggleMiniPlayer(enabled) {
+        const miniPlayer = document.getElementById('miniPlayer');
+        if (miniPlayer) {
+            if (enabled) {
+                miniPlayer.classList.add('active');
+                document.body.classList.add('mini-player-mode');
+            } else {
+                miniPlayer.classList.remove('active');
+                document.body.classList.remove('mini-player-mode');
+            }
+        }
+        if (window.api && window.api.setMiniPlayerSize) {
+            window.api.setMiniPlayerSize(enabled);
+        }
     }
 }
 

@@ -18,6 +18,17 @@ export class Player {
         this.volumeSlider = document.getElementById('volumeSlider');
         this.volumeDropdown = document.getElementById('volumeDropdown');
 
+        // Mini player elements
+        this.miniPlayBtn = document.getElementById('miniPlayBtn');
+        this.miniPrevBtn = document.getElementById('miniPrevBtn');
+        this.miniNextBtn = document.getElementById('miniNextBtn');
+        this.miniAlbumArt = document.querySelector('.mini-album-art');
+        this.miniTrackName = document.querySelector('.mini-track-name');
+        this.miniProgressBar = document.querySelector('.mini-progress-bar');
+        this.miniProgress = document.querySelector('.mini-progress');
+        this.miniCurrentTime = document.querySelector('.mini-current-time');
+        this.miniTotalTime = document.querySelector('.mini-total-time');
+
         this.isPlaying = false;
         this.currentTrackIndex = -1;
         this.audioPlayer = new Audio();
@@ -48,6 +59,9 @@ export class Player {
         if (this.isShuffled) {
             this.initializeShuffleQueue();
         }
+
+        // Set initial state for mini controls
+        this.updateMiniControlsState();
     }
 
     // Setup event listeners
@@ -86,6 +100,7 @@ export class Player {
         // Listen for track list updates
         window.addEventListener('trackListUpdated', (event) => {
             this.currentPlaylist = event.detail.tracks;
+            this.updateMiniControlsState();
         });
 
         // Listen for play track events
@@ -130,6 +145,26 @@ export class Player {
                 this.initializeShuffleQueue();
             }
         });
+
+        // Mini player controls
+        if (this.miniPlayBtn) {
+            this.miniPlayBtn.addEventListener('click', () => this.togglePlay());
+        }
+        if (this.miniPrevBtn) {
+            this.miniPrevBtn.addEventListener('click', () => {
+                console.log('Mini Prev Clicked');
+                this.playPrevious();
+            });
+        }
+        if (this.miniNextBtn) {
+            this.miniNextBtn.addEventListener('click', () => {
+                console.log('Mini Next Clicked');
+                this.playNext();
+            });
+        }
+        if (this.miniProgressBar) {
+            this.miniProgressBar.addEventListener('click', (e) => this.handleMiniProgressClick(e));
+        }
     }
 
     // Play a track
@@ -160,6 +195,8 @@ export class Player {
             
             // Start progress update interval
             this.startProgressUpdate();
+
+            this.updateMiniControlsState();
         }
     }
 
@@ -175,15 +212,25 @@ export class Player {
 
         this.isPlaying = !this.isPlaying;
         const icon = this.playBtn.querySelector('i');
+        const miniIcon = this.miniPlayBtn?.querySelector('i');
+        
         if (this.isPlaying) {
             this.audioPlayer.play();
             icon.classList.remove('fa-play');
             icon.classList.add('fa-pause');
+            if (miniIcon) {
+                miniIcon.classList.remove('fa-play');
+                miniIcon.classList.add('fa-pause');
+            }
             this.startProgressUpdate();
         } else {
             this.audioPlayer.pause();
             icon.classList.remove('fa-pause');
             icon.classList.add('fa-play');
+            if (miniIcon) {
+                miniIcon.classList.remove('fa-pause');
+                miniIcon.classList.add('fa-play');
+            }
             clearInterval(this.updateProgressInterval);
         }
     }
@@ -320,21 +367,39 @@ export class Player {
             const progressPercent = (this.audioPlayer.currentTime / this.audioPlayer.duration) * 100;
             this.progress.style.width = `${progressPercent}%`;
             this.currentTimeEl.textContent = this.formatTime(this.audioPlayer.currentTime);
-            
             if (this.showRemainingTime) {
                 const remainingTime = this.audioPlayer.duration - this.audioPlayer.currentTime;
                 this.totalTimeEl.textContent = `-${this.formatTime(remainingTime)}`;
             } else {
                 this.totalTimeEl.textContent = this.formatTime(this.audioPlayer.duration);
             }
+            // Mini player sync
+            if (this.miniProgress) {
+                this.miniProgress.style.width = `${progressPercent}%`;
+            }
+            if (this.miniCurrentTime) {
+                this.miniCurrentTime.textContent = this.formatTime(this.audioPlayer.currentTime);
+            }
+            if (this.miniTotalTime) {
+                this.miniTotalTime.textContent = this.formatTime(this.audioPlayer.duration);
+            }
         }
     }
 
     // Update now playing info
     updateNowPlaying(track, shape) {
+        // Update main player
         this.trackNameEl.textContent = track.name;
-        this.artistNameEl.textContent = track.artist;
-        this.albumArtEl.src = shape || this.generateGeometricShape();
+        this.artistNameEl.textContent = track.artist || 'Unknown artist';
+        this.albumArtEl.src = track.albumArt || 'default-album-art.jpg';
+
+        // Update mini player
+        if (this.miniTrackName) {
+            this.miniTrackName.textContent = track.name;
+        }
+        if (this.miniAlbumArt) {
+            this.miniAlbumArt.src = track.albumArt || 'default-album-art.jpg';
+        }
     }
 
     // Format time
@@ -389,6 +454,8 @@ export class Player {
         this.albumArtEl.src = '';
         this.currentTimeEl.textContent = '0:00';
         this.totalTimeEl.textContent = '0:00';
+
+        this.updateMiniControlsState();
     }
 
     // Toggle volume dropdown
@@ -492,5 +559,21 @@ export class Player {
             }
             return newIndex;
         }
+    }
+
+    handleMiniProgressClick(e) {
+        if (this.currentTrackIndex === -1 || !this.audioPlayer.duration) return;
+        const rect = this.miniProgressBar.getBoundingClientRect();
+        const pos = (e.clientX - rect.left) / rect.width;
+        const newTime = pos * this.audioPlayer.duration;
+        this.audioPlayer.currentTime = newTime;
+        this.updateProgress();
+    }
+
+    updateMiniControlsState() {
+        const hasTrack = this.currentPlaylist.length > 0 && this.currentTrackIndex !== -1;
+        const multipleTracks = this.currentPlaylist.length > 1;
+        if (this.miniPrevBtn) this.miniPrevBtn.disabled = !hasTrack || !multipleTracks;
+        if (this.miniNextBtn) this.miniNextBtn.disabled = !hasTrack || !multipleTracks;
     }
 } 

@@ -182,6 +182,16 @@
                             </div>
                             <div class="setting-item">
                                 <div class="setting-label">
+                                    <i class="fas fa-compress"></i>
+                                    <span>Mini Player Mode</span>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="miniPlayerToggle">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-label">
                                     <i class="fas fa-text-height"></i>
                                     <span>Font Family</span>
                                 </div>
@@ -404,6 +414,37 @@
                     <div class="progress"></div>
                 </div>
                 <span class="total-time">0:00</span>
+            </div>
+        </div>
+        
+        <!-- Mini Player -->
+        <div class="mini-player" id="miniPlayer">
+            <div class="mini-player-content">
+                <img src="default-album-art.jpg" alt="Album Art" class="mini-album-art">
+                <div class="mini-track-info">
+                    <div class="mini-track-name">No track selected</div>
+                </div>
+                <div class="mini-controls">
+                    <button class="control-btn" id="miniPrevBtn" disabled>
+                        <i class="fas fa-step-backward"></i>
+                    </button>
+                    <button class="control-btn play-btn" id="miniPlayBtn">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button class="control-btn" id="miniNextBtn" disabled>
+                        <i class="fas fa-step-forward"></i>
+                    </button>
+                </div>
+                <button class="control-btn" id="expandPlayerBtn">
+                    <i class="fas fa-expand"></i>
+                </button>
+            </div>
+            <div class="mini-progress-container">
+                <span class="mini-current-time">0:00</span>
+                <div class="mini-progress-bar">
+                    <div class="mini-progress"></div>
+                </div>
+                <span class="mini-total-time">0:00</span>
             </div>
         </div>
     </div>
