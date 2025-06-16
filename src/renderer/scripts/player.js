@@ -62,6 +62,15 @@ export class Player {
 
         // Set initial state for mini controls
         this.updateMiniControlsState();
+        
+        // Initialize mini player state
+        if (this.miniPlayBtn) {
+            const miniIcon = this.miniPlayBtn.querySelector('i');
+            if (miniIcon) {
+                miniIcon.classList.remove('fa-pause');
+                miniIcon.classList.add('fa-play');
+            }
+        }
     }
 
     // Setup event listeners
@@ -169,34 +178,59 @@ export class Player {
 
     // Play a track
     playTrack(index, shape) {
-        if (this.currentPlaylist[index]) {
-            const track = this.currentPlaylist[index];
-            this.currentTrackIndex = index;
-            
-            // Update audio source and play
-            this.audioPlayer.src = track.path;
-            this.audioPlayer.play().catch(error => {
-                console.error('Error playing track:', error);
-                this.handlePlaybackError(error);
-            });
-            this.isPlaying = true;
-            
-            // Update UI
-            this.updateNowPlaying(track, shape);
-            const icon = this.playBtn.querySelector('i');
+        if (index < 0 || index >= this.currentPlaylist.length) return;
+
+        this.currentTrackIndex = index;
+        const track = this.currentPlaylist[index];
+        
+        // Update audio source
+        this.audioPlayer.src = track.path;
+        
+        // Update UI
+        this.trackNameEl.textContent = track.name;
+        this.artistNameEl.textContent = track.artist || 'Unknown Artist';
+        if (this.miniTrackName) {
+            this.miniTrackName.textContent = track.name;
+        }
+        
+        // Update album art
+        if (track.albumArt) {
+            this.albumArtEl.src = track.albumArt;
+            if (this.miniAlbumArt) {
+                this.miniAlbumArt.src = track.albumArt;
+            }
+        } else {
+            this.albumArtEl.src = 'default-album-art.jpg';
+            if (this.miniAlbumArt) {
+                this.miniAlbumArt.src = 'default-album-art.jpg';
+            }
+        }
+
+        // Play the track
+        this.audioPlayer.play();
+        this.isPlaying = true;
+        
+        // Update play button icons
+        const icon = this.playBtn.querySelector('i');
+        const miniIcon = this.miniPlayBtn?.querySelector('i');
+        if (icon) {
             icon.classList.remove('fa-play');
             icon.classList.add('fa-pause');
-            
-            // Update active state in the list
-            document.querySelectorAll('.music-item').forEach(el => {
-                el.classList.remove('active');
-            });
-            document.querySelector(`.music-item[data-index="${index}"]`)?.classList.add('active');
-            
-            // Start progress update interval
-            this.startProgressUpdate();
+        }
+        if (miniIcon) {
+            miniIcon.classList.remove('fa-play');
+            miniIcon.classList.add('fa-pause');
+        }
 
-            this.updateMiniControlsState();
+        // Start progress update
+        this.startProgressUpdate();
+        
+        // Update mini controls state
+        this.updateMiniControlsState();
+        
+        // Show notification if enabled
+        if (window.settingsManager.settings.trackNotifications) {
+            this.showTrackNotification(track);
         }
     }
 
@@ -573,7 +607,19 @@ export class Player {
     updateMiniControlsState() {
         const hasTrack = this.currentPlaylist.length > 0 && this.currentTrackIndex !== -1;
         const multipleTracks = this.currentPlaylist.length > 1;
-        if (this.miniPrevBtn) this.miniPrevBtn.disabled = !hasTrack || !multipleTracks;
-        if (this.miniNextBtn) this.miniNextBtn.disabled = !hasTrack || !multipleTracks;
+        
+        // Update mini player buttons state
+        if (this.miniPrevBtn) {
+            this.miniPrevBtn.disabled = !hasTrack || !multipleTracks;
+            this.miniPrevBtn.style.opacity = (!hasTrack || !multipleTracks) ? '0.4' : '1';
+        }
+        if (this.miniNextBtn) {
+            this.miniNextBtn.disabled = !hasTrack || !multipleTracks;
+            this.miniNextBtn.style.opacity = (!hasTrack || !multipleTracks) ? '0.4' : '1';
+        }
+        if (this.miniPlayBtn) {
+            this.miniPlayBtn.disabled = !hasTrack;
+            this.miniPlayBtn.style.opacity = !hasTrack ? '0.4' : '1';
+        }
     }
 } 
