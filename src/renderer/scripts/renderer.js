@@ -1043,5 +1043,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 miniPlayerToggle.dispatchEvent(new Event('change'));
             }
         }
+
+        // F key for maximize/restore
+        if (e.key.toLowerCase() === 'f') {
+            e.preventDefault();
+            const maximizeBtn = document.getElementById('maximizeBtn');
+            if (maximizeBtn) {
+                maximizeBtn.click();
+            }
+        }
     });
 });
