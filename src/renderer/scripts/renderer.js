@@ -129,6 +129,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 prevBtn.click();
             }
         }
+
+        // Ctrl + ] to increase playback speed
+        if (e.ctrlKey && e.key === ']') {
+            e.preventDefault();
+            const speedSlider = document.getElementById('playbackSpeedSlider');
+            if (speedSlider) {
+                const currentSpeed = parseFloat(speedSlider.value);
+                const newSpeed = Math.min(4, currentSpeed + 0.1);
+                speedSlider.value = newSpeed;
+                speedSlider.dispatchEvent(new Event('input'));
+            }
+        }
+
+        // Ctrl + [ to decrease playback speed
+        if (e.ctrlKey && e.key === '[') {
+            e.preventDefault();
+            const speedSlider = document.getElementById('playbackSpeedSlider');
+            if (speedSlider) {
+                const currentSpeed = parseFloat(speedSlider.value);
+                const newSpeed = Math.max(0.5, currentSpeed - 0.1);
+                speedSlider.value = newSpeed;
+                speedSlider.dispatchEvent(new Event('input'));
+            }
+        }
     });
 
     // Navigation functionality

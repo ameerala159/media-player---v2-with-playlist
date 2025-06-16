@@ -187,6 +187,11 @@ export class Player {
         // Update audio source
         this.audioPlayer.src = track.path;
         
+        // Apply saved playback speed
+        if (window.settingsManager) {
+            this.audioPlayer.playbackRate = window.settingsManager.settings.playbackSpeed;
+        }
+        
         // Update UI
         this.trackNameEl.textContent = track.name;
         this.artistNameEl.textContent = track.artist || 'Unknown Artist';

@@ -10,7 +10,8 @@ class SettingsManager {
             trackNotifications: true,
             themeColor: '#1db954', // Default theme color
             shuffle: false, // Add shuffle setting
-            miniPlayerMode: false // Add mini player mode setting
+            miniPlayerMode: false, // Add mini player mode setting
+            playbackSpeed: 1.0 // Add playback speed setting
         };
         
         this.init();
@@ -75,7 +76,8 @@ class SettingsManager {
                     trackNotifications: parsedSettings.trackNotifications ?? true,
                     themeColor: parsedSettings.themeColor ?? '#1db954',
                     shuffle: parsedSettings.shuffle ?? false,
-                    miniPlayerMode: parsedSettings.miniPlayerMode ?? false
+                    miniPlayerMode: parsedSettings.miniPlayerMode ?? false,
+                    playbackSpeed: parsedSettings.playbackSpeed ?? 1.0
                 };
             }
         } catch (error) {
@@ -344,6 +346,29 @@ class SettingsManager {
                 }
             });
         }
+
+        // Playback Speed Slider
+        const playbackSpeedSlider = document.getElementById('playbackSpeedSlider');
+        const playbackSpeedValue = document.getElementById('playbackSpeedValue');
+        if (playbackSpeedSlider && playbackSpeedValue) {
+            playbackSpeedSlider.value = this.settings.playbackSpeed;
+            playbackSpeedValue.textContent = `${this.settings.playbackSpeed}x`;
+            
+            playbackSpeedSlider.addEventListener('input', (e) => {
+                const speed = parseFloat(e.target.value);
+                this.settings.playbackSpeed = speed;
+                playbackSpeedValue.textContent = `${speed}x`;
+                this.saveSettings();
+                
+                // Update audio player speed if it exists
+                if (window.player && window.player.audioPlayer) {
+                    window.player.audioPlayer.playbackRate = speed;
+                }
+
+                // Show notification
+                this.showSpeedNotification(speed);
+            });
+        }
     }
 
     applySettings() {
@@ -449,6 +474,30 @@ class SettingsManager {
                 }
             }
         }
+    }
+
+    // Show speed change notification
+    showSpeedNotification(speed) {
+        const notification = document.createElement('div');
+        notification.className = 'speed-notification';
+        notification.innerHTML = `
+            <i class="fas fa-forward"></i>
+            <span>Playback Speed: ${speed}x</span>
+        `;
+        document.body.appendChild(notification);
+
+        // Trigger animation
+        requestAnimationFrame(() => {
+            notification.classList.add('show');
+        });
+
+        // Remove notification after 2 seconds
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                notification.remove();
+            }, 300); // Wait for fade out animation
+        }, 2000);
     }
 }
 
