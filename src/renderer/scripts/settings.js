@@ -314,17 +314,36 @@ class SettingsManager {
             });
         }
 
-        // Keyboard shortcut for mini player mode (Ctrl+M)
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.key.toLowerCase() === 'm') {
-                e.preventDefault();
-                this.settings.miniPlayerMode = !this.settings.miniPlayerMode;
-                const miniPlayerToggle = document.getElementById('miniPlayerToggle');
-                if (miniPlayerToggle) miniPlayerToggle.checked = this.settings.miniPlayerMode;
-                this.toggleMiniPlayer(this.settings.miniPlayerMode);
-                this.saveSettings();
-            }
-        });
+        // Keyboard Shortcuts Modal
+        const shortcutsModal = document.getElementById('keyboardShortcutsModal');
+        const showShortcutsBtn = document.getElementById('showShortcutsBtn');
+        const closeShortcutsBtn = document.querySelector('.close-shortcuts-btn');
+
+        if (showShortcutsBtn && shortcutsModal && closeShortcutsBtn) {
+            // Show modal
+            showShortcutsBtn.addEventListener('click', () => {
+                shortcutsModal.classList.add('show');
+            });
+
+            // Close modal
+            closeShortcutsBtn.addEventListener('click', () => {
+                shortcutsModal.classList.remove('show');
+            });
+
+            // Close modal when clicking outside
+            shortcutsModal.addEventListener('click', (e) => {
+                if (e.target === shortcutsModal) {
+                    shortcutsModal.classList.remove('show');
+                }
+            });
+
+            // Close modal with Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && shortcutsModal.classList.contains('show')) {
+                    shortcutsModal.classList.remove('show');
+                }
+            });
+        }
     }
 
     applySettings() {
