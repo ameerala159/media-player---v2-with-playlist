@@ -3738,6 +3738,34 @@ body.mini-player-mode .page {
     transform: translateX(2px);
 }
 
+/* Keyboard shortcuts button specific styles */
+#showShortcutsBtn {
+    background: var(--background-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+#showShortcutsBtn:hover {
+    background: var(--primary-light);
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    transform: translateX(2px);
+}
+
+/* Dark theme adjustments for keyboard shortcuts button */
+body[data-theme="dark"] #showShortcutsBtn {
+    background: #1a1a1a;
+    border-color: #333;
+    color: #fff;
+}
+
+body[data-theme="dark"] #showShortcutsBtn:hover {
+    background: var(--primary-light);
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
 /* Keyboard Shortcuts Modal Styles */
 .shortcuts-modal {
     display: none;
@@ -3891,6 +3919,14 @@ body[data-theme="dark"] .shortcut-key {
     align-items: center;
     gap: 15px;
     min-width: 200px;
+    background: var(--hover-color);
+    padding: 12px 20px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.speed-control:hover {
+    background: var(--primary-light);
 }
 
 #playbackSpeedSlider {
@@ -3900,7 +3936,9 @@ body[data-theme="dark"] .shortcut-key {
     background: var(--border-color);
     border-radius: 3px;
     outline: none;
-    transition: height 0.2s ease;
+    transition: all 0.3s ease;
+    position: relative;
+    cursor: pointer;
 }
 
 #playbackSpeedSlider:hover {
@@ -3910,52 +3948,87 @@ body[data-theme="dark"] .shortcut-key {
 #playbackSpeedSlider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
     background: var(--primary-color);
     border-radius: 50%;
     cursor: pointer;
-    transition: transform 0.2s ease, background-color 0.2s ease;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    border: 2px solid var(--background-color);
 }
 
 #playbackSpeedSlider::-webkit-slider-thumb:hover {
     transform: scale(1.1);
     background: var(--primary-hover);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
 }
 
 #playbackSpeedSlider::-moz-range-thumb {
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
     background: var(--primary-color);
     border-radius: 50%;
     cursor: pointer;
-    border: none;
-    transition: transform 0.2s ease, background-color 0.2s ease;
+    border: 2px solid var(--background-color);
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 #playbackSpeedSlider::-moz-range-thumb:hover {
     transform: scale(1.1);
     background: var(--primary-hover);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
 }
 
 #playbackSpeedValue {
-    min-width: 40px;
-    text-align: right;
+    min-width: 45px;
+    text-align: center;
     color: var(--text-color);
-    font-size: 0.9em;
+    font-size: 0.95em;
+    font-weight: 500;
+    background: var(--background-color);
+    padding: 4px 8px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.speed-control:hover #playbackSpeedValue {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
 }
 
 /* Dark theme adjustments */
+body[data-theme="dark"] .speed-control {
+    background: #2a2a2a;
+}
+
+body[data-theme="dark"] .speed-control:hover {
+    background: #333;
+}
+
 body[data-theme="dark"] #playbackSpeedSlider {
-    background: var(--border-color);
+    background: #444;
 }
 
 body[data-theme="dark"] #playbackSpeedSlider::-webkit-slider-thumb {
-    background: var(--primary-color);
+    border-color: #1a1a1a;
 }
 
 body[data-theme="dark"] #playbackSpeedSlider::-moz-range-thumb {
+    border-color: #1a1a1a;
+}
+
+body[data-theme="dark"] #playbackSpeedValue {
+    background: #1a1a1a;
+}
+
+body[data-theme="dark"] .speed-control:hover #playbackSpeedValue {
     background: var(--primary-color);
+    color: white;
 }
 
 /* Playback Speed Notification */
