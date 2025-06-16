@@ -83,25 +83,76 @@ class SettingsManager {
             });
         }
 
-        // Font Size Select
-        const fontSizeSelect = document.getElementById('fontSizeSelect');
-        if (fontSizeSelect) {
-            fontSizeSelect.value = this.settings.fontSize;
-            fontSizeSelect.addEventListener('change', (e) => {
-                this.settings.fontSize = e.target.value;
-                this.applySettings();
-                this.saveSettings();
+        // Font Size Dropdown
+        const fontSizeDropdown = document.getElementById('fontSizeDropdown');
+        const fontSizeSelected = document.getElementById('fontSizeSelected');
+        const fontSizeOptions = document.getElementById('fontSizeOptions');
+        if (fontSizeDropdown && fontSizeSelected && fontSizeOptions) {
+            // Set initial value
+            const initialFontSize = this.settings.fontSize;
+            fontSizeSelected.textContent = initialFontSize.charAt(0).toUpperCase() + initialFontSize.slice(1);
+            fontSizeOptions.querySelector(`[data-value="${initialFontSize}"]`).classList.add('active');
+
+            // Setup dropdown behavior
+            fontSizeDropdown.addEventListener('click', (e) => {
+                fontSizeDropdown.classList.toggle('open');
+            });
+            fontSizeDropdown.addEventListener('blur', (e) => {
+                setTimeout(() => fontSizeDropdown.classList.remove('open'), 100);
+            });
+
+            // Handle option selection
+            fontSizeOptions.querySelectorAll('.custom-dropdown-option').forEach(option => {
+                option.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const value = option.getAttribute('data-value');
+                    const label = option.textContent;
+                    this.settings.fontSize = value;
+                    fontSizeSelected.textContent = label;
+                    fontSizeOptions.querySelectorAll('.custom-dropdown-option').forEach(opt => opt.classList.remove('active'));
+                    option.classList.add('active');
+                    fontSizeDropdown.classList.remove('open');
+                    this.applySettings();
+                    this.saveSettings();
+                });
             });
         }
 
-        // Font Family Select
-        const fontFamilySelect = document.getElementById('fontFamilySelect');
-        if (fontFamilySelect) {
-            fontFamilySelect.value = this.settings.fontFamily;
-            fontFamilySelect.addEventListener('change', (e) => {
-                this.settings.fontFamily = e.target.value;
-                this.applySettings();
-                this.saveSettings();
+        // Font Family Dropdown
+        const fontFamilyDropdown = document.getElementById('fontFamilyDropdown');
+        const fontFamilySelected = document.getElementById('fontFamilySelected');
+        const fontFamilyOptions = document.getElementById('fontFamilyOptions');
+        if (fontFamilyDropdown && fontFamilySelected && fontFamilyOptions) {
+            // Set initial value
+            const initialFontFamily = this.settings.fontFamily;
+            const initialOption = fontFamilyOptions.querySelector(`[data-value="${initialFontFamily}"]`);
+            if (initialOption) {
+                fontFamilySelected.textContent = initialOption.textContent;
+                initialOption.classList.add('active');
+            }
+
+            // Setup dropdown behavior
+            fontFamilyDropdown.addEventListener('click', (e) => {
+                fontFamilyDropdown.classList.toggle('open');
+            });
+            fontFamilyDropdown.addEventListener('blur', (e) => {
+                setTimeout(() => fontFamilyDropdown.classList.remove('open'), 100);
+            });
+
+            // Handle option selection
+            fontFamilyOptions.querySelectorAll('.custom-dropdown-option').forEach(option => {
+                option.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const value = option.getAttribute('data-value');
+                    const label = option.textContent;
+                    this.settings.fontFamily = value;
+                    fontFamilySelected.textContent = label;
+                    fontFamilyOptions.querySelectorAll('.custom-dropdown-option').forEach(opt => opt.classList.remove('active'));
+                    option.classList.add('active');
+                    fontFamilyDropdown.classList.remove('open');
+                    this.applySettings();
+                    this.saveSettings();
+                });
             });
         }
 
@@ -150,13 +201,40 @@ class SettingsManager {
             });
         }
 
-        // Repeat Mode Select
-        const repeatModeSelect = document.getElementById('repeatModeSelect');
-        if (repeatModeSelect) {
-            repeatModeSelect.value = this.settings.repeatMode;
-            repeatModeSelect.addEventListener('change', (e) => {
-                this.settings.repeatMode = e.target.value;
-                this.saveSettings();
+        // Repeat Mode Dropdown
+        const repeatModeDropdown = document.getElementById('repeatModeDropdown');
+        const repeatModeSelected = document.getElementById('repeatModeSelected');
+        const repeatModeOptions = document.getElementById('repeatModeOptions');
+        if (repeatModeDropdown && repeatModeSelected && repeatModeOptions) {
+            // Set initial value
+            const initialRepeatMode = this.settings.repeatMode || 'none';
+            const initialOption = repeatModeOptions.querySelector(`[data-value="${initialRepeatMode}"]`);
+            if (initialOption) {
+                repeatModeSelected.textContent = initialOption.textContent;
+                initialOption.classList.add('active');
+            }
+
+            // Setup dropdown behavior
+            repeatModeDropdown.addEventListener('click', (e) => {
+                repeatModeDropdown.classList.toggle('open');
+            });
+            repeatModeDropdown.addEventListener('blur', (e) => {
+                setTimeout(() => repeatModeDropdown.classList.remove('open'), 100);
+            });
+
+            // Handle option selection
+            repeatModeOptions.querySelectorAll('.custom-dropdown-option').forEach(option => {
+                option.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const value = option.getAttribute('data-value');
+                    const label = option.textContent;
+                    this.settings.repeatMode = value;
+                    repeatModeSelected.textContent = label;
+                    repeatModeOptions.querySelectorAll('.custom-dropdown-option').forEach(opt => opt.classList.remove('active'));
+                    option.classList.add('active');
+                    repeatModeDropdown.classList.remove('open');
+                    this.saveSettings();
+                });
             });
         }
 
