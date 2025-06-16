@@ -3625,6 +3625,7 @@ body.mini-player-mode #expandPlayerBtn {
     margin-right: 20px;
     position: relative;
     z-index: 1001;
+    max-width: 60px; /* Reduced from 110px to 60px */
 }
 
 .mini-track-name {
@@ -3632,6 +3633,7 @@ body.mini-player-mode #expandPlayerBtn {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    max-width: 100%; /* Ensure text stays within container */
 }
 
 /* Mini Player Progress Container */
