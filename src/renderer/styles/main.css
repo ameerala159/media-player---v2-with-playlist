@@ -3284,3 +3284,49 @@ body[data-theme="dark"] .delete-confirmation-actions .cancel-btn {
 body[data-theme="dark"] .delete-confirmation-actions .cancel-btn:hover {
     background-color: #333;
 }
+
+/* Specific styles for the rating dropdown in home page */
+.sort-select.custom-dropdown {
+    min-height: 28px;
+}
+
+.sort-select .custom-dropdown-selected {
+    padding: 3px 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sort-select .custom-dropdown-selected i {
+    color: var(--primary-color);
+    font-size: 0.9em;
+}
+
+.sort-select .custom-dropdown-options {
+    max-height: 150px;
+}
+
+.sort-select .custom-dropdown-option {
+    padding: 6px 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sort-select .custom-dropdown-option i {
+    color: var(--primary-color);
+    font-size: 0.9em;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.sort-select .custom-dropdown-option:hover i,
+.sort-select .custom-dropdown-option.active i {
+    opacity: 1;
+}
+
+/* Dark mode specific styles */
+body[data-theme="dark"] .sort-select .custom-dropdown-selected i,
+body[data-theme="dark"] .sort-select .custom-dropdown-option i {
+    color: var(--primary-color);
+}

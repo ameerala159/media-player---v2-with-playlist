@@ -43,9 +43,12 @@ export class HomePage {
                 option.addEventListener('click', (e) => {
                     e.stopPropagation();
                     const value = option.getAttribute('data-value');
-                    const label = option.textContent;
+                    const label = option.querySelector('span').textContent;
+                    const icon = option.querySelector('i').cloneNode(true);
                     this.selectedSortValue = value;
-                    this.customSortSelected.textContent = label;
+                    this.customSortSelected.innerHTML = '';
+                    this.customSortSelected.appendChild(icon);
+                    this.customSortSelected.appendChild(document.createTextNode(label));
                     this.customSortOptionEls.forEach(opt => opt.classList.remove('active'));
                     option.classList.add('active');
                     this.customSortDropdown.classList.remove('open');
