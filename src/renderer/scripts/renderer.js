@@ -1033,5 +1033,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 repeatModeSelect.dispatchEvent(new Event('change'));
             }
         }
+
+        // Ctrl + M for mini mode
+        if (e.ctrlKey && e.key.toLowerCase() === 'm') {
+            e.preventDefault();
+            const miniPlayerToggle = document.getElementById('miniPlayerToggle');
+            if (miniPlayerToggle) {
+                miniPlayerToggle.checked = !miniPlayerToggle.checked;
+                miniPlayerToggle.dispatchEvent(new Event('change'));
+            }
+        }
     });
 });
