@@ -2858,10 +2858,10 @@ body[data-theme="dark"] .track-action-btn.playlist-btn:hover {
     width: 100%;
     background: var(--background-color);
     border: 1px solid var(--border-color);
-    border-radius: 0 0 16px 16px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     z-index: 10;
-    margin-top: 2px;
+    margin-top: 8px;
     overflow: hidden;
     max-height: 300px;
     overflow-y: auto;
@@ -2878,6 +2878,19 @@ body[data-theme="dark"] .track-action-btn.playlist-btn:hover {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.custom-dropdown-option:first-child {
+    border-radius: 12px 12px 0 0;
+}
+
+.custom-dropdown-option:last-child {
+    border-radius: 0 0 12px 12px;
+}
+
+/* Dark mode specific styles */
+body[data-theme="dark"] .custom-dropdown-options {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .custom-dropdown-option:hover, .custom-dropdown-option.active {
