@@ -1862,15 +1862,37 @@ html, body {
 .settings-header {
     padding: 20px;
     border-bottom: 1px solid var(--border-color);
-}
-
-.settings-header h2 {
-    margin: 0;
-    color: var(--text-color);
+    position: sticky;
+    top: 0;
+    background: var(--background-color);
+    z-index: 1;
 }
 
 .settings-content {
     padding: 20px;
+    height: calc(100vh - 70px); /* Subtract header height */
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) var(--background-color);
+}
+
+/* Custom scrollbar styles for settings content */
+.settings-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.settings-content::-webkit-scrollbar-track {
+    background: var(--background-color);
+    border-radius: 4px;
+}
+
+.settings-content::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+.settings-content::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
 }
 
 .settings-section {
