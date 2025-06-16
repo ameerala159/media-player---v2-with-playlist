@@ -136,6 +136,14 @@ export class PlaylistsPage {
         };
         document.addEventListener('keydown', handleEscKey);
 
+        // Add click handler for outside modal click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                this.closePlaylistContentsModal(modal);
+                document.removeEventListener('keydown', handleEscKey);
+            }
+        });
+
         // Add event listeners
         const closeBtn = modal.querySelector('.close-btn');
         closeBtn.addEventListener('click', () => {
