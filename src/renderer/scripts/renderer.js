@@ -1052,5 +1052,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 maximizeBtn.click();
             }
         }
+
+        // Ctrl + Right Arrow for next track
+        if (e.ctrlKey && e.key === 'ArrowRight') {
+            e.preventDefault();
+            const nextBtn = document.getElementById('nextBtn');
+            if (nextBtn) {
+                nextBtn.click();
+            }
+        }
+
+        // Ctrl + Left Arrow for previous track
+        if (e.ctrlKey && e.key === 'ArrowLeft') {
+            e.preventDefault();
+            const prevBtn = document.getElementById('prevBtn');
+            if (prevBtn) {
+                prevBtn.click();
+            }
+        }
     });
 });
