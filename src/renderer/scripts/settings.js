@@ -373,7 +373,7 @@ class SettingsManager {
 
     applySettings() {
         // Apply Dark Mode
-        document.body.classList.toggle('dark-mode', this.settings.darkMode);
+        document.body.setAttribute('data-theme', this.settings.darkMode ? 'dark' : 'light');
 
         // Apply Font Size
         document.body.setAttribute('data-font-size', this.settings.fontSize);
