@@ -2114,6 +2114,9 @@ body[data-theme="dark"] .track-details-content {
     gap: 8px;
     font-size: 0.9em;
     transition: all 0.2s ease;
+    position: relative;
+    z-index: 10;
+    margin-right: 20px; /* Increased margin to move button further left */
 }
 
 .create-playlist-btn:hover {
@@ -2596,6 +2599,29 @@ body[data-theme="dark"] .playlist-contents-footer .close-btn:hover {
     padding: 20px;
     max-width: 800px;
     margin: 0 auto;
+    height: calc(100vh - 70px); /* Subtract header height */
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) var(--background-color);
+}
+
+/* Custom scrollbar styles for about content */
+.about-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.about-content::-webkit-scrollbar-track {
+    background: var(--background-color);
+    border-radius: 4px;
+}
+
+.about-content::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+.about-content::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
 }
 
 .developer-profile {
