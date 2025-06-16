@@ -313,6 +313,14 @@ body {
     color: var(--text-color);
 }
 
+.sort-select option:hover {
+    background-color: var(--hover-color);
+}
+
+body[data-theme="dark"] .sort-select option:hover {
+    background-color: var(--hover-color);
+}
+
 /* Responsive styles for search and sort */
 @media (max-width: 768px) {
     .search-sort-container {
@@ -3230,4 +3238,83 @@ body[data-theme="dark"] .delete-confirmation-actions .cancel-btn {
 
 body[data-theme="dark"] .delete-confirmation-actions .cancel-btn:hover {
     background-color: #333;
+}
+
+/* Custom Dropdown Styles */
+.custom-dropdown {
+    position: relative;
+    width: 100%;
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    background: var(--background-color);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: border-color 0.3s;
+    user-select: none;
+    outline: none;
+}
+.custom-dropdown:focus, .custom-dropdown.open {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px var(--primary-light);
+}
+.custom-dropdown-selected {
+    padding: 10px 15px;
+    border-radius: 20px;
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.custom-dropdown-options {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 0 0 16px 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    z-index: 10;
+    margin-top: 2px;
+    overflow: hidden;
+}
+.custom-dropdown.open .custom-dropdown-options {
+    display: block;
+}
+.custom-dropdown-option {
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.custom-dropdown-option:hover, .custom-dropdown-option.active {
+    background: var(--hover-color);
+    color: var(--primary-color);
+}
+
+body[data-theme="dark"] .custom-dropdown, body[data-theme="dark"] .custom-dropdown-options {
+    background: #1a1a1a;
+    color: #fff;
+    border-color: var(--border-color);
+}
+body[data-theme="dark"] .custom-dropdown-option {
+    color: #fff;
+}
+body[data-theme="dark"] .custom-dropdown-option:hover, body[data-theme="dark"] .custom-dropdown-option.active {
+    background: var(--hover-color);
+    color: var(--primary-color);
+}
+
+.custom-dropdown, .custom-dropdown-selected {
+    min-height: 28px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    border-radius: 20px;
+}
+.custom-dropdown-selected {
+    padding-left: 15px;
+    padding-right: 40px;
 }

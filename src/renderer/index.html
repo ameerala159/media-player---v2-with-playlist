@@ -90,11 +90,14 @@
                             <i class="fas fa-search search-icon"></i>
                         </div>
                         <div class="sort-container">
-                            <select id="sortSelect" class="sort-select">
-                                <option value="title">Sort by Title</option>
-                                <option value="rating">Sort by Rating</option>
-                                <option value="date">Sort by Date Modified</option>
-                            </select>
+                            <div id="customSortDropdown" class="custom-dropdown sort-select" tabindex="0">
+                                <div class="custom-dropdown-selected" id="customSortSelected">Sort by Title</div>
+                                <div class="custom-dropdown-options" id="customSortOptions">
+                                    <div class="custom-dropdown-option" data-value="title">Sort by Title</div>
+                                    <div class="custom-dropdown-option" data-value="rating">Sort by Rating</div>
+                                    <div class="custom-dropdown-option" data-value="date">Sort by Date Modified</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     

@@ -6,10 +6,16 @@ export class HomePage {
         this.folderSelectContainer = document.getElementById('folderSelectContainer');
         this.loadingIndicator = document.getElementById('loadingIndicator');
         this.searchInput = document.getElementById('searchInput');
-        this.sortSelect = document.getElementById('sortSelect');
+        // this.sortSelect = document.getElementById('sortSelect'); // Remove native select
         this.currentPlaylist = [];
         this.trackShapes = new Map(); // Store shapes for each track
         this.allTracks = []; // Store all tracks for filtering and sorting
+        // Custom dropdown elements
+        this.customSortDropdown = document.getElementById('customSortDropdown');
+        this.customSortSelected = document.getElementById('customSortSelected');
+        this.customSortOptions = document.getElementById('customSortOptions');
+        this.customSortOptionEls = this.customSortOptions ? this.customSortOptions.querySelectorAll('.custom-dropdown-option') : [];
+        this.selectedSortValue = 'title';
     }
 
     // Initialize home page
@@ -25,8 +31,28 @@ export class HomePage {
         // Add search input listener
         this.searchInput.addEventListener('input', () => this.filterAndSortTracks());
         
-        // Add sort select listener
-        this.sortSelect.addEventListener('change', () => this.filterAndSortTracks());
+        // Custom dropdown logic
+        if (this.customSortDropdown) {
+            this.customSortDropdown.addEventListener('click', (e) => {
+                this.customSortDropdown.classList.toggle('open');
+            });
+            this.customSortDropdown.addEventListener('blur', (e) => {
+                setTimeout(() => this.customSortDropdown.classList.remove('open'), 100);
+            });
+            this.customSortOptionEls.forEach(option => {
+                option.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const value = option.getAttribute('data-value');
+                    const label = option.textContent;
+                    this.selectedSortValue = value;
+                    this.customSortSelected.textContent = label;
+                    this.customSortOptionEls.forEach(opt => opt.classList.remove('active'));
+                    option.classList.add('active');
+                    this.customSortDropdown.classList.remove('open');
+                    this.filterAndSortTracks();
+                });
+            });
+        }
 
         // Listen for track list updates
         window.addEventListener('trackListUpdated', (event) => {
@@ -75,7 +101,7 @@ export class HomePage {
     // Filter and sort tracks based on search input and sort selection
     filterAndSortTracks() {
         const searchTerm = this.searchInput.value.toLowerCase();
-        const sortBy = this.sortSelect.value;
+        const sortBy = this.selectedSortValue || 'title';
         
         // Filter tracks based on search term
         let filteredTracks = this.allTracks.filter(track => {
