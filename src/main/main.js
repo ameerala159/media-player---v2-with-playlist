@@ -144,8 +144,13 @@ async function scanDirectoryRecursively(dirPath) {
 ipcMain.on('set-mini-player-size', (event, isMini) => {
   if (mainWindow) {
     if (isMini) {
+      // If window is maximized, unmaximize first
+      if (mainWindow.isMaximized()) {
+        mainWindow.unmaximize();
+      }
       mainWindow.setSize(370, 120);
       mainWindow.setResizable(false);
+      mainWindow.center(); // Center the window on screen
     } else {
       mainWindow.setSize(1200, 800);
       mainWindow.setResizable(true);

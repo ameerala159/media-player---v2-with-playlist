@@ -436,13 +436,18 @@ class SettingsManager {
             if (enabled) {
                 miniPlayer.classList.add('active');
                 document.body.classList.add('mini-player-mode');
+                // Send message to main process to handle window size
+                if (window.api && window.api.setMiniPlayerSize) {
+                    window.api.setMiniPlayerSize(true);
+                }
             } else {
                 miniPlayer.classList.remove('active');
                 document.body.classList.remove('mini-player-mode');
+                // Send message to main process to restore window size
+                if (window.api && window.api.setMiniPlayerSize) {
+                    window.api.setMiniPlayerSize(false);
+                }
             }
-        }
-        if (window.api && window.api.setMiniPlayerSize) {
-            window.api.setMiniPlayerSize(enabled);
         }
     }
 }
