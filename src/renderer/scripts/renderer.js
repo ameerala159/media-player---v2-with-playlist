@@ -11,11 +11,15 @@ import { PlaylistsPage } from './pages/playlists.js';
 let skipDuration = 5; // Initialize skip duration to 5 seconds here, at the module level
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize modules
+    // Initialize player first
+    const player = new Player();
+    window.player = player; // Make player available globally
+    player.init();
+
+    // Initialize other modules
     const homePage = new HomePage();
     const favoritesPage = new FavoritesPage();
     const trackDetails = new TrackDetails();
-    const player = new Player();
     const playlistsPage = new PlaylistsPage();
 
     // Make playlistsPage available globally for the add to playlist functionality
@@ -25,8 +29,107 @@ document.addEventListener('DOMContentLoaded', () => {
     homePage.init();
     favoritesPage.init();
     trackDetails.init();
-    player.init();
     playlistsPage.init();
+
+    // Add keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+        // Space or Ctrl + P for play/pause
+        if (e.code === 'Space' || (e.ctrlKey && e.key.toLowerCase() === 'p')) {
+            e.preventDefault(); // Prevent page scroll on space
+            player.togglePlay();
+        }
+        
+        // Ctrl + D for dark mode
+        if (e.ctrlKey && e.key.toLowerCase() === 'd') {
+            e.preventDefault();
+            document.body.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            if (darkModeToggle) {
+                darkModeToggle.checked = true;
+            }
+        }
+        
+        // Ctrl + L for light mode
+        if (e.ctrlKey && e.key.toLowerCase() === 'l') {
+            e.preventDefault();
+            document.body.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            if (darkModeToggle) {
+                darkModeToggle.checked = false;
+            }
+        }
+        
+        // Left Arrow for skip backward
+        if (e.code === 'ArrowLeft') {
+            e.preventDefault();
+            player.skipBackward();
+        }
+        
+        // Right Arrow for skip forward
+        if (e.code === 'ArrowRight') {
+            e.preventDefault();
+            player.skipForward();
+        }
+
+        // Ctrl + F for shuffle
+        if (e.ctrlKey && e.key.toLowerCase() === 'f') {
+            e.preventDefault();
+            const shuffleToggle = document.getElementById('shuffleToggle');
+            if (shuffleToggle) {
+                shuffleToggle.checked = !shuffleToggle.checked;
+                shuffleToggle.dispatchEvent(new Event('change'));
+            }
+        }
+
+        // Ctrl + R for repeat once
+        if (e.ctrlKey && e.key.toLowerCase() === 'r') {
+            e.preventDefault();
+            const repeatModeSelect = document.getElementById('repeatModeSelect');
+            if (repeatModeSelect) {
+                repeatModeSelect.value = 'one';
+                repeatModeSelect.dispatchEvent(new Event('change'));
+            }
+        }
+
+        // Ctrl + M for mini mode
+        if (e.ctrlKey && e.key.toLowerCase() === 'm') {
+            e.preventDefault();
+            const miniPlayerToggle = document.getElementById('miniPlayerToggle');
+            if (miniPlayerToggle) {
+                miniPlayerToggle.checked = !miniPlayerToggle.checked;
+                miniPlayerToggle.dispatchEvent(new Event('change'));
+            }
+        }
+
+        // F key for maximize/restore
+        if (e.key.toLowerCase() === 'f') {
+            e.preventDefault();
+            const maximizeBtn = document.getElementById('maximizeBtn');
+            if (maximizeBtn) {
+                maximizeBtn.click();
+            }
+        }
+
+        // Ctrl + Right Arrow for next track
+        if (e.ctrlKey && e.key === 'ArrowRight') {
+            e.preventDefault();
+            const nextBtn = document.getElementById('nextBtn');
+            if (nextBtn) {
+                nextBtn.click();
+            }
+        }
+
+        // Ctrl + Left Arrow for previous track
+        if (e.ctrlKey && e.key === 'ArrowLeft') {
+            e.preventDefault();
+            const prevBtn = document.getElementById('prevBtn');
+            if (prevBtn) {
+                prevBtn.click();
+            }
+        }
+    });
 
     // Navigation functionality
     const navItems = document.querySelectorAll('.nav-item');
@@ -74,41 +177,12 @@ document.addEventListener('DOMContentLoaded', () => {
         window.api.send('toMain', { action: 'close' });
     });
 
-    // Load music from saved folder path if available
-    const savedFolderPath = localStorage.getItem('musicFolderPath');
-    if (savedFolderPath) {
-        (async () => {
-            showLoading();
-            const tracks = await window.api.getMusicFiles(savedFolderPath);
-            updateMusicList(tracks);
-            hideLoading();
-        })();
-    }
-    
-    const playBtn = document.getElementById('playBtn');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const skipBackwardBtn = document.getElementById('skipBackwardBtn');
-    const skipForwardBtn = document.getElementById('skipForwardBtn');
-    const skipBackwardDropdown = document.getElementById('skipBackwardDropdown');
-    const skipForwardDropdown = document.getElementById('skipForwardDropdown');
-    const progressBar = document.querySelector('.progress-bar');
-    const progress = document.querySelector('.progress');
-    const currentTimeEl = document.querySelector('.current-time');
-    const totalTimeEl = document.querySelector('.total-time');
-    const trackNameEl = document.querySelector('.track-name');
-    const artistNameEl = document.querySelector('.artist-name');
-    const albumArtEl = document.querySelector('.album-art');
-    const selectFolderBtn = document.getElementById('selectFolderBtn');
-    const folderSelectContainer = document.getElementById('folderSelectContainer');
-    const changeFolderOption = document.getElementById('changeFolderOption');
-    const musicList = document.getElementById('musicList');
-
     // Get the menu item and its dropdown
     const fileMenuItem = document.querySelector('.menu-item');
     const fileDropdown = document.querySelector('.menu-dropdown');
     const menuButton = document.querySelector('.menu-button');
     const clearListOption = document.getElementById('clearListOption');
+    const changeFolderOption = document.getElementById('changeFolderOption');
 
     // Toggle dropdown visibility on click
     menuButton.addEventListener('click', (event) => {
@@ -148,6 +222,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // Clear the saved folder path
         localStorage.removeItem('musicFolderPath');
         
+        // Close the dropdown
+        fileDropdown.classList.remove('show');
+    });
+
+    // Handle change folder option
+    changeFolderOption.addEventListener('click', () => {
+        // Use the HomePage's folder selection handler
+        homePage.handleFolderSelection();
         // Close the dropdown
         fileDropdown.classList.remove('show');
     });
@@ -648,69 +730,6 @@ document.addEventListener('DOMContentLoaded', () => {
         selectFolderBtn.disabled = false;
     }
 
-    // Function to load saved ratings for all tracks
-    function loadTrackRatings() {
-        const trackRatings = JSON.parse(localStorage.getItem('trackRatings') || '{}');
-        return trackRatings;
-    }
-
-    // Function to update the music list
-    function updateMusicList(tracks) {
-        musicList.innerHTML = '';
-        currentPlaylist = tracks;
-
-        if (tracks.length > 0) {
-            toggleSelectFolderButton(false);
-        } else {
-            toggleSelectFolderButton(true);
-        }
-
-        // Load saved ratings
-        const trackRatings = loadTrackRatings();
-
-        tracks.forEach((track, index) => {
-            const item = createMusicItem(track, index);
-            // Add rating indicator if track has a rating
-            if (trackRatings[track.path]) {
-                const ratingIndicator = document.createElement('div');
-                ratingIndicator.className = 'rating-indicator';
-                ratingIndicator.innerHTML = '★'.repeat(trackRatings[track.path]);
-                item.querySelector('.music-info').appendChild(ratingIndicator);
-            }
-            musicList.appendChild(item);
-        });
-
-        // Dispatch event to notify player of updated track list
-        window.dispatchEvent(new CustomEvent('trackListUpdated', {
-            detail: { tracks: currentPlaylist }
-        }));
-
-        // If there are tracks, update now playing to the first track
-        if (currentPlaylist.length > 0 && currentTrackIndex === -1) {
-            updateNowPlaying(currentPlaylist[0]);
-        }
-    }
-
-    // Handle folder selection from both the button and menu
-    async function handleFolderSelection() {
-        showLoading();
-        const folderPath = await window.api.selectFolder();
-        if (folderPath) {
-            localStorage.setItem('musicFolderPath', folderPath);
-            const tracks = await window.api.getMusicFiles(folderPath);
-            updateMusicList(tracks);
-            // Restart the app after changing folder
-            window.api.send('toMain', { action: 'restart' });
-        } else {
-            console.log('Folder selection cancelled.');
-        }
-        hideLoading();
-    }
-
-    // Add event listeners for folder selection
-    selectFolderBtn.addEventListener('click', handleFolderSelection);
-    changeFolderOption.addEventListener('click', handleFolderSelection);
-
     // Listen for add-music-file events from the main process
     window.api.receive('add-music-file', (filePath) => {
         addMusicFile(filePath);
@@ -971,104 +990,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             document.body.removeAttribute('data-theme');
             localStorage.setItem('theme', 'light');
-        }
-    });
-
-    // Add keyboard shortcuts
-    document.addEventListener('keydown', (e) => {
-        // Space or Ctrl + P for play/pause
-        if (e.code === 'Space' || (e.ctrlKey && e.key.toLowerCase() === 'p')) {
-            e.preventDefault(); // Prevent page scroll on space
-            player.togglePlay();
-        }
-        
-        // Ctrl + D for dark mode
-        if (e.ctrlKey && e.key.toLowerCase() === 'd') {
-            e.preventDefault();
-            document.body.setAttribute('data-theme', 'dark');
-            localStorage.setItem('theme', 'dark');
-            if (darkModeToggle) {
-                darkModeToggle.checked = true;
-            }
-        }
-        
-        // Ctrl + L for light mode
-        if (e.ctrlKey && e.key.toLowerCase() === 'l') {
-            e.preventDefault();
-            document.body.removeAttribute('data-theme');
-            localStorage.setItem('theme', 'light');
-            if (darkModeToggle) {
-                darkModeToggle.checked = false;
-            }
-        }
-        
-        // Left Arrow for skip backward
-        if (e.code === 'ArrowLeft') {
-            e.preventDefault();
-            player.skipBackward();
-        }
-        
-        // Right Arrow for skip forward
-        if (e.code === 'ArrowRight') {
-            e.preventDefault();
-            player.skipForward();
-        }
-
-        // Ctrl + F for shuffle
-        if (e.ctrlKey && e.key.toLowerCase() === 'f') {
-            e.preventDefault();
-            const shuffleToggle = document.getElementById('shuffleToggle');
-            if (shuffleToggle) {
-                shuffleToggle.checked = !shuffleToggle.checked;
-                shuffleToggle.dispatchEvent(new Event('change'));
-            }
-        }
-
-        // Ctrl + R for repeat once
-        if (e.ctrlKey && e.key.toLowerCase() === 'r') {
-            e.preventDefault();
-            const repeatModeSelect = document.getElementById('repeatModeSelect');
-            if (repeatModeSelect) {
-                repeatModeSelect.value = 'one';
-                repeatModeSelect.dispatchEvent(new Event('change'));
-            }
-        }
-
-        // Ctrl + M for mini mode
-        if (e.ctrlKey && e.key.toLowerCase() === 'm') {
-            e.preventDefault();
-            const miniPlayerToggle = document.getElementById('miniPlayerToggle');
-            if (miniPlayerToggle) {
-                miniPlayerToggle.checked = !miniPlayerToggle.checked;
-                miniPlayerToggle.dispatchEvent(new Event('change'));
-            }
-        }
-
-        // F key for maximize/restore
-        if (e.key.toLowerCase() === 'f') {
-            e.preventDefault();
-            const maximizeBtn = document.getElementById('maximizeBtn');
-            if (maximizeBtn) {
-                maximizeBtn.click();
-            }
-        }
-
-        // Ctrl + Right Arrow for next track
-        if (e.ctrlKey && e.key === 'ArrowRight') {
-            e.preventDefault();
-            const nextBtn = document.getElementById('nextBtn');
-            if (nextBtn) {
-                nextBtn.click();
-            }
-        }
-
-        // Ctrl + Left Arrow for previous track
-        if (e.ctrlKey && e.key === 'ArrowLeft') {
-            e.preventDefault();
-            const prevBtn = document.getElementById('prevBtn');
-            if (prevBtn) {
-                prevBtn.click();
-            }
         }
     });
 });

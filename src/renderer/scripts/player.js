@@ -41,6 +41,7 @@ export class Player {
         this.shuffleQueue = [];
         this.isShuffled = false;
         this.showRemainingTime = false;
+        this.trackShapes = new Map();
 
         // Add click handler for total time display
         this.totalTimeEl.addEventListener('click', () => {
@@ -200,9 +201,15 @@ export class Player {
                 this.miniAlbumArt.src = track.albumArt;
             }
         } else {
-            this.albumArtEl.src = 'default-album-art.jpg';
+            // Get or generate shape for this track
+            let coverUrl = this.trackShapes.get(track.path);
+            if (!coverUrl) {
+                coverUrl = this.generateGeometricShape();
+                this.trackShapes.set(track.path, coverUrl);
+            }
+            this.albumArtEl.src = coverUrl;
             if (this.miniAlbumArt) {
-                this.miniAlbumArt.src = 'default-album-art.jpg';
+                this.miniAlbumArt.src = coverUrl;
             }
         }
 
@@ -425,14 +432,35 @@ export class Player {
         // Update main player
         this.trackNameEl.textContent = track.name;
         this.artistNameEl.textContent = track.artist || 'Unknown artist';
-        this.albumArtEl.src = track.albumArt || 'default-album-art.jpg';
+        
+        if (track.albumArt) {
+            this.albumArtEl.src = track.albumArt;
+        } else {
+            // Get or generate shape for this track
+            let coverUrl = this.trackShapes.get(track.path);
+            if (!coverUrl) {
+                coverUrl = this.generateGeometricShape();
+                this.trackShapes.set(track.path, coverUrl);
+            }
+            this.albumArtEl.src = coverUrl;
+        }
 
         // Update mini player
         if (this.miniTrackName) {
             this.miniTrackName.textContent = track.name;
         }
         if (this.miniAlbumArt) {
-            this.miniAlbumArt.src = track.albumArt || 'default-album-art.jpg';
+            if (track.albumArt) {
+                this.miniAlbumArt.src = track.albumArt;
+            } else {
+                // Get or generate shape for this track
+                let coverUrl = this.trackShapes.get(track.path);
+                if (!coverUrl) {
+                    coverUrl = this.generateGeometricShape();
+                    this.trackShapes.set(track.path, coverUrl);
+                }
+                this.miniAlbumArt.src = coverUrl;
+            }
         }
     }
 

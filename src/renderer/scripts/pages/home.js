@@ -8,7 +8,7 @@ export class HomePage {
         this.searchInput = document.getElementById('searchInput');
         // this.sortSelect = document.getElementById('sortSelect'); // Remove native select
         this.currentPlaylist = [];
-        this.trackShapes = new Map(); // Store shapes for each track
+        this.trackShapes = window.player.trackShapes; // Use the same track shapes as the player
         this.allTracks = []; // Store all tracks for filtering and sorting
         // Custom dropdown elements
         this.customSortDropdown = document.getElementById('customSortDropdown');
