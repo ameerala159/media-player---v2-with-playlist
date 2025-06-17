@@ -33,6 +33,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Add keyboard shortcuts
     document.addEventListener('keydown', (e) => {
+        // Don't trigger shortcuts if user is typing in an input field
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+            return;
+        }
+
         // Space or Ctrl + P for play/pause
         if (e.code === 'Space' || (e.ctrlKey && e.key.toLowerCase() === 'p')) {
             e.preventDefault(); // Prevent page scroll on space
