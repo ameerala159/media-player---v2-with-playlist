@@ -117,8 +117,8 @@ document.addEventListener('DOMContentLoaded', () => {
             player.skipForward();
         }
 
-        // Ctrl + F for shuffle
-        if (e.ctrlKey && e.key.toLowerCase() === 'f') {
+        // Ctrl + S for shuffle
+        if (e.ctrlKey && e.key.toLowerCase() === 's') {
             e.preventDefault();
             const shuffleToggle = document.getElementById('shuffleToggle');
             if (shuffleToggle) {
