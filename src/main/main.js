@@ -3,8 +3,13 @@ const path = require('path');
 const fs = require('fs');
 const musicMetadata = require('music-metadata');
 
-// Add squirrel startup check
-if (require('electron-squirrel-startup')) app.quit();
+let isSquirrel = false;
+try {
+  isSquirrel = require('electron-squirrel-startup');
+} catch (e) {
+  isSquirrel = false;
+}
+if (isSquirrel) app.quit();
 
 let mainWindow;
 

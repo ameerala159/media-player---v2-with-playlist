@@ -15,6 +15,7 @@ A sleek and feature-rich desktop music player built with Electron, offering a mo
 - ⭐ Track rating system
 - ❤️ Favorites functionality
 - 🔍 Search and sort capabilities
+- 🖼️ Custom application icon and desktop shortcut
 
 ### Advanced Controls
 - **Smart Skip Controls**
@@ -69,6 +70,7 @@ A sleek and feature-rich desktop music player built with Electron, offering a mo
 - electron (^36.4.0)
 - electron-builder (^24.9.1)
 - music-metadata (^11.2.3)
+- electron-squirrel-startup (^1.0.1)
 
 ## Installation
 
@@ -102,6 +104,7 @@ modern-music-player/
 │   │   └── index.html  # Main window HTML
 │   └── preload/        # Preload scripts
 ├── dist/              # Build output directory
+├── forge.config.js    # Electron Forge configuration
 ├── package.json
 └── README.md
 ```
@@ -150,3 +153,20 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Font Awesome for the beautiful icons
 - Electron team for the amazing framework
 - All contributors who have helped shape this project
+
+## Building and Packaging
+
+The application uses Electron Forge for building and packaging. The configuration is set up to:
+- Create a desktop shortcut with custom icon
+- Create a start menu shortcut
+- Allow users to choose installation directory
+- Package the application as an NSIS installer for Windows
+
+To build the application:
+```bash
+# For all platforms
+npm run build
+
+# For Windows only
+npm run build:win
+```
