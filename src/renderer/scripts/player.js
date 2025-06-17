@@ -107,6 +107,22 @@ export class Player {
             }
         });
 
+        // Listen for thumbnail toolbar clicks
+        window.api.receive('thumbnail-toolbar-click', (action) => {
+            console.log('Thumbnail toolbar action:', action);
+            switch (action) {
+                case 'play-pause':
+                    this.togglePlay();
+                    break;
+                case 'prev':
+                    this.playPrevious();
+                    break;
+                case 'next':
+                    this.playNext();
+                    break;
+            }
+        });
+
         // Listen for track list updates
         window.addEventListener('trackListUpdated', (event) => {
             this.currentPlaylist = event.detail.tracks;
@@ -248,37 +264,42 @@ export class Player {
 
     // Toggle play/pause
     togglePlay() {
-        if (this.currentTrackIndex === -1) {
-            // If no track is selected, play the first one
-            if (this.currentPlaylist.length > 0) {
-                this.playTrack(0);
+        if (this.currentTrackIndex === -1) return;
+
+        if (this.isPlaying) {
+            this.audioPlayer.pause();
+            this.isPlaying = false;
+            const icon = this.playBtn.querySelector('i');
+            if (icon) {
+                icon.classList.remove('fa-pause');
+                icon.classList.add('fa-play');
             }
-            return;
+            if (this.miniPlayBtn) {
+                const miniIcon = this.miniPlayBtn.querySelector('i');
+                if (miniIcon) {
+                    miniIcon.classList.remove('fa-pause');
+                    miniIcon.classList.add('fa-play');
+                }
+            }
+        } else {
+            this.audioPlayer.play();
+            this.isPlaying = true;
+            const icon = this.playBtn.querySelector('i');
+            if (icon) {
+                icon.classList.remove('fa-play');
+                icon.classList.add('fa-pause');
+            }
+            if (this.miniPlayBtn) {
+                const miniIcon = this.miniPlayBtn.querySelector('i');
+                if (miniIcon) {
+                    miniIcon.classList.remove('fa-play');
+                    miniIcon.classList.add('fa-pause');
+                }
+            }
         }
 
-        this.isPlaying = !this.isPlaying;
-        const icon = this.playBtn.querySelector('i');
-        const miniIcon = this.miniPlayBtn?.querySelector('i');
-        
-        if (this.isPlaying) {
-            this.audioPlayer.play();
-            icon.classList.remove('fa-play');
-            icon.classList.add('fa-pause');
-            if (miniIcon) {
-                miniIcon.classList.remove('fa-play');
-                miniIcon.classList.add('fa-pause');
-            }
-            this.startProgressUpdate();
-        } else {
-            this.audioPlayer.pause();
-            icon.classList.remove('fa-pause');
-            icon.classList.add('fa-play');
-            if (miniIcon) {
-                miniIcon.classList.remove('fa-pause');
-                miniIcon.classList.add('fa-play');
-            }
-            clearInterval(this.updateProgressInterval);
-        }
+        // Send playback state to main process for thumbnail toolbar
+        window.api.send('playback-state-changed', { isPlaying: this.isPlaying });
     }
 
     // Play previous track

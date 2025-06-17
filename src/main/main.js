@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, nativeImage } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const musicMetadata = require('music-metadata');
@@ -20,6 +20,80 @@ function createWindow() {
   mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
   mainWindow.setSize(1200, 800);
   mainWindow.setResizable(true);
+
+  // Set up thumbnail toolbar buttons for Windows
+  if (process.platform === 'win32') {
+    try {
+      const prevIcon = nativeImage.createFromPath(path.join(__dirname, '../renderer/assets/left.ico'));
+      const playIcon = nativeImage.createFromPath(path.join(__dirname, '../renderer/assets/play.ico'));
+      const nextIcon = nativeImage.createFromPath(path.join(__dirname, '../renderer/assets/right.ico'));
+      const pauseIcon = nativeImage.createFromPath(path.join(__dirname, '../renderer/assets/pause.ico'));
+
+      console.log('Icons loaded:', {
+        prev: prevIcon.isEmpty() ? 'empty' : 'loaded',
+        play: playIcon.isEmpty() ? 'empty' : 'loaded',
+        next: nextIcon.isEmpty() ? 'empty' : 'loaded',
+        pause: pauseIcon.isEmpty() ? 'empty' : 'loaded'
+      });
+
+      let isPlaying = false;
+
+      // Create buttons array with minimal configuration
+      const buttons = [
+        {
+          tooltip: 'Previous',
+          icon: prevIcon,
+          click: () => {
+            console.log('Previous button clicked');
+            mainWindow.webContents.send('thumbnail-toolbar-click', 'prev');
+          }
+        },
+        {
+          tooltip: 'Play/Pause',
+          icon: playIcon,
+          click: () => {
+            console.log('Play/Pause button clicked');
+            mainWindow.webContents.send('thumbnail-toolbar-click', 'play-pause');
+            // Toggle icon after click
+            isPlaying = !isPlaying;
+            buttons[1].icon = isPlaying ? pauseIcon : playIcon;
+            mainWindow.setThumbarButtons(buttons);
+          }
+        },
+        {
+          tooltip: 'Next',
+          icon: nextIcon,
+          click: () => {
+            console.log('Next button clicked');
+            mainWindow.webContents.send('thumbnail-toolbar-click', 'next');
+          }
+        }
+      ];
+
+      // Set thumbnail toolbar buttons
+      const result = mainWindow.setThumbarButtons(buttons);
+      console.log('setThumbarButtons result:', result);
+
+      // If setting buttons failed, try with empty array first
+      if (!result) {
+        console.log('Trying to clear existing buttons first...');
+        mainWindow.setThumbarButtons([]);
+        setTimeout(() => {
+          const retryResult = mainWindow.setThumbarButtons(buttons);
+          console.log('Retry setThumbarButtons result:', retryResult);
+        }, 100);
+      }
+
+      // Listen for playback state changes from renderer
+      ipcMain.on('playback-state-changed', (event, state) => {
+        isPlaying = state.isPlaying;
+        buttons[1].icon = isPlaying ? pauseIcon : playIcon;
+        mainWindow.setThumbarButtons(buttons);
+      });
+    } catch (error) {
+      console.error('Error setting up thumbnail toolbar:', error);
+    }
+  }
 }
 
 // Handle window control actions
@@ -165,6 +239,53 @@ ipcMain.on('set-mini-player-size', (event, isMini) => {
     } else {
       mainWindow.setSize(1200, 800);
       mainWindow.setResizable(true);
+    }
+  }
+});
+
+// Handle thumbnail toolbar button clicks
+ipcMain.on('update-thumbnail-toolbar', (event, { button, icon }) => {
+  if (mainWindow && process.platform === 'win32') {
+    try {
+      const prevIcon = nativeImage.createFromPath(path.join(__dirname, '../renderer/assets/left.ico'));
+      const playIcon = nativeImage.createFromPath(path.join(__dirname, '../renderer/assets/play.ico'));
+      const nextIcon = nativeImage.createFromPath(path.join(__dirname, '../renderer/assets/right.ico'));
+      const pauseIcon = nativeImage.createFromPath(path.join(__dirname, '../renderer/assets/pause.ico'));
+
+      const buttons = [
+        {
+          tooltip: 'Previous Track',
+          icon: prevIcon,
+          flags: ['enabled'],
+          click: () => {
+            console.log('Previous button clicked');
+            mainWindow.webContents.send('thumbnail-toolbar-click', 'prev');
+          }
+        },
+        {
+          tooltip: button === 'play' ? 'Pause' : 'Play',
+          icon: button === 'play' ? pauseIcon : playIcon,
+          flags: ['enabled'],
+          click: () => {
+            console.log('Play/Pause button clicked');
+            mainWindow.webContents.send('thumbnail-toolbar-click', 'play-pause');
+          }
+        },
+        {
+          tooltip: 'Next Track',
+          icon: nextIcon,
+          flags: ['enabled'],
+          click: () => {
+            console.log('Next button clicked');
+            mainWindow.webContents.send('thumbnail-toolbar-click', 'next');
+          }
+        }
+      ];
+
+      const result = mainWindow.setThumbarButtons(buttons);
+      console.log('Updated thumbnail toolbar result:', result);
+    } catch (error) {
+      console.error('Error updating thumbnail toolbar:', error);
     }
   }
 });

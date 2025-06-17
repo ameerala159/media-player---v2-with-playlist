@@ -31,6 +31,45 @@ document.addEventListener('DOMContentLoaded', () => {
     trackDetails.init();
     playlistsPage.init();
 
+    // Handle thumbnail toolbar button clicks
+    window.api.receive('thumbnail-toolbar-click', (action) => {
+        console.log('Thumbnail toolbar action:', action);
+        switch (action) {
+            case 'prev':
+                const prevBtn = document.getElementById('prevBtn');
+                if (prevBtn) {
+                    prevBtn.click();
+                }
+                break;
+            case 'play-pause':
+                const playPauseBtn = document.getElementById('playPauseBtn');
+                if (playPauseBtn) {
+                    playPauseBtn.click();
+                }
+                break;
+            case 'next':
+                const nextBtn = document.getElementById('nextBtn');
+                if (nextBtn) {
+                    nextBtn.click();
+                }
+                break;
+        }
+    });
+
+    // Update thumbnail toolbar when play state changes
+    function updateThumbnailToolbar() {
+        const isPlaying = !player.audioPlayer.paused;
+        window.api.send('update-thumbnail-toolbar', {
+            button: isPlaying ? 'play' : 'pause',
+            icon: isPlaying ? 'pause' : 'play'
+        });
+    }
+
+    // Add event listeners for play state changes
+    player.audioPlayer.addEventListener('play', updateThumbnailToolbar);
+    player.audioPlayer.addEventListener('pause', updateThumbnailToolbar);
+    player.audioPlayer.addEventListener('ended', updateThumbnailToolbar);
+
     // Add keyboard shortcuts
     document.addEventListener('keydown', (e) => {
         // Don't trigger shortcuts if user is typing in an input field
