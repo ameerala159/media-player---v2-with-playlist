@@ -763,10 +763,15 @@ document.addEventListener('DOMContentLoaded', () => {
     async function addMusicFile(filePath) {
         showLoading();
         try {
-            const tracks = await window.api.getMusicFiles([filePath]);
-            if (tracks.length > 0) {
-                currentPlaylist.push(tracks[0]);
-                const item = createMusicItem(tracks[0], currentPlaylist.length - 1);
+            const result = await window.api.getMusicFiles({
+                path: [filePath],
+                batchSize: 1,
+                startIndex: 0
+            });
+            
+            if (result.tracks.length > 0) {
+                currentPlaylist.push(result.tracks[0]);
+                const item = createMusicItem(result.tracks[0], currentPlaylist.length - 1);
                 musicList.appendChild(item);
                 // Optionally, scroll to the newly added item
                 item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });

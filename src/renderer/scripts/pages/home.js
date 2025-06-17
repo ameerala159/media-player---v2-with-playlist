@@ -10,12 +10,22 @@ export class HomePage {
         this.currentPlaylist = [];
         this.trackShapes = window.player.trackShapes; // Use the same track shapes as the player
         this.allTracks = []; // Store all tracks for filtering and sorting
+        this.currentFolderPath = null;
+        this.isLoading = false;
+        this.hasMore = false;
+        this.batchSize = 100;
+        this.currentBatch = 0;
+        this.searchTimeout = null;
+        this.searchIndex = new Map(); // For fast searching
         // Custom dropdown elements
         this.customSortDropdown = document.getElementById('customSortDropdown');
         this.customSortSelected = document.getElementById('customSortSelected');
         this.customSortOptions = document.getElementById('customSortOptions');
         this.customSortOptionEls = this.customSortOptions ? this.customSortOptions.querySelectorAll('.custom-dropdown-option') : [];
         this.selectedSortValue = 'title';
+
+        // Initialize scroll handler
+        this.initializeScrollHandler();
     }
 
     // Initialize home page
@@ -28,8 +38,29 @@ export class HomePage {
     setupEventListeners() {
         this.selectFolderBtn.addEventListener('click', () => this.handleFolderSelection());
         
-        // Add search input listener
-        this.searchInput.addEventListener('input', () => this.filterAndSortTracks());
+        // Add debounced search input listener with immediate update on clear
+        this.searchInput.addEventListener('input', () => {
+            if (this.searchTimeout) {
+                clearTimeout(this.searchTimeout);
+            }
+            
+            // If search is cleared, update immediately
+            if (this.searchInput.value === '') {
+                // Reset to show all tracks
+                this.filterAndSortTracks();
+            } else {
+                this.searchTimeout = setTimeout(() => this.filterAndSortTracks(), 300);
+            }
+        });
+        
+        // Add clear button functionality
+        this.searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                this.searchInput.value = '';
+                // Reset to show all tracks
+                this.filterAndSortTracks();
+            }
+        });
         
         // Custom dropdown logic
         if (this.customSortDropdown) {
@@ -60,7 +91,7 @@ export class HomePage {
         // Listen for track list updates
         window.addEventListener('trackListUpdated', (event) => {
             this.currentPlaylist = event.detail.tracks;
-            this.allTracks = [...this.currentPlaylist];
+            this.updateSearchIndex();
             this.filterAndSortTracks();
         });
 
@@ -73,6 +104,45 @@ export class HomePage {
         window.addEventListener('updateMusicList', () => {
             this.filterAndSortTracks();
         });
+    }
+
+    // Initialize scroll handler for virtual scrolling
+    initializeScrollHandler() {
+        this.musicList.addEventListener('scroll', () => {
+            const { scrollTop, scrollHeight, clientHeight } = this.musicList;
+            if (scrollHeight - scrollTop <= clientHeight * 1.5 && !this.isLoading && this.hasMore) {
+                this.loadMoreTracks();
+            }
+        });
+    }
+
+    // Load more tracks when scrolling
+    async loadMoreTracks() {
+        if (this.isLoading || !this.hasMore) return;
+        
+        this.isLoading = true;
+        this.showLoading();
+        
+        try {
+            const result = await window.api.getMusicFiles({
+                path: this.currentFolderPath,
+                batchSize: this.batchSize,
+                startIndex: this.currentBatch * this.batchSize
+            });
+
+            if (result.tracks.length > 0) {
+                this.allTracks = [...this.allTracks, ...result.tracks];
+                this.hasMore = result.hasMore;
+                this.currentBatch++;
+                this.updateSearchIndex();
+                this.filterAndSortTracks();
+            }
+        } catch (error) {
+            console.error('Error loading more tracks:', error);
+        } finally {
+            this.isLoading = false;
+            this.hideLoading();
+        }
     }
 
     // Load saved folder if available
@@ -96,40 +166,83 @@ export class HomePage {
 
     // Load music from folder
     async loadMusicFromFolder(folderPath) {
-        const tracks = await window.api.getMusicFiles(folderPath);
-        this.allTracks = tracks; // Store all tracks
-        this.filterAndSortTracks(); // Initial display with default sorting
+        this.currentFolderPath = folderPath;
+        this.currentBatch = 0;
+        this.allTracks = [];
+        this.musicList.innerHTML = '';
+        
+        this.isLoading = true;
+        this.showLoading();
+        
+        try {
+            const result = await window.api.getMusicFiles({
+                path: folderPath,
+                batchSize: this.batchSize,
+                startIndex: 0
+            });
+
+            this.allTracks = result.tracks;
+            this.hasMore = result.hasMore;
+            this.updateSearchIndex();
+            this.filterAndSortTracks();
+        } catch (error) {
+            console.error('Error loading music files:', error);
+        } finally {
+            this.isLoading = false;
+            this.hideLoading();
+        }
     }
 
-    // Filter and sort tracks based on search input and sort selection
+    // Update search index for fast searching
+    updateSearchIndex() {
+        this.searchIndex.clear();
+        this.allTracks.forEach((track, index) => {
+            const searchableText = `${track.name} ${track.artist}`.toLowerCase();
+            this.searchIndex.set(index, searchableText);
+        });
+    }
+
+    // Filter and sort tracks with optimized performance
     filterAndSortTracks() {
         const searchTerm = this.searchInput.value.toLowerCase();
-        const sortBy = this.selectedSortValue || 'title';
-        
-        // Filter tracks based on search term
-        let filteredTracks = this.allTracks.filter(track => {
-            const title = (track.name || '').toLowerCase();
-            const artist = (track.artist || '').toLowerCase();
-            return title.includes(searchTerm) || artist.includes(searchTerm);
-        });
-        
-        // Sort tracks based on selected option
-        filteredTracks.sort((a, b) => {
-            switch (sortBy) {
-                case 'title':
-                    return (a.name || '').localeCompare(b.name || '');
-                case 'rating':
-                    const ratings = JSON.parse(localStorage.getItem('trackRatings') || '{}');
-                    const ratingA = ratings[a.path] || 0;
-                    const ratingB = ratings[b.path] || 0;
-                    return ratingB - ratingA; // Sort by highest rating first
-                case 'date':
-                    return (b.modifiedTime || 0) - (a.modifiedTime || 0); // Sort by most recent first
-                default:
-                    return 0;
-            }
-        });
-        
+        let filteredTracks;
+
+        // Fast filtering using search index
+        if (searchTerm) {
+            const matchingIndices = [];
+            this.searchIndex.forEach((text, index) => {
+                if (text.includes(searchTerm)) {
+                    matchingIndices.push(index);
+                }
+            });
+            filteredTracks = matchingIndices.map(index => this.allTracks[index]);
+        } else {
+            // When search is cleared, use all tracks
+            filteredTracks = [...this.allTracks];
+        }
+
+        // Optimized sorting
+        switch (this.selectedSortValue) {
+            case 'title':
+                filteredTracks.sort((a, b) => a.name.localeCompare(b.name));
+                break;
+            case 'artist':
+                filteredTracks.sort((a, b) => a.artist.localeCompare(b.artist));
+                break;
+            case 'rating':
+                const ratings = JSON.parse(localStorage.getItem('trackRatings') || '{}');
+                filteredTracks.sort((a, b) => (ratings[b.path] || 0) - (ratings[a.path] || 0));
+                break;
+            case 'date':
+                filteredTracks.sort((a, b) => {
+                    const dateA = new Date(a.path.split('/').pop().split('\\').pop());
+                    const dateB = new Date(b.path.split('/').pop().split('\\').pop());
+                    return dateB - dateA;
+                });
+                break;
+        }
+
+        // Update the music list with the filtered and sorted tracks
         this.updateMusicList(filteredTracks);
     }
 
@@ -412,8 +525,9 @@ export class HomePage {
         return item;
     }
 
-    // Update music list
+    // Update music list with virtual scrolling
     updateMusicList(tracks) {
+        // Clear existing items
         this.musicList.innerHTML = '';
         this.currentPlaylist = tracks;
 
@@ -423,10 +537,15 @@ export class HomePage {
             this.folderSelectContainer.style.display = 'flex';
         }
 
+        // Create a document fragment for better performance
+        const fragment = document.createDocumentFragment();
+        
         tracks.forEach((track, index) => {
             const item = this.createMusicItem(track, index);
-            this.musicList.appendChild(item);
+            fragment.appendChild(item);
         });
+
+        this.musicList.appendChild(fragment);
 
         // Dispatch event for track list update
         window.dispatchEvent(new CustomEvent('trackListUpdated', { 

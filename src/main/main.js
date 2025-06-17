@@ -74,19 +74,26 @@ ipcMain.handle('select-folder', async () => {
 });
 
 // Handle getting music files
-ipcMain.handle('get-music-files', async (event, paths) => {
+ipcMain.handle('get-music-files', async (event, { path: folderPath, batchSize = 100, startIndex = 0 }) => {
     try {
         let musicFilesPaths = [];
 
-        if (Array.isArray(paths)) {
+        if (Array.isArray(folderPath)) {
             // If paths is an array, it's individual files
-            musicFilesPaths = paths;
-        } else if (typeof paths === 'string') {
+            musicFilesPaths = folderPath;
+        } else if (typeof folderPath === 'string') {
             // If paths is a string, it's a folder path
-            musicFilesPaths = await scanDirectoryRecursively(paths);
+            musicFilesPaths = await scanDirectoryRecursively(folderPath);
         }
 
-        const tracks = await Promise.all(musicFilesPaths.map(async (filePath) => {
+        // Get total count for pagination
+        const totalCount = musicFilesPaths.length;
+        
+        // Get batch of files
+        const batchFiles = musicFilesPaths.slice(startIndex, startIndex + batchSize);
+        
+        // Process batch of files
+        const tracks = await Promise.all(batchFiles.map(async (filePath) => {
             try {
                 const metadata = await musicMetadata.parseFile(filePath);
                 return {
@@ -106,10 +113,14 @@ ipcMain.handle('get-music-files', async (event, paths) => {
             }
         }));
 
-        return tracks;
+        return {
+            tracks,
+            totalCount,
+            hasMore: startIndex + batchSize < totalCount
+        };
     } catch (error) {
         console.error('Error reading music files:', error);
-        return [];
+        return { tracks: [], totalCount: 0, hasMore: false };
     }
 });
 
