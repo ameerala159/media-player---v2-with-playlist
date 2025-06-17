@@ -3,6 +3,9 @@ const path = require('path');
 const fs = require('fs');
 const musicMetadata = require('music-metadata');
 
+// Add squirrel startup check
+if (require('electron-squirrel-startup')) app.quit();
+
 let mainWindow;
 
 function createWindow() {
@@ -20,6 +23,9 @@ function createWindow() {
   mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
   mainWindow.setSize(1200, 800);
   mainWindow.setResizable(true);
+  
+  // Set window icon
+  mainWindow.setIcon(path.join(__dirname, '../renderer/assets/icon.ico'));
 
   // Set up thumbnail toolbar buttons for Windows
   if (process.platform === 'win32') {
