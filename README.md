@@ -1,172 +1,144 @@
-# Modern Music Player
+# Media Player - v2 with Playlist
 
-A sleek and feature-rich desktop music player built with Electron, offering a modern user interface and powerful playback controls.
+A modern, feature-rich desktop music player built with Electron. Enjoy seamless music browsing, powerful playlist and favorites management, extensive customization, and a beautiful, responsive UI.
 
-## Features
+---
 
-### Core Features
-- 🎵 Local music file playback
-- 📁 Custom music folder selection
-- 🎨 Modern, clean user interface
-- 🎧 Full playback controls (play/pause, next/previous, seek)
-- ⏪⏩ Skip forward/backward with customizable durations
-- 📱 Responsive design for different screen sizes
-- 📋 Playlist management system
-- ⭐ Track rating system
-- ❤️ Favorites functionality
-- 🔍 Search and sort capabilities
-- 🖼️ Custom application icon and desktop shortcut
+## 🚀 Features
 
-### Advanced Controls
-- **Smart Skip Controls**
-  - Long-press skip buttons to show duration options
-  - Customizable skip durations (2s, 5s, 10s, 15s, 30s, 1m, 5m)
-  - Quick access to frequently used skip durations
+### 🎵 Music Browsing
+- **Select Music Folder:** Choose your music directory for instant library access.
+- **Search & Sort:** Find tracks by name and sort by title, rating, or date modified.
+- **Track Cards:** View tracks in a card-based layout with album art, details, and quick actions.
 
-- **Track Navigation**
-  - Long-press next/previous buttons to show track selection
-  - Visual track list with current track highlighting
-  - Quick jump to any track in the playlist
+### ▶️ Playback Controls
+- **Play/Pause, Next/Previous:** Full playback control with both UI buttons and keyboard shortcuts.
+- **Skip Forward/Backward:** Adjustable skip duration, progress bar seeking.
+- **Playback Speed:** Change speed from 0.5x to 4x, with visual feedback.
+- **Shuffle & Repeat:** Toggle shuffle, repeat one/all/none, and auto-shuffle options.
+- **Sleep Timer:** Set a timer to stop playback after a chosen period.
+- **Volume Control:** Slider and mute/unmute with dropdown and icon feedback.
 
-- **Playback Information**
-  - Real-time progress bar
-  - Current time and total duration display
-  - Now playing information with track name and artist
-  - Dynamic album art generation
+### 🖼️ Mini Player Mode
+- **Compact UI:** Essential controls in a floating, draggable, and resizable mini player.
+- **Quick Toggle:** Instantly switch between full and mini player modes.
 
-### Playlist Features
-- Create and manage multiple playlists
-- Add tracks to playlists with a single click
-- Play entire playlists with one button
-- Duplicate track prevention in playlists
-- Visual playlist management interface
-- Quick access to playlist controls
+### ⭐ Favorites
+- **Mark/Unmark Favorites:** Easily favorite tracks and view them in a dedicated page.
+- **Favorite Indicators:** Visual cues for favorite tracks throughout the app.
 
-### User Interface
-- Custom window controls (minimize, maximize, close)
-- File menu for folder selection
-- Responsive layout that adapts to window size
-- Modern dropdown menus with smooth animations
-- Loading indicators for better user experience
-- Track rating system with visual indicators
-- Favorites page for quick access to favorite tracks
-- Search and sort functionality for music library
+### 🎶 Playlists
+- **Create/Delete Playlists:** Organize your music with custom playlists.
+- **Add/Remove Tracks:** Manage playlist contents with ease.
+- **Shuffle/Play All:** Instantly play or shuffle entire playlists.
+- **Remove All Tracks:** Clear playlists with a single action.
+- **Modal Management:** Intuitive modal dialogs for playlist actions.
 
-## Technical Requirements
+### ℹ️ Track Details
+- **Detailed Modal:** View and edit track info, including:
+  - **Rating:** 0-5 stars, with the ability to remove ratings.
+  - **Add to Favorites/Playlist:** Quick actions from the details modal.
 
-### System Requirements
-- Windows 10 or later
-- macOS 10.13 or later
-- Linux (Ubuntu 18.04 or later)
-- 4GB RAM minimum
-- 100MB free disk space
+### 🔔 Notifications
+- **Visual Feedback:** Animated notifications for actions like removing favorites, changing speed, etc.
 
-### Development Requirements
-- Node.js 16.x or later
-- npm 7.x or later
-- Electron 36.x or later
+### ⚙️ Settings
+- **Dark/Light Mode:** Toggle between themes for comfortable viewing.
+- **Font Size & Family:** Choose from many Google Fonts and adjust text size.
+- **Theme Color:** Select from presets or use a color picker for full customization.
+- **Mini Player Toggle:** Enable/disable mini player mode.
+- **Persistent Settings:** All preferences are saved via localStorage.
 
-### Dependencies
-- electron (^36.4.0)
-- electron-builder (^24.9.1)
-- music-metadata (^11.2.3)
-- electron-squirrel-startup (^1.0.1)
+### 👤 About Page
+- **Developer Info:** Learn about the app creator.
+- **Support:** Quick links to PayPal and Patreon for supporting development.
 
-## Installation
+---
 
-1. Clone the repository:
-```bash
-git clone [repository-url]
-cd modern-music-player
+## ⌨️ Keyboard Shortcuts
+
+| Shortcut                | Action                        |
+|-------------------------|-------------------------------|
+| Space / Ctrl+P          | Play/Pause                    |
+| Ctrl+D                  | Dark mode                     |
+| Ctrl+L                  | Light mode                    |
+| Ctrl+F                  | Toggle shuffle                |
+| Ctrl+R                  | Repeat once                   |
+| Ctrl+M                  | Toggle mini player            |
+| F                       | Maximize/restore/fullscreen   |
+| Arrow Left/Right        | Skip backward/forward         |
+| Ctrl+Arrow Left/Right   | Previous/next track           |
+| Ctrl+]                  | Increase playback speed       |
+| Ctrl+[                  | Decrease playback speed       |
+| Esc                     | Close modal/dropdown          |
+
+> **Tip:** An in-app shortcuts modal is available for quick reference.
+
+---
+
+## 🎨 Design Features
+
+- **Modern, Responsive UI:** Sidebar navigation, adaptive content area, and player controls for both desktop and mobile.
+- **Customizable Appearance:** Theme color, dark/light mode, font size, and font family.
+- **Material/Flat Design:** CSS variables, shadows, rounded corners, and smooth transitions.
+- **Custom Dropdowns:** For settings, sorting, and playlist management.
+- **Animated Elements:** Loading spinners, notifications, and modal transitions.
+- **Accessibility:** Keyboard navigation, focus states, and clear visual feedback.
+- **Mini Player:** Floating, draggable, and resizable with a distinct style.
+- **Track/Playlist Cards:** Card-based layout with hover effects, icons, and action buttons.
+- **Dark Mode:** Comprehensive dark theme with adjusted colors for all UI elements.
+- **Support for Multiple Fonts:** Many Google Fonts selectable in settings.
+
+---
+
+## 🛠️ Getting Started
+
+1. **Install Dependencies**
+   ```bash
+   npm install
+   ```
+
+2. **Run the App**
+   ```bash
+   npm start
+   ```
+
+3. **Build for Production**
+   ```bash
+   npm run make
+   ```
+
+---
+
+## 📁 Project Structure
+
+```
+src/
+  main/         # Electron main process
+  preload/      # Preload scripts
+  renderer/     # UI, scripts, styles, and assets
+    assets/     # Icons, images, thumbnails
+    scripts/    # All renderer JS (player, pages, settings, etc.)
+    styles/     # CSS
+    index.html  # Main UI
 ```
 
-2. Install dependencies:
-```bash
-npm install
-```
+---
 
-3. Start the application:
-```bash
-npm start
-```
+## 🙏 Support
 
-## Development
+If you enjoy using this app, consider supporting development via [PayPal](#) or [Patreon](#).
 
-### Project Structure
-```
-modern-music-player/
-├── src/
-│   ├── main/           # Main process files
-│   ├── renderer/       # Renderer process files
-│   │   ├── scripts/    # JavaScript files
-│   │   ├── styles/     # CSS files
-│   │   ├── assets/     # Icons and other assets
-│   │   └── index.html  # Main window HTML
-│   └── preload/        # Preload scripts
-├── dist/              # Build output directory
-├── forge.config.js    # Electron Forge configuration
-├── package.json
-└── README.md
-```
+---
 
-### Available Scripts
-- `npm start` - Start the application in development mode
-- `npm run dev` - Start the application with debug mode enabled
-- `npm run build` - Build the application for all platforms
-- `npm run build:win` - Build the application specifically for Windows
+## 👨‍💻 Author
 
-## Usage
+Developed by Ameer.
 
-1. **Selecting Music Folder**
-   - Click "File" in the menu bar
-   - Select "Change Music Folder"
-   - Choose your music directory
+---
 
-2. **Playing Music**
-   - Click on any track in the list to play
-   - Use the play/pause button to control playback
-   - Use next/previous buttons to change tracks
+**Enjoy your music with style and power!**
 
-3. **Skip Controls**
-   - Click skip buttons for default duration (5s)
-   - Long-press skip buttons to show duration options
-   - Select custom duration from the dropdown
+---
 
-4. **Track Selection**
-   - Long-press next/previous buttons to show track list
-   - Click on any track to play it immediately
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgments
-
-- Font Awesome for the beautiful icons
-- Electron team for the amazing framework
-- All contributors who have helped shape this project
-
-## Building and Packaging
-
-The application uses Electron Forge for building and packaging. The configuration is set up to:
-- Create a desktop shortcut with custom icon
-- Create a start menu shortcut
-- Allow users to choose installation directory
-- Package the application as an NSIS installer for Windows
-
-To build the application:
-```bash
-# For all platforms
-npm run build
-
-# For Windows only
-npm run build:win
-```
+Let me know if you want to add installation screenshots, troubleshooting, or contribution guidelines! 
