@@ -117,8 +117,8 @@ document.addEventListener('DOMContentLoaded', () => {
             player.skipForward();
         }
 
-        // Ctrl + S for shuffle
-        if (e.ctrlKey && e.key.toLowerCase() === 's') {
+        // Ctrl + F for shuffle
+        if (e.ctrlKey && e.key.toLowerCase() === 'f') {
             e.preventDefault();
             const shuffleToggle = document.getElementById('shuffleToggle');
             if (shuffleToggle) {
@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // F key for maximize/restore
-        if (e.key.toLowerCase() === 'f') {
+        if (e.key.toLowerCase() === 'f' && !e.ctrlKey && !e.altKey && !e.shiftKey) {
             e.preventDefault();
             const maximizeBtn = document.getElementById('maximizeBtn');
             if (maximizeBtn) {
