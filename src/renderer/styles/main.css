@@ -3675,7 +3675,7 @@ body.mini-player-mode #miniPlayer {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 370px;
+    width: 475px;
     height: 140px;
     background: var(--background-color);
     box-shadow: 0 8px 32px var(--shadow-color-dark), 0 1.5px 8px var(--shadow-color);
@@ -3822,18 +3822,20 @@ body.mini-player-mode #expandPlayerBtn {
     align-items: center;
     justify-content: space-between;
     height: 100%;
-    max-width: 1200px;
+    max-width: 100%;
+    width: 100%;
     margin: 0 auto;
     position: relative;
     z-index: 1001;
     pointer-events: auto;
+    gap: 18px;
 }
 
 .mini-controls {
     display: flex;
     align-items: center;
-    gap: 15px;
-    margin-right: 20px;
+    gap: 18px;
+    margin-right: 18px;
     position: relative;
     z-index: 1002;
     pointer-events: auto;
@@ -3907,6 +3909,7 @@ body.mini-player-mode #expandPlayerBtn {
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-left: 0;
 }
 
 #expandPlayerBtn:hover {
@@ -3915,22 +3918,22 @@ body.mini-player-mode #expandPlayerBtn {
 }
 
 .mini-album-art {
-    width: 40px;
-    height: 40px;
-    border-radius: 4px;
-    margin-right: 15px;
+    width: 56px;
+    height: 56px;
+    border-radius: 6px;
+    margin-right: 18px;
     transition: all 0.3s ease;
     position: relative;
     z-index: 1001;
 }
 
 .mini-track-info {
-    flex: 1;
+    flex: 2 1 0%;
     min-width: 0;
-    margin-right: 20px;
+    margin-right: 24px;
     position: relative;
     z-index: 1001;
-    max-width: 60px; /* Reduced from 110px to 60px */
+    max-width: 220px;
 }
 
 .mini-track-name {
@@ -3938,7 +3941,8 @@ body.mini-player-mode #expandPlayerBtn {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 100%; /* Ensure text stays within container */
+    max-width: 100%;
+    font-size: 1.08em;
 }
 
 /* Mini Player Progress Container */
