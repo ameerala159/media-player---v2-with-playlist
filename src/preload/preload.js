@@ -6,7 +6,7 @@ contextBridge.exposeInMainWorld(
   'api', {
     send: (channel, data) => {
       // whitelist channels
-      let validChannels = ['toMain', 'playback-state-changed'];
+      let validChannels = ['toMain', 'playback-state-changed', 'set-always-on-top'];
       if (validChannels.includes(channel)) {
         ipcRenderer.send(channel, data);
       }

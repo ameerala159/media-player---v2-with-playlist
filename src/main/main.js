@@ -301,3 +301,9 @@ ipcMain.on('update-thumbnail-toolbar', (event, { button, icon }) => {
     }
   }
 });
+
+ipcMain.on('set-always-on-top', (event, enabled) => {
+  if (mainWindow) {
+    mainWindow.setAlwaysOnTop(!!enabled, 'screen-saver');
+  }
+});

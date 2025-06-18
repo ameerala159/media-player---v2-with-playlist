@@ -465,12 +465,20 @@ class SettingsManager {
                 if (window.api && window.api.setMiniPlayerSize) {
                     window.api.setMiniPlayerSize(true);
                 }
+                // Set always on top
+                if (window.api && window.api.send) {
+                    window.api.send('set-always-on-top', true);
+                }
             } else {
                 miniPlayer.classList.remove('active');
                 document.body.classList.remove('mini-player-mode');
                 // Send message to main process to restore window size
                 if (window.api && window.api.setMiniPlayerSize) {
                     window.api.setMiniPlayerSize(false);
+                }
+                // Remove always on top
+                if (window.api && window.api.send) {
+                    window.api.send('set-always-on-top', false);
                 }
             }
         }
