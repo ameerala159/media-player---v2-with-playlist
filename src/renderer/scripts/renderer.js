@@ -1065,4 +1065,9 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('theme', 'light');
         }
     });
+
+    if (window.Player === undefined && typeof Player !== 'undefined') {
+        window.Player = new Player();
+        window.Player.init();
+    }
 });

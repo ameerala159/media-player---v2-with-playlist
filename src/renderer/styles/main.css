@@ -3,6 +3,7 @@ html, body {
     height: 100%;
     margin: 0;
     padding: 0;
+    min-width: 475px;
 }
 
 /* Global box-sizing, already present in your code base, keeping it at the top */
@@ -55,6 +56,10 @@ body {
     background-color: var(--background-color);
     font-size: var(--font-size-medium);
     transition: font-size 0.3s ease, font-family 0.3s ease;
+}
+
+#root, .app-container {
+    min-width: 475px;
 }
 
 #root {
@@ -4365,4 +4370,134 @@ body[data-theme="dark"] .speed-control:hover #playbackSpeedValue {
 body[data-theme="dark"] .speed-notification {
     background: #1a1a1a;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.sleep-timer-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 60px;
+    flex-shrink: 0;
+    justify-content: center;
+}
+
+.sleep-timer-btn {
+    font-size: 1.2em;
+    color: var(--text-color);
+    transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sleep-timer-btn i {
+    width: 20px;
+    text-align: center;
+}
+
+.sleep-timer-btn:hover {
+    color: var(--primary-color);
+}
+
+.sleep-timer-dropdown {
+    display: none;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--background-color);
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    margin-bottom: 10px;
+    z-index: 1001;
+    min-width: 120px;
+    text-align: left;
+}
+
+.sleep-timer-dropdown.show {
+    display: block;
+}
+
+.sleep-timer-dropdown::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid var(--background-color);
+}
+
+.sleep-timer-option {
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    color: var(--text-color);
+    font-size: 1em;
+}
+
+.sleep-timer-option:hover,
+.sleep-timer-option.active {
+    background-color: var(--hover-color);
+    color: var(--primary-color);
+}
+
+.sleep-timer-option.cancel {
+    color: var(--danger-color);
+    font-weight: bold;
+}
+
+.sleep-timer-option.cancel:hover {
+    background-color: var(--danger-color);
+    color: #fff;
+}
+
+.sleep-timer-popup {
+    right: 20px;
+    left: auto;
+    bottom: 80px;
+    background: var(--background-color);
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1em;
+    z-index: 1100;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    pointer-events: none;
+}
+
+.sleep-timer-popup i {
+    color: var(--primary-color);
+    font-size: 1.1em;
+}
+
+body[data-theme="dark"] .sleep-timer-popup {
+    background: #1a1a1a;
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.sleep-timer-container,
+.volume-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    /* Remove width, flex-shrink, justify-content */
+    margin: 0;
+}
+
+.controls .control-btn,
+.controls .sleep-timer-container,
+.controls .volume-container {
+    margin-right: 8px;
+}
+.controls .control-btn:last-child,
+.controls .sleep-timer-container:last-child,
+.controls .volume-container:last-child {
+    margin-right: 0;
 }

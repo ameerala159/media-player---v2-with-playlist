@@ -379,6 +379,19 @@
             </div>
             
             <div class="controls">
+                <div class="sleep-timer-container">
+                    <button class="control-btn sleep-timer-btn" id="sleepTimerBtn" title="Sleep Timer">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <div class="sleep-timer-dropdown" id="sleepTimerDropdown">
+                        <div class="sleep-timer-option" data-minutes="5">5m</div>
+                        <div class="sleep-timer-option" data-minutes="15">15m</div>
+                        <div class="sleep-timer-option" data-minutes="30">30m</div>
+                        <div class="sleep-timer-option" data-minutes="60">1h</div>
+                        <div class="sleep-timer-option" data-minutes="120">2h</div>
+                        <div class="sleep-timer-option cancel" data-minutes="0">Cancel</div>
+                    </div>
+                </div>
                 <button class="control-btn" id="prevBtn">
                     <i class="fas fa-backward"></i>
                 </button>
@@ -428,6 +441,11 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div class="sleep-timer-remaining-notification" id="sleepTimerRemainingNotification" style="display: none;">
+                <i class="fas fa-moon"></i>
+                <span id="sleepTimerRemainingText"></span>
             </div>
 
             <div class="progress-container">

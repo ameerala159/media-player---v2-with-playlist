@@ -43,6 +43,14 @@ export class Player {
         this.showRemainingTime = false;
         this.trackShapes = new Map();
 
+        // Sleep Timer elements
+        this.sleepTimerBtn = document.getElementById('sleepTimerBtn');
+        this.sleepTimerDropdown = document.getElementById('sleepTimerDropdown');
+        this.sleepTimer = null;
+        this.sleepTimerEnd = null;
+        this.sleepTimerInterval = null;
+        this.sleepTimerNotificationEl = null;
+
         // Add click handler for total time display
         this.totalTimeEl.addEventListener('click', () => {
             this.showRemainingTime = !this.showRemainingTime;
@@ -190,6 +198,28 @@ export class Player {
         }
         if (this.miniProgressBar) {
             this.miniProgressBar.addEventListener('click', (e) => this.handleMiniProgressClick(e));
+        }
+
+        // Sleep Timer control
+        if (this.sleepTimerBtn && this.sleepTimerDropdown) {
+            this.sleepTimerBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.toggleSleepTimerDropdown();
+            });
+            this.sleepTimerDropdown.addEventListener('click', (e) => {
+                const option = e.target.closest('.sleep-timer-option');
+                if (option) {
+                    const minutes = parseInt(option.getAttribute('data-minutes'));
+                    this.setSleepTimer(minutes);
+                    this.sleepTimerDropdown.classList.remove('show');
+                }
+            });
+            // Close sleep timer dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!this.sleepTimerBtn.contains(e.target) && !this.sleepTimerDropdown.contains(e.target)) {
+                    this.sleepTimerDropdown.classList.remove('show');
+                }
+            });
         }
     }
 
@@ -674,6 +704,98 @@ export class Player {
         if (this.miniPlayBtn) {
             this.miniPlayBtn.disabled = !hasTrack;
             this.miniPlayBtn.style.opacity = !hasTrack ? '0.4' : '1';
+        }
+    }
+
+    toggleSleepTimerDropdown() {
+        this.sleepTimerDropdown.classList.toggle('show');
+    }
+
+    setSleepTimer(minutes) {
+        if (this.sleepTimer) {
+            clearTimeout(this.sleepTimer);
+            this.sleepTimer = null;
+            this.sleepTimerEnd = null;
+        }
+        if (this.sleepTimerInterval) {
+            clearInterval(this.sleepTimerInterval);
+            this.sleepTimerInterval = null;
+        }
+        // Remove any existing notification
+        if (this.sleepTimerNotificationEl) {
+            this.sleepTimerNotificationEl.remove();
+            this.sleepTimerNotificationEl = null;
+        }
+        if (minutes > 0) {
+            const ms = minutes * 60 * 1000;
+            this.sleepTimerEnd = Date.now() + ms;
+            this.sleepTimer = setTimeout(() => {
+                this.audioPlayer.pause();
+                this.isPlaying = false;
+                const icon = this.playBtn.querySelector('i');
+                if (icon) {
+                    icon.classList.remove('fa-pause');
+                    icon.classList.add('fa-play');
+                }
+                if (this.miniPlayBtn) {
+                    const miniIcon = this.miniPlayBtn.querySelector('i');
+                    if (miniIcon) {
+                        miniIcon.classList.remove('fa-pause');
+                        miniIcon.classList.add('fa-play');
+                    }
+                }
+                this.showSleepTimerNotification('Sleep timer expired. Playback stopped.');
+                if (this.sleepTimerInterval) {
+                    clearInterval(this.sleepTimerInterval);
+                    this.sleepTimerInterval = null;
+                }
+            }, ms);
+            // Show and update notification
+            this.showSleepTimerNotification();
+            this.sleepTimerInterval = setInterval(() => {
+                this.showSleepTimerNotification();
+            }, 1000);
+        }
+    }
+
+    showSleepTimerNotification(message) {
+        // Remove any existing notification
+        if (this.sleepTimerNotificationEl) {
+            this.sleepTimerNotificationEl.remove();
+            this.sleepTimerNotificationEl = null;
+        }
+        // If timer is running, show remaining time
+        if (!message && this.sleepTimerEnd) {
+            const remaining = Math.max(0, this.sleepTimerEnd - Date.now());
+            const mins = Math.floor(remaining / 60000);
+            const secs = Math.floor((remaining % 60000) / 1000);
+            let text = '';
+            if (mins > 0) {
+                text = `Sleep timer: ${mins}m ${secs.toString().padStart(2, '0')}s remaining`;
+            } else {
+                text = `Sleep timer: ${secs}s remaining`;
+            }
+            this.sleepTimerNotificationEl = document.createElement('div');
+            this.sleepTimerNotificationEl.className = 'notification sleep-timer-popup show';
+            this.sleepTimerNotificationEl.innerHTML = `<i class='fas fa-moon'></i> <span>${text}</span>`;
+            document.body.appendChild(this.sleepTimerNotificationEl);
+        } else if (message) {
+            // Show expiration message
+            this.sleepTimerNotificationEl = document.createElement('div');
+            this.sleepTimerNotificationEl.className = 'notification sleep-timer-popup show';
+            this.sleepTimerNotificationEl.innerHTML = `<i class='fas fa-moon'></i> <span>${message}</span>`;
+            document.body.appendChild(this.sleepTimerNotificationEl);
+            setTimeout(() => {
+                if (this.sleepTimerNotificationEl) {
+                    this.sleepTimerNotificationEl.classList.remove('show');
+                    setTimeout(() => {
+                        if (this.sleepTimerNotificationEl) {
+                            this.sleepTimerNotificationEl.remove();
+                            this.sleepTimerNotificationEl = null;
+                        }
+                    }, 300);
+                }
+            }, 3000);
         }
     }
 } 
