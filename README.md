@@ -22,6 +22,7 @@ A modern, feature-rich desktop music player built with Electron. Enjoy seamless 
 ### 🖼️ Mini Player Mode
 - **Compact UI:** Essential controls in a floating, draggable, and resizable mini player.
 - **Quick Toggle:** Instantly switch between full and mini player modes.
+- **Always on Top:** When mini player mode is enabled, the player window stays on top of other apps for easy access.
 
 ### ⭐ Favorites
 - **Mark/Unmark Favorites:** Easily favorite tracks and view them in a dedicated page.
