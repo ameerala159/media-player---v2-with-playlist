@@ -31,6 +31,14 @@ document.addEventListener('DOMContentLoaded', () => {
     trackDetails.init();
     playlistsPage.init();
 
+    // Refresh favorites list when the sidebar 'Favorites' nav item is clicked
+    const favoritesNav = document.querySelector('.nav-item[data-page="favorites"]');
+    if (favoritesNav) {
+        favoritesNav.addEventListener('click', () => {
+            favoritesPage.updateFavoritesList();
+        });
+    }
+
     // Handle thumbnail toolbar button clicks
     window.api.receive('thumbnail-toolbar-click', (action) => {
         console.log('Thumbnail toolbar action:', action);

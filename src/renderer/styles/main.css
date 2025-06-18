@@ -4505,3 +4505,36 @@ body[data-theme="dark"] .sleep-timer-popup {
 .controls .volume-container:last-child {
     margin-right: 0;
 }
+
+.favorite-btn {
+    display: none;
+    position: absolute;
+    right: 48px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    z-index: 2;
+    color: var(--text-muted);
+    font-size: 1.2em;
+    transition: color 0.2s, background 0.2s;
+}
+.music-item:hover .favorite-btn {
+    display: inline-block;
+}
+.favorite-btn.active i,
+.favorite-btn:hover i {
+    color: var(--primary-color);
+}
+.favorite-btn i {
+    transition: color 0.2s;
+}
+body[data-theme="dark"] .favorite-btn {
+    color: #aaa;
+}
+body[data-theme="dark"] .favorite-btn.active i,
+body[data-theme="dark"] .favorite-btn:hover i {
+    color: #1db954;
+}

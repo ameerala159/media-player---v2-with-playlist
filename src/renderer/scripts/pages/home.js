@@ -104,6 +104,11 @@ export class HomePage {
         window.addEventListener('updateMusicList', () => {
             this.filterAndSortTracks();
         });
+
+        // Listen for favorite status changes (e.g., from favorites page)
+        window.addEventListener('favoriteStatusChanged', () => {
+            this.updateFavoriteIcons();
+        });
     }
 
     // Initialize scroll handler for virtual scrolling
@@ -286,6 +291,9 @@ export class HomePage {
             <button class="add-to-playlist-btn">
                 <i class="fas fa-plus"></i>
             </button>
+            <button class="favorite-btn" title="Favorite">
+                <i class="fa-heart"></i>
+            </button>
         `;
 
         // Create dropdown element
@@ -307,6 +315,30 @@ export class HomePage {
             ratingIndicator.innerHTML = '★'.repeat(trackRatings[track.path]);
             item.querySelector('.music-info').appendChild(ratingIndicator);
         }
+
+        // Add favorite button logic
+        const favoriteBtn = item.querySelector('.favorite-btn');
+        const favoriteIcon = favoriteBtn.querySelector('i');
+        let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+        const isFavorite = favorites.includes(track.path);
+        favoriteIcon.className = isFavorite ? 'fas fa-heart' : 'far fa-heart';
+        favoriteBtn.classList.toggle('active', isFavorite);
+
+        favoriteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+            const idx = favorites.indexOf(track.path);
+            if (idx === -1) {
+                favorites.push(track.path);
+            } else {
+                favorites.splice(idx, 1);
+            }
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            favoriteIcon.className = favorites.includes(track.path) ? 'fas fa-heart' : 'far fa-heart';
+            favoriteBtn.classList.toggle('active', favorites.includes(track.path));
+            // Optionally, update favorites page
+            window.dispatchEvent(new Event('updateFavoritesList'));
+        });
 
         // Add click handler for playing track
         item.addEventListener('click', (e) => {
@@ -603,5 +635,25 @@ export class HomePage {
                 notification.remove();
             }, 300);
         }, 3000);
+    }
+
+    // Add a method to update favorite icons in the home page
+    updateFavoriteIcons() {
+        const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+        document.querySelectorAll('.music-item').forEach(item => {
+            const index = item.dataset.index;
+            if (index !== undefined) {
+                const track = this.currentPlaylist[index];
+                if (track) {
+                    const favoriteBtn = item.querySelector('.favorite-btn');
+                    const favoriteIcon = favoriteBtn && favoriteBtn.querySelector('i');
+                    if (favoriteBtn && favoriteIcon) {
+                        const isFavorite = favorites.includes(track.path);
+                        favoriteIcon.className = isFavorite ? 'fas fa-heart' : 'far fa-heart';
+                        favoriteBtn.classList.toggle('active', isFavorite);
+                    }
+                }
+            }
+        });
     }
 } 
