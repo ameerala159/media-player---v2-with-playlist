@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog, nativeImage } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, nativeImage, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const musicMetadata = require('music-metadata');
@@ -305,5 +305,23 @@ ipcMain.on('update-thumbnail-toolbar', (event, { button, icon }) => {
 ipcMain.on('set-always-on-top', (event, enabled) => {
   if (mainWindow) {
     mainWindow.setAlwaysOnTop(!!enabled, 'screen-saver');
+  }
+});
+
+ipcMain.handle('delete-file', async (event, filePath) => {
+  try {
+    await shell.trashItem(filePath);
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('rename-file', async (event, { oldPath, newPath }) => {
+  try {
+    await fs.promises.rename(oldPath, newPath);
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.message };
   }
 });

@@ -8,11 +8,12 @@ export class TrackDetails {
         this.duration = document.getElementById('trackDetailsDuration');
         this.description = document.querySelector('.track-details-description p');
         this.ratingSquares = document.querySelectorAll('.rating-square');
-        this.favoriteBtn = document.getElementById('favoriteTrackBtn');
         this.addToPlaylistBtn = document.getElementById('addToPlaylistBtn');
         this.removeRatingBtn = document.getElementById('removeRatingBtn');
         this.currentTrack = null;
         this.currentRating = 0;
+        this.deleteBtn = document.getElementById('deleteTrackBtn');
+        this.renameBtn = document.getElementById('renameTrackBtn');
     }
 
     // Initialize track details
@@ -49,11 +50,33 @@ export class TrackDetails {
         // Remove rating button
         this.removeRatingBtn.addEventListener('click', () => this.removeRating());
 
-        // Favorite button
-        this.favoriteBtn.addEventListener('click', () => this.handleFavoriteClick());
-
         // Add to playlist button
         this.addToPlaylistBtn.addEventListener('click', () => this.showAddToPlaylistModal());
+
+        // Delete button
+        if (this.deleteBtn) {
+            this.deleteBtn.addEventListener('click', async () => {
+                if (!this.currentTrack) return;
+                const confirmed = confirm('Are you sure you want to delete this file? It will be moved to the Recycle Bin.');
+                if (!confirmed) return;
+                const result = await window.api.deleteFile(this.currentTrack.path);
+                if (result.success) {
+                    alert('File moved to Recycle Bin successfully.');
+                    this.closeModal();
+                    window.dispatchEvent(new CustomEvent('trackDeleted', { detail: { path: this.currentTrack.path } }));
+                } else {
+                    alert('Failed to delete file: ' + result.error);
+                }
+            });
+        }
+
+        // Rename button
+        if (this.renameBtn) {
+            this.renameBtn.addEventListener('click', () => {
+                if (!this.currentTrack) return;
+                this.showRenameModal();
+            });
+        }
     }
 
     // Show track details
@@ -78,12 +101,6 @@ export class TrackDetails {
         // Update rating squares and remove rating button
         this.updateRatingSquares();
         this.updateRemoveRatingButton();
-
-        // Load favorite status
-        const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-        const isFavorite = favorites.includes(track.path);
-        this.favoriteBtn.classList.toggle('active', isFavorite);
-        this.favoriteBtn.innerHTML = `<i class="fas fa-heart"></i> ${isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}`;
 
         // Show modal
         this.modal.style.display = 'flex';
@@ -189,32 +206,6 @@ export class TrackDetails {
         });
     }
 
-    // Handle favorite click
-    handleFavoriteClick() {
-        if (this.currentTrack) {
-            const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-            const isFavorite = favorites.includes(this.currentTrack.path);
-            
-            if (isFavorite) {
-                // Remove from favorites
-                const index = favorites.indexOf(this.currentTrack.path);
-                favorites.splice(index, 1);
-                this.favoriteBtn.classList.remove('active');
-                this.favoriteBtn.innerHTML = '<i class="fas fa-heart"></i> Add to Favorites';
-            } else {
-                // Add to favorites
-                favorites.push(this.currentTrack.path);
-                this.favoriteBtn.classList.add('active');
-                this.favoriteBtn.innerHTML = '<i class="fas fa-heart"></i> Remove from Favorites';
-            }
-            
-            localStorage.setItem('favorites', JSON.stringify(favorites));
-            
-            // Dispatch event for favorite status change
-            window.dispatchEvent(new CustomEvent('favoriteStatusChanged'));
-        }
-    }
-
     // Show add to playlist modal
     showAddToPlaylistModal() {
         const playlists = JSON.parse(localStorage.getItem('playlists') || '[]');
@@ -290,5 +281,88 @@ export class TrackDetails {
         const minutes = Math.floor(seconds / 60);
         const remainingSeconds = Math.floor(seconds % 60);
         return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
+
+    // Show rename modal
+    showRenameModal() {
+        const currentName = this.currentTrack.path.split(/[/\\]/).pop();
+        const modal = document.createElement('div');
+        modal.className = 'rename-modal';
+        modal.innerHTML = `
+            <div class="rename-content">
+                <h3>Rename Track</h3>
+                <form class="rename-form">
+                    <input type="text" value="${currentName}" required>
+                    <div class="rename-actions">
+                        <button type="button" class="cancel-btn">Cancel</button>
+                        <button type="submit" class="rename-btn">
+                            <i class="fas fa-edit"></i>
+                            Rename
+                        </button>
+                    </div>
+                </form>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+        requestAnimationFrame(() => modal.classList.add('show'));
+
+        const form = modal.querySelector('form');
+        const input = modal.querySelector('input');
+        const cancelBtn = modal.querySelector('.cancel-btn');
+
+        // Select the filename without extension
+        const lastDotIndex = currentName.lastIndexOf('.');
+        if (lastDotIndex > 0) {
+            input.setSelectionRange(0, lastDotIndex);
+        }
+        input.focus();
+
+        // Close modal function
+        const closeModal = () => {
+            modal.classList.remove('show');
+            setTimeout(() => modal.remove(), 300);
+        };
+
+        // Handle form submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newName = input.value.trim();
+            if (!newName || newName === currentName) {
+                closeModal();
+                return;
+            }
+
+            const currentPath = this.currentTrack.path;
+            const newPath = currentPath.replace(/[/\\][^/\\]+$/, '/' + newName);
+            
+            const result = await window.api.renameFile(currentPath, newPath);
+            if (result.success) {
+                this.closeModal();
+                window.dispatchEvent(new CustomEvent('trackRenamed', { 
+                    detail: { oldPath: currentPath, newPath } 
+                }));
+                closeModal();
+            } else {
+                alert('Failed to rename file: ' + result.error);
+            }
+        });
+
+        // Handle cancel button
+        cancelBtn.addEventListener('click', closeModal);
+
+        // Close on outside click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
     }
 } 

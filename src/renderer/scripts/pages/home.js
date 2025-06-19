@@ -109,6 +109,30 @@ export class HomePage {
         window.addEventListener('favoriteStatusChanged', () => {
             this.updateFavoriteIcons();
         });
+
+        // Listen for track deleted event
+        window.addEventListener('trackDeleted', (event) => {
+            const deletedPath = event.detail.path;
+            // Remove from allTracks
+            this.allTracks = this.allTracks.filter(track => track.path !== deletedPath);
+            this.updateSearchIndex();
+            this.filterAndSortTracks();
+        });
+
+        // Listen for track renamed event
+        window.addEventListener('trackRenamed', (event) => {
+            const { oldPath, newPath } = event.detail;
+            // Find the track and update its path and name
+            const track = this.allTracks.find(track => track.path === oldPath);
+            if (track) {
+                track.path = newPath;
+                // Update the name based on the new file name (without extension)
+                const newName = newPath.split(/[/\\]/).pop().replace(/\.[^/.]+$/, '');
+                track.name = newName;
+            }
+            this.updateSearchIndex();
+            this.filterAndSortTracks();
+        });
     }
 
     // Initialize scroll handler for virtual scrolling
