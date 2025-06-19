@@ -91,6 +91,10 @@ export class PlaylistsPage {
                             <i class="fas fa-play"></i>
                             Play All
                         </button>
+                        <button class="export-m3u-btn">
+                            <i class="fas fa-file-export"></i>
+                            Export M3U
+                        </button>
                         <button class="remove-all-btn">
                             <i class="fas fa-trash"></i>
                             Remove All
@@ -159,6 +163,11 @@ export class PlaylistsPage {
         const shuffleBtn = modal.querySelector('.shuffle-btn');
         if (shuffleBtn) {
             shuffleBtn.addEventListener('click', () => this.shuffleAndPlayTracks(playlist.tracks));
+        }
+
+        const exportM3UBtn = modal.querySelector('.export-m3u-btn');
+        if (exportM3UBtn) {
+            exportM3UBtn.addEventListener('click', () => this.exportAsM3U(playlist));
         }
 
         const removeAllBtn = modal.querySelector('.remove-all-btn');
@@ -407,5 +416,29 @@ export class PlaylistsPage {
     closeDeleteConfirmationModal(modal) {
         modal.classList.remove('show');
         setTimeout(() => modal.remove(), 300);
+    }
+
+    exportAsM3U(playlist) {
+        // Create M3U content
+        let m3uContent = '#EXTM3U\n';
+        
+        // Add each track
+        playlist.tracks.forEach(track => {
+            // Add extended info
+            m3uContent += `#EXTINF:-1,${track.artist || 'Unknown Artist'} - ${track.name || 'Unknown Track'}\n`;
+            // Add file path
+            m3uContent += `${track.path}\n`;
+        });
+
+        // Create blob and download
+        const blob = new Blob([m3uContent], { type: 'audio/x-mpegurl' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${playlist.name}.m3u`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
     }
 } 

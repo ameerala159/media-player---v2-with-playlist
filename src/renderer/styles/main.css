@@ -2493,6 +2493,137 @@ body[data-theme="dark"] .track-details-content {
     flex: 1;
     min-width: 120px;
     justify-content: center;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+.playlist-contents-actions button i {
+    color: var(--primary-color);
+}
+
+.playlist-contents-actions button:hover {
+    background-color: var(--hover-color);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.playlist-contents-actions .play-all-btn,
+.playlist-contents-actions .shuffle-btn,
+.playlist-contents-actions .export-m3u-btn {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    border: 1px solid var(--primary-color);
+}
+
+.playlist-contents-actions .play-all-btn i,
+.playlist-contents-actions .shuffle-btn i,
+.playlist-contents-actions .export-m3u-btn i {
+    color: var(--primary-color);
+}
+
+.playlist-contents-actions .play-all-btn:hover,
+.playlist-contents-actions .shuffle-btn:hover,
+.playlist-contents-actions .export-m3u-btn:hover {
+    background-color: var(--primary-light);
+    color: black;
+    transform: translateY(-2px);
+    border-color: var(--primary-color);
+}
+
+.playlist-contents-actions .play-all-btn:hover i,
+.playlist-contents-actions .shuffle-btn:hover i,
+.playlist-contents-actions .export-m3u-btn:hover i {
+    color: black;
+}
+
+.playlist-contents-actions .remove-all-btn {
+    background-color: var(--danger-color);
+    color: white;
+    border: none;
+}
+
+.playlist-contents-actions .remove-all-btn i {
+    color: white;
+}
+
+.playlist-contents-actions .remove-all-btn:hover {
+    background-color: var(--danger-hover);
+    transform: translateY(-2px);
+    border: none;
+}
+
+/* Dark mode specific overrides */
+body[data-theme="dark"] .playlist-contents-actions .play-all-btn,
+body[data-theme="dark"] .playlist-contents-actions .shuffle-btn,
+body[data-theme="dark"] .playlist-contents-actions .export-m3u-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+}
+
+body[data-theme="dark"] .playlist-contents-actions .play-all-btn i,
+body[data-theme="dark"] .playlist-contents-actions .shuffle-btn i,
+body[data-theme="dark"] .playlist-contents-actions .export-m3u-btn i {
+    color: white;
+}
+
+body[data-theme="dark"] .playlist-contents-actions .play-all-btn:hover,
+body[data-theme="dark"] .playlist-contents-actions .shuffle-btn:hover,
+body[data-theme="dark"] .playlist-contents-actions .export-m3u-btn:hover {
+    background-color: var(--primary-hover);
+    color: white;
+}
+
+body[data-theme="dark"] .playlist-contents-actions .play-all-btn:hover i,
+body[data-theme="dark"] .playlist-contents-actions .shuffle-btn:hover i,
+body[data-theme="dark"] .playlist-contents-actions .export-m3u-btn:hover i {
+    color: white;
+}
+
+.playlist-contents-header .playlist-contents-actions button:hover {
+    background-color: var(--hover-color);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.playlist-contents-header .playlist-contents-actions button i {
+    color: var(--primary-color);
+}
+
+.playlist-contents-header .play-all-btn,
+.playlist-contents-header .shuffle-btn,
+.playlist-contents-header .export-m3u-btn {
+    background-color: var(--primary-light);
+    border-color: var(--primary-color);
+}
+
+.playlist-contents-header .play-all-btn:hover,
+.playlist-contents-header .shuffle-btn:hover,
+.playlist-contents-header .export-m3u-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.playlist-contents-header .play-all-btn:hover i,
+.playlist-contents-header .shuffle-btn:hover i,
+.playlist-contents-header .export-m3u-btn:hover i {
+    color: white;
+}
+
+.playlist-contents-header .remove-all-btn {
+    background-color: var(--danger-color);
+    color: white;
+    border-color: var(--danger-color);
+}
+
+.playlist-contents-header .remove-all-btn i {
+    color: white;
+}
+
+.playlist-contents-header .remove-all-btn:hover {
+    background-color: var(--danger-hover);
+    border-color: var(--danger-hover);
 }
 
 .playlist-tracks-list {
