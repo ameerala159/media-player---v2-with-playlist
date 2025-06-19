@@ -3,7 +3,7 @@ class SettingsManager {
     constructor() {
         this.settings = {
             darkMode: false,
-            fontSize: 'medium',
+            fontSize: 'small',
             fontFamily: "'Comfortaa', cursive",
             autoShuffle: false,
             repeatMode: 'none',
@@ -69,7 +69,7 @@ class SettingsManager {
                 // Merge saved settings with defaults, ensuring all properties exist
                 this.settings = {
                     darkMode: parsedSettings.darkMode ?? false,
-                    fontSize: parsedSettings.fontSize ?? 'medium',
+                    fontSize: parsedSettings.fontSize ?? 'small',
                     fontFamily: parsedSettings.fontFamily ?? "'Comfortaa', cursive",
                     autoShuffle: parsedSettings.autoShuffle ?? false,
                     repeatMode: parsedSettings.repeatMode ?? 'none',
