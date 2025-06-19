@@ -33,12 +33,16 @@ A modern, feature-rich desktop music player built with Electron. Enjoy seamless 
 - **Add/Remove Tracks:** Manage playlist contents with ease.
 - **Shuffle/Play All:** Instantly play or shuffle entire playlists.
 - **Remove All Tracks:** Clear playlists with a single action.
+- **Export Playlist as M3U:** Export any playlist to a standard `.m3u` file for use in other players.
 - **Modal Management:** Intuitive modal dialogs for playlist actions.
 
 ### ℹ️ Track Details
 - **Detailed Modal:** View and edit track info, including:
   - **Rating:** 0-5 stars, with the ability to remove ratings.
   - **Add to Favorites/Playlist:** Quick actions from the details modal.
+  - **Open Song in File Explorer:** Click the file path to open the song's location in your system's file explorer.
+  - **Delete Track:** Move tracks to the Recycle Bin directly from the app.
+  - **Rename Track:** Rename music files from within the app.
 
 ### 🔔 Notifications
 - **Visual Feedback:** Animated notifications for actions like removing favorites, changing speed, etc.
