@@ -2,7 +2,7 @@
 class SettingsManager {
     constructor() {
         this.settings = {
-            darkMode: false,
+            darkMode: true,
             fontSize: 'small',
             fontFamily: "'Comfortaa', cursive",
             autoShuffle: false,
@@ -68,7 +68,7 @@ class SettingsManager {
                 const parsedSettings = JSON.parse(savedSettings);
                 // Merge saved settings with defaults, ensuring all properties exist
                 this.settings = {
-                    darkMode: parsedSettings.darkMode ?? false,
+                    darkMode: parsedSettings.darkMode ?? true,
                     fontSize: parsedSettings.fontSize ?? 'small',
                     fontFamily: parsedSettings.fontFamily ?? "'Comfortaa', cursive",
                     autoShuffle: parsedSettings.autoShuffle ?? false,
