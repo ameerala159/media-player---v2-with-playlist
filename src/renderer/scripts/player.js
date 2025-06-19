@@ -58,6 +58,18 @@ export class Player {
         this.eqSliderIds = ['eq60', 'eq170', 'eq350', 'eq1000', 'eq3500', 'eq10000'];
         this.eqValueIds = ['eq60Value', 'eq170Value', 'eq350Value', 'eq1000Value', 'eq3500Value', 'eq10000Value'];
 
+        // --- Equalizer Presets ---
+        this.eqPresets = {
+            flat:      [0, 0, 0, 0, 0, 0],
+            rock:      [4, 3, 2, 0, 2, 4],
+            pop:       [2, 4, 2, 0, 2, 3],
+            jazz:      [3, 2, 0, 2, 3, 2],
+            classical: [0, 2, 3, 4, 2, 0],
+            bass:      [6, 4, 2, 0, -2, -4],
+            treble:    [-2, 0, 2, 3, 5, 7],
+            custom:    null // Will be set by user
+        };
+
         // Add click handler for total time display
         this.totalTimeEl.addEventListener('click', () => {
             this.showRemainingTime = !this.showRemainingTime;
@@ -831,6 +843,25 @@ export class Player {
             this.sourceNode.connect(this.eqFilters[0]);
             this.eqFilters[this.eqFilters.length - 1].connect(this.audioContext.destination);
         }
+        // Preset dropdown logic
+        const presetSelect = document.getElementById('eqPresetSelect');
+        if (presetSelect) {
+            presetSelect.addEventListener('change', () => {
+                const preset = presetSelect.value;
+                if (preset !== 'custom' && this.eqPresets[preset]) {
+                    this.eqSliderIds.forEach((id, i) => {
+                        const slider = document.getElementById(id);
+                        const valueLabel = document.getElementById(this.eqValueIds[i]);
+                        if (slider && valueLabel) {
+                            const gain = this.eqPresets[preset][i];
+                            slider.value = gain;
+                            this.eqFilters[i].gain.value = gain;
+                            valueLabel.textContent = `${gain} dB`;
+                        }
+                    });
+                }
+            });
+        }
         // Wire up sliders and reset buttons
         this.eqSliderIds.forEach((id, i) => {
             const slider = document.getElementById(id);
@@ -841,12 +872,22 @@ export class Player {
                     const gain = parseInt(slider.value, 10);
                     this.eqFilters[i].gain.value = gain;
                     valueLabel.textContent = `${gain} dB`;
+                    // If user moves a slider, set preset to custom
+                    const presetSelect = document.getElementById('eqPresetSelect');
+                    if (presetSelect && presetSelect.value !== 'custom') {
+                        presetSelect.value = 'custom';
+                    }
                 });
                 // Double-click on slider resets to 0
                 slider.addEventListener('dblclick', () => {
                     slider.value = 0;
                     this.eqFilters[i].gain.value = 0;
                     valueLabel.textContent = `0 dB`;
+                    // If user resets, set preset to custom
+                    const presetSelect = document.getElementById('eqPresetSelect');
+                    if (presetSelect && presetSelect.value !== 'custom') {
+                        presetSelect.value = 'custom';
+                    }
                 });
                 // Set initial value
                 valueLabel.textContent = `${slider.value} dB`;
@@ -856,6 +897,11 @@ export class Player {
                     slider.value = 0;
                     this.eqFilters[i].gain.value = 0;
                     valueLabel.textContent = `0 dB`;
+                    // If user resets, set preset to custom
+                    const presetSelect = document.getElementById('eqPresetSelect');
+                    if (presetSelect && presetSelect.value !== 'custom') {
+                        presetSelect.value = 'custom';
+                    }
                 });
             }
         });

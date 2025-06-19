@@ -4878,3 +4878,45 @@ body[data-theme="dark"] .favorite-btn:hover i {
     background: var(--primary-light);
     color: var(--primary-dark);
 }
+
+#eqPresetSelect {
+    padding: 4px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: var(--background-color);
+    color: var(--text-color);
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    transition: border 0.2s, background 0.2s;
+    margin-left: 6px;
+    margin-bottom: 0;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+#eqPresetSelect:focus {
+    border-color: var(--primary-color);
+}
+#eqPresetSelect option {
+    background: var(--background-color);
+    color: var(--text-color);
+}
+.settings-section label[for="eqPresetSelect"] {
+    font-size: 15px;
+    color: var(--text-color);
+    margin-right: 4px;
+}
+@media (max-width: 768px) {
+    #eqPresetSelect {
+        font-size: 14px;
+        padding: 3px 8px;
+    }
+}
+body[data-theme="dark"] #eqPresetSelect {
+    background: #23272f;
+    color: #f1f1f1;
+    border-color: #444;
+}
+body[data-theme="dark"] #eqPresetSelect option {
+    background: #23272f;
+    color: #f1f1f1;
+}
