@@ -205,6 +205,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 speedSlider.dispatchEvent(new Event('input'));
             }
         }
+
+        // Ctrl + E to toggle equalizer preset
+        if (e.ctrlKey && e.key.toLowerCase() === 'e') {
+            e.preventDefault();
+            const presetSelect = document.getElementById('eqPresetSelect');
+            if (presetSelect) {
+                const options = Array.from(presetSelect.options).filter(opt => opt.value !== 'custom');
+                const currentIdx = options.findIndex(opt => opt.value === presetSelect.value);
+                const nextIdx = (currentIdx + 1) % options.length;
+                presetSelect.value = options[nextIdx].value;
+                presetSelect.dispatchEvent(new Event('change'));
+            }
+        }
     });
 
     // Navigation functionality

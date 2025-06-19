@@ -268,9 +268,9 @@
                         </div>
                         <div class="settings-section">
                             <h3>Equalizer</h3>
-                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
-                                <label for="eqPresetSelect" style="font-weight: 500;">Preset:</label>
-                                <select id="eqPresetSelect" style="padding: 4px 10px; border-radius: 6px; border: 1px solid #ccc;">
+                            <div class="eq-preset-row">
+                                <label for="eqPresetSelect" class="eq-preset-label">Preset:</label>
+                                <select id="eqPresetSelect">
                                     <option value="flat">Flat</option>
                                     <option value="rock">Rock</option>
                                     <option value="pop">Pop</option>
@@ -598,6 +598,10 @@
                     <div class="shortcut-item">
                         <span class="shortcut-key">Ctrl + [</span>
                         <span class="shortcut-description">Decrease Playback Speed</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="shortcut-key">Ctrl + E</span>
+                        <span class="shortcut-description">Toggle Equalizer Preset</span>
                     </div>
                 </div>
                 <div class="shortcut-group">
