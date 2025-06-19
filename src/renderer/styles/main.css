@@ -4863,7 +4863,7 @@ body[data-theme="dark"] .favorite-btn:hover i {
     background: none;
     border: none;
     color: var(--primary-color);
-    margin-top: 4px;
+    margin-top: 16px;
     cursor: pointer;
     border-radius: 50%;
     padding: 4px 6px;
