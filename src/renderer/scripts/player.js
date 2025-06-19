@@ -51,6 +51,13 @@ export class Player {
         this.sleepTimerInterval = null;
         this.sleepTimerNotificationEl = null;
 
+        // --- Equalizer (Web Audio API) ---
+        this.audioContext = null;
+        this.eqFilters = [];
+        this.eqFrequencies = [60, 170, 350, 1000, 3500, 10000];
+        this.eqSliderIds = ['eq60', 'eq170', 'eq350', 'eq1000', 'eq3500', 'eq10000'];
+        this.eqValueIds = ['eq60Value', 'eq170Value', 'eq350Value', 'eq1000Value', 'eq3500Value', 'eq10000Value'];
+
         // Add click handler for total time display
         this.totalTimeEl.addEventListener('click', () => {
             this.showRemainingTime = !this.showRemainingTime;
@@ -80,6 +87,9 @@ export class Player {
                 miniIcon.classList.add('fa-play');
             }
         }
+
+        // --- Equalizer setup ---
+        this.setupEqualizer();
     }
 
     // Setup event listeners
@@ -797,5 +807,57 @@ export class Player {
                 }
             }, 3000);
         }
+    }
+
+    setupEqualizer() {
+        // Create AudioContext and filters if not already created
+        if (!this.audioContext) {
+            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            // Create filters for each band
+            this.eqFilters = this.eqFrequencies.map((freq, i) => {
+                const filter = this.audioContext.createBiquadFilter();
+                filter.type = 'peaking';
+                filter.frequency.value = freq;
+                filter.Q.value = 1.0;
+                filter.gain.value = 0;
+                return filter;
+            });
+            // Connect filters in series
+            for (let i = 0; i < this.eqFilters.length - 1; i++) {
+                this.eqFilters[i].connect(this.eqFilters[i + 1]);
+            }
+            // Connect audio element to filters
+            this.sourceNode = this.audioContext.createMediaElementSource(this.audioPlayer);
+            this.sourceNode.connect(this.eqFilters[0]);
+            this.eqFilters[this.eqFilters.length - 1].connect(this.audioContext.destination);
+        }
+        // Wire up sliders and reset buttons
+        this.eqSliderIds.forEach((id, i) => {
+            const slider = document.getElementById(id);
+            const valueLabel = document.getElementById(this.eqValueIds[i]);
+            const resetBtn = document.querySelector(`.eq-reset-btn[data-eq-id='${id}']`);
+            if (slider && valueLabel) {
+                slider.addEventListener('input', () => {
+                    const gain = parseInt(slider.value, 10);
+                    this.eqFilters[i].gain.value = gain;
+                    valueLabel.textContent = `${gain} dB`;
+                });
+                // Double-click on slider resets to 0
+                slider.addEventListener('dblclick', () => {
+                    slider.value = 0;
+                    this.eqFilters[i].gain.value = 0;
+                    valueLabel.textContent = `0 dB`;
+                });
+                // Set initial value
+                valueLabel.textContent = `${slider.value} dB`;
+            }
+            if (resetBtn && slider && valueLabel) {
+                resetBtn.addEventListener('click', () => {
+                    slider.value = 0;
+                    this.eqFilters[i].gain.value = 0;
+                    valueLabel.textContent = `0 dB`;
+                });
+            }
+        });
     }
 } 
