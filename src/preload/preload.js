@@ -23,6 +23,7 @@ contextBridge.exposeInMainWorld(
     getMusicFiles: (folderPath) => ipcRenderer.invoke('get-music-files', folderPath),
     setMiniPlayerSize: (isMini) => ipcRenderer.send('set-mini-player-size', isMini),
     deleteFile: (filePath) => ipcRenderer.invoke('delete-file', filePath),
-    renameFile: (oldPath, newPath) => ipcRenderer.invoke('rename-file', { oldPath, newPath })
+    renameFile: (oldPath, newPath) => ipcRenderer.invoke('rename-file', { oldPath, newPath }),
+    showItemInFolder: (filePath) => ipcRenderer.invoke('show-item-in-folder', filePath)
   }
 );

@@ -91,8 +91,18 @@ export class TrackDetails {
             <strong>File Name:</strong> ${track.name}<br>
             <strong>Artist:</strong> ${track.artist}<br>
             <strong>Duration:</strong> ${this.formatTime(track.duration)}<br>
-            <strong>Path:</strong> <span style='word-break:break-all;'>${track.path}</span>
+            <strong>Path:</strong> <span class='track-path-link' style='word-break:break-all; color: var(--primary); cursor: pointer; text-decoration: underline;' title='Show in File Explorer'>${track.path}</span>
         `;
+        
+        // Add click event for the path
+        const pathLink = this.description.querySelector('.track-path-link');
+        if (pathLink) {
+            pathLink.addEventListener('click', () => {
+                if (window.api && window.api.showItemInFolder) {
+                    window.api.showItemInFolder(track.path);
+                }
+            });
+        }
         
         // Load saved rating
         const trackRatings = JSON.parse(localStorage.getItem('trackRatings') || '{}');

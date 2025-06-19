@@ -325,3 +325,12 @@ ipcMain.handle('rename-file', async (event, { oldPath, newPath }) => {
     return { success: false, error: error.message };
   }
 });
+
+ipcMain.handle('show-item-in-folder', async (event, filePath) => {
+  try {
+    shell.showItemInFolder(filePath);
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
