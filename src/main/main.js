@@ -159,6 +159,30 @@ ipcMain.handle('select-folder', async () => {
     return null;
 });
 
+// Handle getting subfolders
+ipcMain.handle('get-subfolders', async (event, folderPath) => {
+    try {
+        const dirents = await fs.promises.readdir(folderPath, { withFileTypes: true });
+        const subfolderPromises = dirents
+            .filter(dirent => dirent.isDirectory())
+            .map(async (dirent) => {
+                const subfolderPath = path.join(folderPath, dirent.name);
+                const musicFiles = await scanDirectoryRecursively(subfolderPath);
+                return {
+                    name: dirent.name,
+                    path: subfolderPath,
+                    trackCount: musicFiles.length,
+                };
+            });
+        
+        const subfolders = await Promise.all(subfolderPromises);
+        return subfolders;
+    } catch (error) {
+        console.error(`Error reading subfolders for ${folderPath}:`, error);
+        return [];
+    }
+});
+
 // Handle getting music files
 ipcMain.handle('get-music-files', async (event, { path: folderPath, batchSize = 100, startIndex = 0 }) => {
     try {

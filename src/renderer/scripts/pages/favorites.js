@@ -26,22 +26,30 @@ export class FavoritesPage {
     }
 
     // Update favorites list
-    updateFavoritesList() {
-        const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    async updateFavoritesList() {
+        const favoritePaths = JSON.parse(localStorage.getItem('favorites') || '[]');
         this.favoritesList.innerHTML = '';
 
-        if (favorites.length === 0) {
+        if (favoritePaths.length === 0) {
             this.favoritesList.innerHTML = '<div class="empty-state">No favorite songs yet</div>';
             return;
         }
 
-        // Filter current playlist to only show favorite tracks
-        const favoriteTracks = this.currentPlaylist.filter(track => favorites.includes(track.path));
-        
-        favoriteTracks.forEach((track, index) => {
-            const item = this.createFavoriteItem(track, this.currentPlaylist.indexOf(track));
-            this.favoritesList.appendChild(item);
-        });
+        try {
+            // Fetch full track details for favorite songs
+            const result = await window.api.getMusicFiles({ path: favoritePaths });
+            const favoriteTracks = result.tracks;
+
+            this.currentPlaylist = favoriteTracks; // Update the playlist for playback
+
+            favoriteTracks.forEach((track, index) => {
+                const item = this.createFavoriteItem(track, index);
+                this.favoritesList.appendChild(item);
+            });
+        } catch (error) {
+            console.error('Error fetching favorite tracks:', error);
+            this.favoritesList.innerHTML = '<div class="empty-state">Error loading favorites.</div>';
+        }
     }
 
     // Create favorite item element
@@ -100,6 +108,7 @@ export class FavoritesPage {
                 detail: { 
                     index,
                     tracks: this.currentPlaylist,
+                    isPlaylist: true, // Treat favorites as a playlist
                     shape: coverUrl
                 }
             }));

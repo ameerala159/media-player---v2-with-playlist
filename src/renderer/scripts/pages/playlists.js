@@ -290,7 +290,7 @@ export class PlaylistsPage {
         }));
     }
 
-    showCreatePlaylistModal() {
+    showCreatePlaylistModal(track = null) {
         const modal = document.createElement('div');
         modal.className = 'create-playlist-modal';
         modal.innerHTML = `
@@ -311,12 +311,17 @@ export class PlaylistsPage {
 
         const form = modal.querySelector('form');
         const cancelBtn = modal.querySelector('.cancel-btn');
+        const createBtn = modal.querySelector('.create-btn');
+        const input = modal.querySelector('input');
 
         form.addEventListener('submit', (e) => {
             e.preventDefault();
-            const name = form.querySelector('input').value.trim();
+            const name = input.value.trim();
             if (name) {
                 this.createPlaylist(name);
+                if (track) {
+                    this.addTrackToPlaylist(track, this.playlists.length - 1);
+                }
                 this.closeModal(modal);
             }
         });
@@ -331,7 +336,7 @@ export class PlaylistsPage {
 
     createPlaylist(name) {
         const newPlaylist = {
-            name,
+            name: name,
             tracks: []
         };
         this.playlists.push(newPlaylist);
@@ -342,21 +347,23 @@ export class PlaylistsPage {
     addTrackToPlaylist(track, playlistIndex) {
         if (playlistIndex >= 0 && playlistIndex < this.playlists.length) {
             const playlist = this.playlists[playlistIndex];
-            if (!playlist.tracks.some(t => t.path === track.path)) {
+            if (playlist) {
+                // Avoid duplicates
+                if (playlist.tracks.some(t => t.path === track.path)) {
+                    this.showNotification(`"${track.name}" is already in "${playlist.name}"`);
+                    return;
+                }
                 playlist.tracks.push(track);
                 this.savePlaylists();
                 this.renderPlaylists();
-                
-                // Dispatch event for track addition
-                window.dispatchEvent(new CustomEvent('trackAddedToPlaylist', {
-                    detail: { playlistIndex, track }
-                }));
+                this.showNotification(`Added "${track.name}" to "${playlist.name}"`);
             }
         }
     }
 
     savePlaylists() {
         localStorage.setItem('playlists', JSON.stringify(this.playlists));
+        window.dispatchEvent(new Event('playlistUpdated'));
     }
 
     deletePlaylist(index) {
@@ -374,22 +381,16 @@ export class PlaylistsPage {
         modal.innerHTML = `
             <div class="delete-confirmation-content">
                 <h3>Delete Playlist</h3>
-                <p>Are you sure you want to delete "${playlistName}"?</p>
-                <p class="warning-text">This action cannot be undone.</p>
+                <p>Are you sure you want to delete the playlist "${playlistName}"?</p>
                 <div class="delete-confirmation-actions">
                     <button class="cancel-btn">Cancel</button>
-                    <button class="delete-btn">
-                        <i class="fas fa-trash"></i>
-                        Delete
-                    </button>
+                    <button class="delete-btn">Delete</button>
                 </div>
             </div>
         `;
-
         document.body.appendChild(modal);
         requestAnimationFrame(() => modal.classList.add('show'));
 
-        // Add ESC key handler
         const handleEscKey = (e) => {
             if (e.key === 'Escape') {
                 this.closeDeleteConfirmationModal(modal);
@@ -398,27 +399,24 @@ export class PlaylistsPage {
         };
         document.addEventListener('keydown', handleEscKey);
 
-        // Add click handlers
-        const cancelBtn = modal.querySelector('.cancel-btn');
-        const deleteBtn = modal.querySelector('.delete-btn');
-
-        cancelBtn.addEventListener('click', () => {
-            this.closeDeleteConfirmationModal(modal);
-            document.removeEventListener('keydown', handleEscKey);
+        modal.addEventListener('click', e => {
+            if (e.target === modal) {
+                this.closeDeleteConfirmationModal(modal);
+                document.removeEventListener('keydown', handleEscKey);
+            }
         });
 
+        const deleteBtn = modal.querySelector('.delete-btn');
         deleteBtn.addEventListener('click', () => {
             this.deletePlaylist(playlistIndex);
             this.closeDeleteConfirmationModal(modal);
             document.removeEventListener('keydown', handleEscKey);
         });
 
-        // Close on outside click
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                this.closeDeleteConfirmationModal(modal);
-                document.removeEventListener('keydown', handleEscKey);
-            }
+        const cancelBtn = modal.querySelector('.cancel-btn');
+        cancelBtn.addEventListener('click', () => {
+            this.closeDeleteConfirmationModal(modal);
+            document.removeEventListener('keydown', handleEscKey);
         });
     }
 
@@ -530,5 +528,86 @@ export class PlaylistsPage {
             modal.classList.remove('show');
             setTimeout(() => modal.remove(), 300);
         }
+    }
+
+    showNotification(message) {
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        setTimeout(() => {
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }, 10);
+    }
+
+    showPlaylistDropdown(track, buttonElement) {
+        // Close any other open dropdowns
+        document.querySelectorAll('.playlist-dropdown.show').forEach(openDropdown => {
+            openDropdown.remove();
+        });
+
+        const dropdown = document.createElement('div');
+        dropdown.className = 'playlist-dropdown';
+
+        // Populate with playlists
+        this.playlists.forEach((playlist, index) => {
+            const option = document.createElement('div');
+            option.className = 'playlist-option';
+            option.innerHTML = `<i class="fas fa-music"></i> ${playlist.name}`;
+            option.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.addTrackToPlaylist(track, index);
+                dropdown.remove();
+            });
+            dropdown.appendChild(option);
+        });
+
+        // Add "Create New Playlist" option
+        const createOption = document.createElement('div');
+        createOption.className = 'playlist-option create-playlist-option';
+        createOption.innerHTML = `<i class="fas fa-plus"></i> Create New Playlist`;
+        createOption.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.showCreatePlaylistModal(track);
+            dropdown.remove();
+        });
+        dropdown.appendChild(createOption);
+
+        document.body.appendChild(dropdown);
+        
+        // Position and show the dropdown
+        requestAnimationFrame(() => {
+            const rect = buttonElement.getBoundingClientRect();
+            dropdown.style.position = 'fixed';
+            
+            const spaceBelow = window.innerHeight - rect.bottom;
+            const dropdownHeight = dropdown.offsetHeight;
+            
+            if (spaceBelow < dropdownHeight && rect.top > dropdownHeight) {
+                dropdown.style.top = `${rect.top - dropdownHeight - 5}px`;
+            } else {
+                dropdown.style.top = `${rect.bottom + 5}px`;
+            }
+            
+            dropdown.style.left = `${rect.right - dropdown.offsetWidth}px`;
+            
+            if (parseFloat(dropdown.style.left) < 0) {
+                dropdown.style.left = '0px';
+            }
+            dropdown.classList.add('show');
+        });
+
+        // Click outside to close
+        const clickOutsideHandler = (e) => {
+            if (!dropdown.contains(e.target) && dropdown.classList.contains('show')) {
+                dropdown.remove();
+                document.removeEventListener('click', clickOutsideHandler, true);
+            }
+        };
+        document.addEventListener('click', clickOutsideHandler, true);
     }
 } 

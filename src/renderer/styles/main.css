@@ -5020,3 +5020,124 @@ body[data-theme="dark"] .playlist-contents-actions .remove-all-btn:hover {
     background-color: var(--danger-hover);
     border-color: var(--danger-hover);
 }
+
+/* Folders Page Styles */
+.folders-header {
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 20px;
+}
+
+.folders-header h2 {
+    margin: 0;
+    font-size: 1.8em;
+    color: var(--text-color);
+}
+
+.folders-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.subfolder-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.subfolder-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 20px;
+    background-color: var(--sidebar-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1.1em;
+    color: var(--text-color);
+}
+
+.subfolder-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px var(--shadow-color);
+    background-color: var(--hover-color);
+    color: var(--primary-color);
+}
+
+.subfolder-item i {
+    font-size: 1.5em;
+    color: var(--primary-color);
+}
+
+.subfolder-item-main {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.subfolder-track-count {
+    font-size: 0.9em;
+    color: var(--text-secondary);
+    align-self: flex-end;
+}
+
+.back-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    align-self: flex-start;
+    transition: background-color 0.2s ease;
+}
+
+.back-button:hover {
+    background-color: var(--primary-hover);
+}
+
+.back-button i {
+    font-size: 1.1em;
+}
+
+/* Dark Mode for Folders Page */
+body[data-theme="dark"] .folders-header {
+    border-bottom-color: var(--border-color);
+}
+
+body[data-theme="dark"] .folders-header h2 {
+    color: var(--text-color);
+}
+
+body[data-theme="dark"] .subfolder-item {
+    background-color: var(--sidebar-bg);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+body[data-theme="dark"] .subfolder-item:hover {
+    background-color: var(--hover-color);
+    color: var(--primary-color);
+}
+
+body[data-theme="dark"] .subfolder-track-count {
+    color: var(--text-secondary);
+}
+
+body[data-theme="dark"] .back-button {
+    background-color: var(--primary-dark);
+}
+
+body[data-theme="dark"] .back-button:hover {
+    background-color: var(--primary-color);
+}

@@ -7,6 +7,7 @@ import { FavoritesPage } from './pages/favorites.js';
 import { TrackDetails } from './pages/trackDetails.js';
 import { Player } from './player.js';
 import { PlaylistsPage } from './pages/playlists.js';
+import { FoldersPage } from './pages/folders.js';
 
 let skipDuration = 5; // Initialize skip duration to 5 seconds here, at the module level
 
@@ -21,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const favoritesPage = new FavoritesPage();
     const trackDetails = new TrackDetails();
     const playlistsPage = new PlaylistsPage();
+    const foldersPage = new FoldersPage(player);
 
     // Make playlistsPage available globally for the add to playlist functionality
     window.playlistsPage = playlistsPage;
@@ -30,6 +32,35 @@ document.addEventListener('DOMContentLoaded', () => {
     favoritesPage.init();
     trackDetails.init();
     playlistsPage.init();
+    foldersPage.init();
+
+    // Page navigation
+    const navItems = document.querySelectorAll('.nav-item');
+    const pages = document.querySelectorAll('.page');
+
+    function showPage(pageId) {
+        pages.forEach(page => {
+            page.classList.remove('active');
+        });
+        const pageToShow = document.getElementById(`${pageId}-page`);
+        if (pageToShow) {
+            pageToShow.classList.add('active');
+        }
+
+        if (pageId === 'folders') {
+            foldersPage.loadSubfolders();
+        }
+    }
+
+    navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            navItems.forEach(nav => nav.classList.remove('active'));
+            item.classList.add('active');
+            const pageId = item.getAttribute('data-page');
+            showPage(pageId);
+        });
+    });
 
     // Refresh favorites list when the sidebar 'Favorites' nav item is clicked
     const favoritesNav = document.querySelector('.nav-item[data-page="favorites"]');
@@ -218,29 +249,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 presetSelect.dispatchEvent(new Event('change'));
             }
         }
-    });
-
-    // Navigation functionality
-    const navItems = document.querySelectorAll('.nav-item');
-    const pages = document.querySelectorAll('.page');
-
-    navItems.forEach(item => {
-        item.addEventListener('click', (e) => {
-            e.preventDefault();
-            const targetPage = item.dataset.page;
-            
-            // Update active states
-            navItems.forEach(nav => nav.classList.remove('active'));
-            item.classList.add('active');
-            
-            // Show target page
-            pages.forEach(page => {
-                page.classList.remove('active');
-                if (page.id === `${targetPage}-page`) {
-                    page.classList.add('active');
-                }
-            });
-        });
     });
 
     // Listen for track details show event

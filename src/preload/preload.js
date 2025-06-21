@@ -21,6 +21,7 @@ contextBridge.exposeInMainWorld(
     // Add new methods for folder selection and music files
     selectFolder: () => ipcRenderer.invoke('select-folder'),
     getMusicFiles: (folderPath) => ipcRenderer.invoke('get-music-files', folderPath),
+    getSubfolders: (folderPath) => ipcRenderer.invoke('get-subfolders', folderPath),
     setMiniPlayerSize: (isMini) => ipcRenderer.send('set-mini-player-size', isMini),
     deleteFile: (filePath) => ipcRenderer.invoke('delete-file', filePath),
     renameFile: (oldPath, newPath) => ipcRenderer.invoke('rename-file', { oldPath, newPath }),
