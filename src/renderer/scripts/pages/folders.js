@@ -18,6 +18,7 @@ export class FoldersPage {
     }
 
     async loadSubfolders() {
+        this.currentSubfolder = null; // Reset state when loading main folder view
         const savedFolderPath = localStorage.getItem('musicFolderPath');
         if (savedFolderPath) {
             this.currentFolderPath = savedFolderPath;
@@ -67,7 +68,10 @@ export class FoldersPage {
         const backButton = document.createElement('button');
         backButton.className = 'back-button';
         backButton.innerHTML = '<i class="fas fa-arrow-left"></i> Back to folders';
-        backButton.addEventListener('click', () => this.loadSubfolders());
+        backButton.addEventListener('click', () => {
+            this.currentSubfolder = null; // Clear state before going back
+            this.loadSubfolders();
+        });
         this.container.appendChild(backButton);
 
         const folderHeader = document.createElement('h3');

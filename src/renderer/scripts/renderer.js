@@ -47,8 +47,14 @@ document.addEventListener('DOMContentLoaded', () => {
             pageToShow.classList.add('active');
         }
 
-        if (pageId === 'folders') {
+        // Only reload the root of the folders page
+        if (pageId === 'folders' && !foldersPage.currentSubfolder) {
             foldersPage.loadSubfolders();
+        }
+
+        // Always refresh favorites when navigating to the page
+        if (pageId === 'favorites') {
+            favoritesPage.updateFavoritesList();
         }
     }
 
@@ -61,14 +67,6 @@ document.addEventListener('DOMContentLoaded', () => {
             showPage(pageId);
         });
     });
-
-    // Refresh favorites list when the sidebar 'Favorites' nav item is clicked
-    const favoritesNav = document.querySelector('.nav-item[data-page="favorites"]');
-    if (favoritesNav) {
-        favoritesNav.addEventListener('click', () => {
-            favoritesPage.updateFavoritesList();
-        });
-    }
 
     // Handle thumbnail toolbar button clicks
     window.api.receive('thumbnail-toolbar-click', (action) => {
