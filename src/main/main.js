@@ -213,7 +213,7 @@ ipcMain.handle('get-music-files', async (event, { path: folderPath, batchSize = 
 // Function to recursively scan directory for music files
 async function scanDirectoryRecursively(dirPath) {
     const musicFiles = [];
-    const validExtensions = ['.mp3', '.wav', '.ogg', '.m4a'];
+    const validExtensions = ['.mp3', '.wav', '.ogg', '.m4a', '.flac'];
 
     async function scan(dir) {
         const entries = await fs.promises.readdir(dir, { withFileTypes: true });
@@ -351,15 +351,66 @@ ipcMain.handle('copy-files-to-folder', async (event, { filePaths, destinationFol
         const fileName = path.basename(filePath);
         const destinationPath = path.join(destinationFolder, fileName);
         
-        // Check if file already exists in destination
-        let finalDestinationPath = destinationPath;
+        // Check if file already exists in destination with exact same name
+        const fileExists = await fs.access(destinationPath).then(() => true).catch(() => false);
+        
+        if (fileExists) {
+          // File already exists, skip copying but mark as skipped
+          results.push({ 
+            originalPath: filePath, 
+            destinationPath: destinationPath, 
+            success: true,
+            skipped: true,
+            reason: 'File already exists'
+          });
+          continue;
+        }
+        
+        // Check if file already exists with numbered suffix (e.g., "song (1).mp3")
+        // This prevents creating multiple copies when copying the same playlist multiple times
+        const nameWithoutExt = path.parse(fileName).name;
+        const ext = path.parse(fileName).ext;
+        let existingNumberedFile = false;
         let counter = 1;
         
-        while (await fs.access(finalDestinationPath).then(() => true).catch(() => false)) {
-          const nameWithoutExt = path.parse(fileName).name;
-          const ext = path.parse(fileName).ext;
-          finalDestinationPath = path.join(destinationFolder, `${nameWithoutExt} (${counter})${ext}`);
+        while (true) {
+          const numberedPath = path.join(destinationFolder, `${nameWithoutExt} (${counter})${ext}`);
+          const numberedExists = await fs.access(numberedPath).then(() => true).catch(() => false);
+          
+          if (numberedExists) {
+            existingNumberedFile = true;
+            break;
+          }
+          
+          // If we've checked up to 10 numbered files and none exist, stop checking
+          if (counter > 10) {
+            break;
+          }
+          
           counter++;
+        }
+        
+        if (existingNumberedFile) {
+          // A numbered version already exists, skip copying
+          results.push({ 
+            originalPath: filePath, 
+            destinationPath: destinationPath, 
+            success: true,
+            skipped: true,
+            reason: 'File already exists with numbered suffix'
+          });
+          continue;
+        }
+        
+        // Check if file already exists with numbered suffix (e.g., "song (1).mp3")
+        let finalDestinationPath = destinationPath;
+        let finalCounter = 1;
+        
+        while (await fs.access(finalDestinationPath).then(() => true).catch(() => false)) {
+          const finalNameWithoutExt = path.parse(fileName).name;
+          const finalExt = path.parse(fileName).ext;
+          finalDestinationPath = path.join(destinationFolder, `${finalNameWithoutExt} (${finalCounter})${finalExt}`);
+          finalCounter++;
         }
         
         // Copy the file
@@ -367,13 +418,15 @@ ipcMain.handle('copy-files-to-folder', async (event, { filePaths, destinationFol
         results.push({ 
           originalPath: filePath, 
           destinationPath: finalDestinationPath, 
-          success: true 
+          success: true,
+          skipped: false
         });
       } catch (error) {
         results.push({ 
           originalPath: filePath, 
           success: false, 
-          error: error.message 
+          error: error.message,
+          skipped: false
         });
       }
     }

@@ -478,12 +478,26 @@ export class PlaylistsPage {
             this.hideLoadingModal(loadingModal);
             
             if (result.success) {
-                const successfulCopies = result.results.filter(r => r.success).length;
+                const successfulCopies = result.results.filter(r => r.success && !r.skipped).length;
+                const skippedFiles = result.results.filter(r => r.skipped).length;
                 const failedCopies = result.results.filter(r => !r.success).length;
                 
-                let message = `Successfully copied ${successfulCopies} files to "${destinationFolder}"`;
+                let message = `Operation completed for "${destinationFolder}":\n\n`;
+                
+                if (successfulCopies > 0) {
+                    message += `✅ ${successfulCopies} new files copied\n`;
+                }
+                
+                if (skippedFiles > 0) {
+                    message += `⏭️ ${skippedFiles} files skipped (already exist)\n`;
+                }
+                
                 if (failedCopies > 0) {
-                    message += `\n${failedCopies} files failed to copy.`;
+                    message += `❌ ${failedCopies} files failed to copy\n`;
+                }
+                
+                if (successfulCopies === 0 && skippedFiles > 0) {
+                    message += `\nAll files already exist in the destination folder.`;
                 }
                 
                 alert(message);
