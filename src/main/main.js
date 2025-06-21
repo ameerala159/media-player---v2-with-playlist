@@ -334,3 +334,52 @@ ipcMain.handle('show-item-in-folder', async (event, filePath) => {
     return { success: false, error: error.message };
   }
 });
+
+// Handle copying files to a new folder
+ipcMain.handle('copy-files-to-folder', async (event, { filePaths, destinationFolder }) => {
+  try {
+    const fs = require('fs').promises;
+    const path = require('path');
+    
+    // Create destination folder if it doesn't exist
+    await fs.mkdir(destinationFolder, { recursive: true });
+    
+    const results = [];
+    
+    for (const filePath of filePaths) {
+      try {
+        const fileName = path.basename(filePath);
+        const destinationPath = path.join(destinationFolder, fileName);
+        
+        // Check if file already exists in destination
+        let finalDestinationPath = destinationPath;
+        let counter = 1;
+        
+        while (await fs.access(finalDestinationPath).then(() => true).catch(() => false)) {
+          const nameWithoutExt = path.parse(fileName).name;
+          const ext = path.parse(fileName).ext;
+          finalDestinationPath = path.join(destinationFolder, `${nameWithoutExt} (${counter})${ext}`);
+          counter++;
+        }
+        
+        // Copy the file
+        await fs.copyFile(filePath, finalDestinationPath);
+        results.push({ 
+          originalPath: filePath, 
+          destinationPath: finalDestinationPath, 
+          success: true 
+        });
+      } catch (error) {
+        results.push({ 
+          originalPath: filePath, 
+          success: false, 
+          error: error.message 
+        });
+      }
+    }
+    
+    return { success: true, results };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});

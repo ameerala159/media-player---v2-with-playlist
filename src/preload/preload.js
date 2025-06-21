@@ -24,6 +24,7 @@ contextBridge.exposeInMainWorld(
     setMiniPlayerSize: (isMini) => ipcRenderer.send('set-mini-player-size', isMini),
     deleteFile: (filePath) => ipcRenderer.invoke('delete-file', filePath),
     renameFile: (oldPath, newPath) => ipcRenderer.invoke('rename-file', { oldPath, newPath }),
-    showItemInFolder: (filePath) => ipcRenderer.invoke('show-item-in-folder', filePath)
+    showItemInFolder: (filePath) => ipcRenderer.invoke('show-item-in-folder', filePath),
+    copyFilesToFolder: (filePaths, destinationFolder) => ipcRenderer.invoke('copy-files-to-folder', { filePaths, destinationFolder })
   }
 );

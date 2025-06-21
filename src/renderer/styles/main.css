@@ -2508,39 +2508,43 @@ body[data-theme="dark"] .track-details-content {
     transform: translateY(-2px);
 }
 
+/* Light mode: All buttons have consistent styling */
 .playlist-contents-actions .play-all-btn,
 .playlist-contents-actions .shuffle-btn,
-.playlist-contents-actions .export-m3u-btn {
+.playlist-contents-actions .export-m3u-btn,
+.playlist-contents-actions .copy-to-folder-btn {
     background-color: var(--background-color);
     color: var(--text-color);
-    border: 1px solid var(--primary-color);
+    border: 1px solid var(--border-color);
 }
 
 .playlist-contents-actions .play-all-btn i,
 .playlist-contents-actions .shuffle-btn i,
-.playlist-contents-actions .export-m3u-btn i {
+.playlist-contents-actions .export-m3u-btn i,
+.playlist-contents-actions .copy-to-folder-btn i {
     color: var(--primary-color);
 }
 
 .playlist-contents-actions .play-all-btn:hover,
 .playlist-contents-actions .shuffle-btn:hover,
-.playlist-contents-actions .export-m3u-btn:hover {
-    background-color: var(--primary-light);
-    color: black;
-    transform: translateY(-2px);
+.playlist-contents-actions .export-m3u-btn:hover,
+.playlist-contents-actions .copy-to-folder-btn:hover {
+    background-color: var(--hover-color);
     border-color: var(--primary-color);
+    transform: translateY(-2px);
 }
 
 .playlist-contents-actions .play-all-btn:hover i,
 .playlist-contents-actions .shuffle-btn:hover i,
-.playlist-contents-actions .export-m3u-btn:hover i {
-    color: black;
+.playlist-contents-actions .export-m3u-btn:hover i,
+.playlist-contents-actions .copy-to-folder-btn:hover i {
+    color: var(--primary-color);
 }
 
 .playlist-contents-actions .remove-all-btn {
     background-color: var(--danger-color);
     color: white;
-    border: none;
+    border: 1px solid var(--danger-color);
 }
 
 .playlist-contents-actions .remove-all-btn i {
@@ -2549,36 +2553,8 @@ body[data-theme="dark"] .track-details-content {
 
 .playlist-contents-actions .remove-all-btn:hover {
     background-color: var(--danger-hover);
+    border-color: var(--danger-hover);
     transform: translateY(-2px);
-    border: none;
-}
-
-/* Dark mode specific overrides */
-body[data-theme="dark"] .playlist-contents-actions .play-all-btn,
-body[data-theme="dark"] .playlist-contents-actions .shuffle-btn,
-body[data-theme="dark"] .playlist-contents-actions .export-m3u-btn {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-}
-
-body[data-theme="dark"] .playlist-contents-actions .play-all-btn i,
-body[data-theme="dark"] .playlist-contents-actions .shuffle-btn i,
-body[data-theme="dark"] .playlist-contents-actions .export-m3u-btn i {
-    color: white;
-}
-
-body[data-theme="dark"] .playlist-contents-actions .play-all-btn:hover,
-body[data-theme="dark"] .playlist-contents-actions .shuffle-btn:hover,
-body[data-theme="dark"] .playlist-contents-actions .export-m3u-btn:hover {
-    background-color: var(--primary-hover);
-    color: white;
-}
-
-body[data-theme="dark"] .playlist-contents-actions .play-all-btn:hover i,
-body[data-theme="dark"] .playlist-contents-actions .shuffle-btn:hover i,
-body[data-theme="dark"] .playlist-contents-actions .export-m3u-btn:hover i {
-    color: white;
 }
 
 .playlist-contents-header .playlist-contents-actions button:hover {
@@ -2593,21 +2569,24 @@ body[data-theme="dark"] .playlist-contents-actions .export-m3u-btn:hover i {
 
 .playlist-contents-header .play-all-btn,
 .playlist-contents-header .shuffle-btn,
-.playlist-contents-header .export-m3u-btn {
+.playlist-contents-header .export-m3u-btn,
+.playlist-contents-header .copy-to-folder-btn {
     background-color: var(--primary-light);
     border-color: var(--primary-color);
 }
 
 .playlist-contents-header .play-all-btn:hover,
 .playlist-contents-header .shuffle-btn:hover,
-.playlist-contents-header .export-m3u-btn:hover {
+.playlist-contents-header .export-m3u-btn:hover,
+.playlist-contents-header .copy-to-folder-btn:hover {
     background-color: var(--primary-color);
     color: white;
 }
 
 .playlist-contents-header .play-all-btn:hover i,
 .playlist-contents-header .shuffle-btn:hover i,
-.playlist-contents-header .export-m3u-btn:hover i {
+.playlist-contents-header .export-m3u-btn:hover i,
+.playlist-contents-header .copy-to-folder-btn:hover i {
     color: white;
 }
 
@@ -4930,4 +4909,114 @@ body[data-theme="dark"] #eqPresetSelect option {
         gap: 8px;
         margin-bottom: 12px;
     }
+}
+
+@media (max-width: 768px) {
+    .eq-preset-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+/* Loading Modal Styles */
+.loading-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--modal-overlay);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.loading-modal.show {
+    opacity: 1;
+}
+
+.loading-content {
+    background-color: var(--background-color);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px var(--shadow-color-darker);
+    text-align: center;
+    min-width: 200px;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border-color);
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 15px;
+}
+
+.loading-content p {
+    margin: 0;
+    color: var(--text-color);
+    font-size: var(--font-size-medium);
+}
+
+body[data-theme="dark"] .loading-content {
+    background-color: #2d2d2d;
+    color: #ffffff;
+}
+
+body[data-theme="dark"] .loading-content p {
+    color: #ffffff;
+}
+
+body[data-theme="dark"] .loading-spinner {
+    border-color: #444;
+    border-top-color: var(--primary-color);
+}
+
+/* Dark mode specific overrides */
+body[data-theme="dark"] .playlist-contents-actions .play-all-btn,
+body[data-theme="dark"] .playlist-contents-actions .shuffle-btn,
+body[data-theme="dark"] .playlist-contents-actions .export-m3u-btn,
+body[data-theme="dark"] .playlist-contents-actions .copy-to-folder-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: 1px solid var(--primary-color);
+}
+
+body[data-theme="dark"] .playlist-contents-actions .play-all-btn i,
+body[data-theme="dark"] .playlist-contents-actions .shuffle-btn i,
+body[data-theme="dark"] .playlist-contents-actions .export-m3u-btn i,
+body[data-theme="dark"] .playlist-contents-actions .copy-to-folder-btn i {
+    color: white;
+}
+
+body[data-theme="dark"] .playlist-contents-actions .play-all-btn:hover,
+body[data-theme="dark"] .playlist-contents-actions .shuffle-btn:hover,
+body[data-theme="dark"] .playlist-contents-actions .export-m3u-btn:hover,
+body[data-theme="dark"] .playlist-contents-actions .copy-to-folder-btn:hover {
+    background-color: var(--primary-hover);
+    color: white;
+    border-color: var(--primary-hover);
+}
+
+body[data-theme="dark"] .playlist-contents-actions .play-all-btn:hover i,
+body[data-theme="dark"] .playlist-contents-actions .shuffle-btn:hover i,
+body[data-theme="dark"] .playlist-contents-actions .export-m3u-btn:hover i,
+body[data-theme="dark"] .playlist-contents-actions .copy-to-folder-btn:hover i {
+    color: white;
+}
+
+body[data-theme="dark"] .playlist-contents-actions .remove-all-btn {
+    background-color: var(--danger-color);
+    color: white;
+    border: 1px solid var(--danger-color);
+}
+
+body[data-theme="dark"] .playlist-contents-actions .remove-all-btn:hover {
+    background-color: var(--danger-hover);
+    border-color: var(--danger-hover);
 }

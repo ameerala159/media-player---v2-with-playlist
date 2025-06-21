@@ -95,6 +95,10 @@ export class PlaylistsPage {
                             <i class="fas fa-file-export"></i>
                             Export M3U
                         </button>
+                        <button class="copy-to-folder-btn">
+                            <i class="fas fa-folder-plus"></i>
+                            Copy to Folder
+                        </button>
                         <button class="remove-all-btn">
                             <i class="fas fa-trash"></i>
                             Remove All
@@ -168,6 +172,11 @@ export class PlaylistsPage {
         const exportM3UBtn = modal.querySelector('.export-m3u-btn');
         if (exportM3UBtn) {
             exportM3UBtn.addEventListener('click', () => this.exportAsM3U(playlist));
+        }
+
+        const copyToFolderBtn = modal.querySelector('.copy-to-folder-btn');
+        if (copyToFolderBtn) {
+            copyToFolderBtn.addEventListener('click', () => this.copyPlaylistToFolder(playlist));
         }
 
         const removeAllBtn = modal.querySelector('.remove-all-btn');
@@ -440,5 +449,72 @@ export class PlaylistsPage {
         a.click();
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
+    }
+
+    async copyPlaylistToFolder(playlist) {
+        if (playlist.tracks.length === 0) {
+            alert('This playlist is empty. Add some tracks first.');
+            return;
+        }
+
+        try {
+            // Get file paths from tracks
+            const filePaths = playlist.tracks.map(track => track.path);
+            
+            // Show folder selection dialog
+            const destinationFolder = await window.api.selectFolder();
+            
+            if (!destinationFolder) {
+                return; // User cancelled
+            }
+
+            // Show loading indicator
+            const loadingModal = this.showLoadingModal(`Copying ${playlist.tracks.length} files...`);
+            
+            // Copy files to the selected folder
+            const result = await window.api.copyFilesToFolder(filePaths, destinationFolder);
+            
+            // Hide loading modal
+            this.hideLoadingModal(loadingModal);
+            
+            if (result.success) {
+                const successfulCopies = result.results.filter(r => r.success).length;
+                const failedCopies = result.results.filter(r => !r.success).length;
+                
+                let message = `Successfully copied ${successfulCopies} files to "${destinationFolder}"`;
+                if (failedCopies > 0) {
+                    message += `\n${failedCopies} files failed to copy.`;
+                }
+                
+                alert(message);
+            } else {
+                alert(`Error copying files: ${result.error}`);
+            }
+        } catch (error) {
+            console.error('Error copying playlist to folder:', error);
+            alert(`Error copying files: ${error.message}`);
+        }
+    }
+
+    showLoadingModal(message) {
+        const modal = document.createElement('div');
+        modal.className = 'loading-modal';
+        modal.innerHTML = `
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <p>${message}</p>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+        requestAnimationFrame(() => modal.classList.add('show'));
+        return modal;
+    }
+
+    hideLoadingModal(modal) {
+        if (modal) {
+            modal.classList.remove('show');
+            setTimeout(() => modal.remove(), 300);
+        }
     }
 } 
