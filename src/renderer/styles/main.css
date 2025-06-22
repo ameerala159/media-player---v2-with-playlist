@@ -2504,8 +2504,12 @@ body[data-theme="dark"] .track-details-content {
 
 .playlist-contents-actions button:hover {
     background-color: var(--hover-color);
-    border-color: var(--primary-color);
-    transform: translateY(-2px);
+    color: var(--primary-color);
+}
+
+body:not([data-theme="dark"]) .playlist-contents-actions button:hover {
+    background-color: var(--hover-color);
+    color: var(--primary-color);
 }
 
 /* Light mode: All buttons have consistent styling */
@@ -2525,20 +2529,20 @@ body[data-theme="dark"] .track-details-content {
     color: var(--primary-color);
 }
 
-.playlist-contents-actions .play-all-btn:hover,
-.playlist-contents-actions .shuffle-btn:hover,
-.playlist-contents-actions .export-m3u-btn:hover,
-.playlist-contents-actions .copy-to-folder-btn:hover {
-    background-color: var(--hover-color);
-    border-color: var(--primary-color);
-    transform: translateY(-2px);
+body:not([data-theme="dark"]) .playlist-contents-actions .play-all-btn:hover,
+body:not([data-theme="dark"]) .playlist-contents-actions .shuffle-btn:hover,
+body:not([data-theme="dark"]) .playlist-contents-actions .export-m3u-btn:hover,
+body:not([data-theme="dark"]) .playlist-contents-actions .copy-to-folder-btn:hover {
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+    border-color: var(--primary-light);
 }
 
-.playlist-contents-actions .play-all-btn:hover i,
-.playlist-contents-actions .shuffle-btn:hover i,
-.playlist-contents-actions .export-m3u-btn:hover i,
-.playlist-contents-actions .copy-to-folder-btn:hover i {
-    color: var(--primary-color);
+body:not([data-theme="dark"]) .playlist-contents-actions .play-all-btn:hover i,
+body:not([data-theme="dark"]) .playlist-contents-actions .shuffle-btn:hover i,
+body:not([data-theme="dark"]) .playlist-contents-actions .export-m3u-btn:hover i,
+body:not([data-theme="dark"]) .playlist-contents-actions .copy-to-folder-btn:hover i {
+    color: var(--primary-dark);
 }
 
 .playlist-contents-actions .remove-all-btn {
@@ -5137,4 +5141,44 @@ body[data-theme="dark"] .back-button {
 
 body[data-theme="dark"] .back-button:hover {
     background-color: var(--primary-color);
+}
+
+.playlist-contents-actions .play-all-btn:hover,
+.playlist-contents-actions .shuffle-btn:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+}
+
+.playlist-contents-actions .export-m3u-btn,
+.playlist-contents-actions .copy-to-folder-btn {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+.playlist-contents-actions .export-m3u-btn i,
+.playlist-contents-actions .copy-to-folder-btn i {
+    color: var(--primary-color);
+}
+
+.playlist-contents-actions .export-m3u-btn:hover i,
+.playlist-contents-actions .copy-to-folder-btn:hover i {
+    color: var(--primary-color);
+}
+
+body:not([data-theme="dark"]) .playlist-contents-actions .export-m3u-btn:hover,
+body:not([data-theme="dark"]) .playlist-contents-actions .copy-to-folder-btn:hover {
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+    border-color: var(--primary-light);
+}
+
+body:not([data-theme="dark"]) .playlist-contents-actions .export-m3u-btn:hover i,
+body:not([data-theme="dark"]) .playlist-contents-actions .copy-to-folder-btn:hover i {
+    color: var(--primary-dark);
+}
+
+.playlist-contents-actions .remove-all-btn {
+    background-color: var(--danger-color);
+    color: white;
 }
