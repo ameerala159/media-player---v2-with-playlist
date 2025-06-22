@@ -275,6 +275,7 @@ ipcMain.on('set-mini-player-size', (event, isMini) => {
     } else {
       mainWindow.setSize(1200, 800);
       mainWindow.setResizable(true);
+      mainWindow.center();
     }
   }
 });
