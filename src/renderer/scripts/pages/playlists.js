@@ -579,35 +579,20 @@ export class PlaylistsPage {
 
         document.body.appendChild(dropdown);
         
-        // Position and show the dropdown
-        requestAnimationFrame(() => {
-            const rect = buttonElement.getBoundingClientRect();
-            dropdown.style.position = 'fixed';
-            
-            const spaceBelow = window.innerHeight - rect.bottom;
-            const dropdownHeight = dropdown.offsetHeight;
-            
-            if (spaceBelow < dropdownHeight && rect.top > dropdownHeight) {
-                dropdown.style.top = `${rect.top - dropdownHeight - 5}px`;
-            } else {
-                dropdown.style.top = `${rect.bottom + 5}px`;
-            }
-            
-            dropdown.style.left = `${rect.right - dropdown.offsetWidth}px`;
-            
-            if (parseFloat(dropdown.style.left) < 0) {
-                dropdown.style.left = '0px';
-            }
-            dropdown.classList.add('show');
-        });
+        const rect = buttonElement.getBoundingClientRect();
+        dropdown.style.position = 'fixed';
+        dropdown.style.top = `${rect.bottom}px`;
+        dropdown.style.left = `${rect.left}px`;
 
-        // Click outside to close
+        requestAnimationFrame(() => dropdown.classList.add('show'));
+
         const clickOutsideHandler = (e) => {
-            if (!dropdown.contains(e.target) && dropdown.classList.contains('show')) {
+            if (!dropdown.contains(e.target) && e.target !== buttonElement) {
                 dropdown.remove();
-                document.removeEventListener('click', clickOutsideHandler, true);
+                document.removeEventListener('click', clickOutsideHandler);
             }
         };
-        document.addEventListener('click', clickOutsideHandler, true);
+        
+        setTimeout(() => document.addEventListener('click', clickOutsideHandler), 0);
     }
 } 

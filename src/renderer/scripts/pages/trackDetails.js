@@ -51,7 +51,7 @@ export class TrackDetails {
         this.removeRatingBtn.addEventListener('click', () => this.removeRating());
 
         // Add to playlist button
-        this.addToPlaylistBtn.addEventListener('click', () => this.showAddToPlaylistModal());
+        this.addToPlaylistBtn.addEventListener('click', () => this.showPlaylistDropdown());
 
         // Delete button
         if (this.deleteBtn) {
@@ -216,73 +216,9 @@ export class TrackDetails {
         });
     }
 
-    // Show add to playlist modal
-    showAddToPlaylistModal() {
-        const playlists = JSON.parse(localStorage.getItem('playlists') || '[]');
-        
-        if (playlists.length === 0) {
-            alert('No playlists available. Please create a playlist first.');
-            return;
-        }
-
-        const modal = document.createElement('div');
-        modal.className = 'add-to-playlist-modal';
-        modal.innerHTML = `
-            <div class="add-to-playlist-content">
-                <h3>Add to Playlist</h3>
-                <div class="playlist-list">
-                    ${playlists.map((playlist, index) => `
-                        <div class="playlist-item" data-index="${index}">
-                            <span class="playlist-name">${playlist.name}</span>
-                            <span class="track-count">${playlist.tracks.length} tracks</span>
-                        </div>
-                    `).join('')}
-                </div>
-                <div class="add-to-playlist-actions">
-                    <button class="cancel-btn">Cancel</button>
-                </div>
-            </div>
-        `;
-
-        document.body.appendChild(modal);
-        requestAnimationFrame(() => modal.classList.add('show'));
-
-        // Add click handlers for playlist items
-        const playlistItems = modal.querySelectorAll('.playlist-item');
-        playlistItems.forEach(item => {
-            item.addEventListener('click', () => {
-                const playlistIndex = parseInt(item.dataset.index);
-                this.addTrackToPlaylist(playlistIndex);
-                this.closeAddToPlaylistModal(modal);
-            });
-        });
-
-        // Add click handler for cancel button
-        const cancelBtn = modal.querySelector('.cancel-btn');
-        cancelBtn.addEventListener('click', () => this.closeAddToPlaylistModal(modal));
-    }
-
-    // Close add to playlist modal
-    closeAddToPlaylistModal(modal) {
-        modal.classList.remove('show');
-        setTimeout(() => modal.remove(), 300);
-    }
-
-    // Add track to playlist
-    addTrackToPlaylist(playlistIndex) {
+    showPlaylistDropdown() {
         if (this.currentTrack) {
-            const playlists = JSON.parse(localStorage.getItem('playlists') || '[]');
-            const playlist = playlists[playlistIndex];
-            
-            if (playlist && !playlist.tracks.some(t => t.path === this.currentTrack.path)) {
-                playlist.tracks.push(this.currentTrack);
-                localStorage.setItem('playlists', JSON.stringify(playlists));
-                
-                // Dispatch event for playlist update
-                window.dispatchEvent(new CustomEvent('playlistUpdated', {
-                    detail: { playlistIndex, track: this.currentTrack }
-                }));
-            }
+            window.playlistsPage.showPlaylistDropdown(this.currentTrack, this.addToPlaylistBtn);
         }
     }
 
@@ -344,7 +280,7 @@ export class TrackDetails {
             }
 
             const currentPath = this.currentTrack.path;
-            const newPath = currentPath.replace(/[/\\][^/\\]+$/, '/' + newName);
+            const newPath = currentPath.replace(/[/\\\\][^/\\\\]+$/, '/' + newName);
             
             const result = await window.api.renameFile(currentPath, newPath);
             if (result.success) {
