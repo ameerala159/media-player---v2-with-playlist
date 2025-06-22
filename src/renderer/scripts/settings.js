@@ -11,7 +11,9 @@ class SettingsManager {
             themeColor: '#1db954', // Default theme color
             shuffle: false, // Add shuffle setting
             miniPlayerMode: false, // Add mini player mode setting
-            playbackSpeed: 1.0 // Add playback speed setting
+            playbackSpeed: 1.0, // Add playback speed setting
+            eqPreset: 'flat', // Add equalizer preset setting
+            eqBands: [0, 0, 0, 0, 0, 0] // Add equalizer custom bands
         };
         
         this.init();
@@ -77,7 +79,9 @@ class SettingsManager {
                     themeColor: parsedSettings.themeColor ?? '#1db954',
                     shuffle: parsedSettings.shuffle ?? false,
                     miniPlayerMode: parsedSettings.miniPlayerMode ?? false,
-                    playbackSpeed: parsedSettings.playbackSpeed ?? 1.0
+                    playbackSpeed: parsedSettings.playbackSpeed ?? 1.0,
+                    eqPreset: parsedSettings.eqPreset ?? 'flat',
+                    eqBands: parsedSettings.eqBands ?? [0, 0, 0, 0, 0, 0]
                 };
             }
         } catch (error) {

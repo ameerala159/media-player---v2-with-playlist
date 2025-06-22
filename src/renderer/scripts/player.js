@@ -843,23 +843,25 @@ export class Player {
             this.sourceNode.connect(this.eqFilters[0]);
             this.eqFilters[this.eqFilters.length - 1].connect(this.audioContext.destination);
         }
-        // Preset dropdown logic
+
+        // Load saved preset from settings
+        const savedPreset = window.settingsManager.settings.eqPreset;
         const presetSelect = document.getElementById('eqPresetSelect');
+        if (presetSelect && savedPreset) {
+            presetSelect.value = savedPreset;
+            this.applyEqPreset(savedPreset);
+        }
+        
+        // Preset dropdown logic
         if (presetSelect) {
             presetSelect.addEventListener('change', () => {
                 const preset = presetSelect.value;
                 if (preset !== 'custom' && this.eqPresets[preset]) {
-                    this.eqSliderIds.forEach((id, i) => {
-                        const slider = document.getElementById(id);
-                        const valueLabel = document.getElementById(this.eqValueIds[i]);
-                        if (slider && valueLabel) {
-                            const gain = this.eqPresets[preset][i];
-                            slider.value = gain;
-                            this.eqFilters[i].gain.value = gain;
-                            valueLabel.textContent = `${gain} dB`;
-                        }
-                    });
+                    this.applyEqPreset(preset);
                 }
+                // Save the preset to settings
+                window.settingsManager.settings.eqPreset = preset;
+                window.settingsManager.saveSettings();
             });
         }
         // Wire up sliders and reset buttons
@@ -874,9 +876,14 @@ export class Player {
                     valueLabel.textContent = `${gain} dB`;
                     // If user moves a slider, set preset to custom
                     const presetSelect = document.getElementById('eqPresetSelect');
-                    if (presetSelect && presetSelect.value !== 'custom') {
+                    if (presetSelect) {
                         presetSelect.value = 'custom';
+                        window.settingsManager.settings.eqPreset = 'custom';
                     }
+                    // Save custom band values
+                    const bandValues = this.eqSliderIds.map(id => parseInt(document.getElementById(id).value, 10));
+                    window.settingsManager.settings.eqBands = bandValues;
+                    window.settingsManager.saveSettings();
                 });
                 // Double-click on slider resets to 0
                 slider.addEventListener('dblclick', () => {
@@ -885,9 +892,14 @@ export class Player {
                     valueLabel.textContent = `0 dB`;
                     // If user resets, set preset to custom
                     const presetSelect = document.getElementById('eqPresetSelect');
-                    if (presetSelect && presetSelect.value !== 'custom') {
+                    if (presetSelect) {
                         presetSelect.value = 'custom';
+                        window.settingsManager.settings.eqPreset = 'custom';
                     }
+                    // Save custom band values
+                    const bandValues = this.eqSliderIds.map(id => parseInt(document.getElementById(id).value, 10));
+                    window.settingsManager.settings.eqBands = bandValues;
+                    window.settingsManager.saveSettings();
                 });
                 // Set initial value
                 valueLabel.textContent = `${slider.value} dB`;
@@ -899,10 +911,36 @@ export class Player {
                     valueLabel.textContent = `0 dB`;
                     // If user resets, set preset to custom
                     const presetSelect = document.getElementById('eqPresetSelect');
-                    if (presetSelect && presetSelect.value !== 'custom') {
+                    if (presetSelect) {
                         presetSelect.value = 'custom';
+                        window.settingsManager.settings.eqPreset = 'custom';
                     }
+                    // Save custom band values
+                    const bandValues = this.eqSliderIds.map(id => parseInt(document.getElementById(id).value, 10));
+                    window.settingsManager.settings.eqBands = bandValues;
+                    window.settingsManager.saveSettings();
                 });
+            }
+        });
+    }
+
+    applyEqPreset(preset) {
+        if (!this.eqPresets[preset]) return;
+        
+        const values = (preset === 'custom')
+            ? window.settingsManager.settings.eqBands
+            : this.eqPresets[preset];
+
+        this.eqSliderIds.forEach((id, i) => {
+            const slider = document.getElementById(id);
+            const valueLabel = document.getElementById(this.eqValueIds[i]);
+            if (slider && valueLabel) {
+                const gain = values[i];
+                slider.value = gain;
+                if (this.eqFilters[i]) {
+                    this.eqFilters[i].gain.value = gain;
+                }
+                valueLabel.textContent = `${gain} dB`;
             }
         });
     }
