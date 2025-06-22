@@ -509,10 +509,13 @@
                     </button>
                     <div class="volume-dropdown" id="volumeDropdown">
                         <div class="volume-slider-container">
-                            <input type="range" id="volumeSlider" class="volume-slider" min="0" max="125" value="100">
+                            <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="100">
                         </div>
                     </div>
                 </div>
+                <button class="control-btn" id="lyricsBtn" title="Show Lyrics">
+                    <i class="fas fa-file-audio"></i>
+                </button>
             </div>
 
             <div class="sleep-timer-remaining-notification" id="sleepTimerRemainingNotification" style="display: none;">
@@ -526,6 +529,50 @@
                     <div class="progress"></div>
                 </div>
                 <span class="total-time">0:00</span>
+            </div>
+        </div>
+        
+        <!-- Lyrics Modals -->
+        <div id="lyrics-modal-backdrop" class="modal-backdrop" style="display: none;"></div>
+        
+        <div id="add-lyrics-modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Add Lyrics</h3>
+                    <button id="close-add-lyrics-modal" class="close-modal-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>No lyrics found for this track. Add them below.</p>
+                    <textarea id="lyrics-textarea" placeholder="Paste lyrics here..."></textarea>
+                    <div class="lyrics-upload-container">
+                        <span>or</span>
+                        <label for="lyrics-file-input" class="file-upload-label">
+                            <i class="fas fa-upload"></i> Upload a .txt or .lrc file
+                        </label>
+                        <input type="file" id="lyrics-file-input" accept=".txt,.lrc" style="display: none;">
+                        <span id="lyrics-file-name"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="save-lyrics-btn" class="modal-button primary">Save Lyrics</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-lyrics-modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Lyrics</h3>
+                    <button id="close-view-lyrics-modal" class="close-modal-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div id="lyrics-display" class="lyrics-display-area"></div>
+                </div>
+                <div class="modal-footer">
+                    <span class="lyrics-zoom-tip">Use Ctrl + Scroll or pinch to zoom</span>
+                    <button id="edit-lyrics-btn" class="modal-button secondary">Edit</button>
+                    <button id="delete-lyrics-btn" class="modal-button danger">Delete</button>
+                </div>
             </div>
         </div>
         

@@ -29,6 +29,21 @@ export class Player {
         this.miniCurrentTime = document.querySelector('.mini-current-time');
         this.miniTotalTime = document.querySelector('.mini-total-time');
 
+        // Lyrics elements
+        this.lyricsBtn = document.getElementById('lyricsBtn');
+        this.lyricsModalBackdrop = document.getElementById('lyrics-modal-backdrop');
+        this.addLyricsModal = document.getElementById('add-lyrics-modal');
+        this.viewLyricsModal = document.getElementById('view-lyrics-modal');
+        this.closeAddLyricsModalBtn = document.getElementById('close-add-lyrics-modal');
+        this.closeViewLyricsModalBtn = document.getElementById('close-view-lyrics-modal');
+        this.lyricsTextarea = document.getElementById('lyrics-textarea');
+        this.lyricsFileInput = document.getElementById('lyrics-file-input');
+        this.lyricsFileName = document.getElementById('lyrics-file-name');
+        this.saveLyricsBtn = document.getElementById('save-lyrics-btn');
+        this.lyricsDisplay = document.getElementById('lyrics-display');
+        this.editLyricsBtn = document.getElementById('edit-lyrics-btn');
+        this.deleteLyricsBtn = document.getElementById('delete-lyrics-btn');
+
         this.isPlaying = false;
         this.currentTrackIndex = -1;
         this.audioPlayer = new Audio();
@@ -242,6 +257,11 @@ export class Player {
                     this.sleepTimerDropdown.classList.remove('show');
                 }
             });
+        }
+
+        // Lyrics button listener
+        if (this.lyricsBtn) {
+            this.lyricsBtn.addEventListener('click', () => this.handleLyricsClick());
         }
     }
 
@@ -943,5 +963,140 @@ export class Player {
                 valueLabel.textContent = `${gain} dB`;
             }
         });
+    }
+
+    // --- Lyrics Methods ---
+
+    handleLyricsClick() {
+        if (this.currentTrackIndex === -1) {
+            // Optional: show a notification that no track is playing
+            return;
+        }
+        const currentTrack = this.currentPlaylist[this.currentTrackIndex];
+        const lyrics = this.getLyrics(currentTrack.path);
+
+        if (lyrics) {
+            this.showViewLyricsModal(lyrics);
+        } else {
+            this.showAddLyricsModal();
+        }
+    }
+
+    getLyrics(trackPath) {
+        const allLyrics = JSON.parse(localStorage.getItem('trackLyrics') || '{}');
+        return allLyrics[trackPath];
+    }
+
+    saveLyrics(trackPath, lyrics) {
+        const allLyrics = JSON.parse(localStorage.getItem('trackLyrics') || '{}');
+        allLyrics[trackPath] = lyrics;
+        localStorage.setItem('trackLyrics', JSON.stringify(allLyrics));
+    }
+
+    deleteLyrics(trackPath) {
+        const allLyrics = JSON.parse(localStorage.getItem('trackLyrics') || '{}');
+        delete allLyrics[trackPath];
+        localStorage.setItem('trackLyrics', JSON.stringify(allLyrics));
+    }
+
+    showAddLyricsModal(existingLyrics = '') {
+        this.lyricsTextarea.value = existingLyrics;
+        this.lyricsFileInput.value = '';
+        this.lyricsFileName.textContent = '';
+        this.lyricsModalBackdrop.style.display = 'block';
+        this.addLyricsModal.style.display = 'block';
+        requestAnimationFrame(() => {
+            this.lyricsModalBackdrop.classList.add('show');
+            this.addLyricsModal.classList.add('show');
+        });
+
+        const close = () => {
+            this.addLyricsModal.classList.remove('show');
+            this.lyricsModalBackdrop.classList.remove('show');
+            setTimeout(() => {
+                this.addLyricsModal.style.display = 'none';
+                this.lyricsModalBackdrop.style.display = 'none';
+            }, 300);
+        };
+        
+        this.closeAddLyricsModalBtn.onclick = close;
+        this.lyricsModalBackdrop.onclick = close;
+
+        this.lyricsFileInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                this.lyricsFileName.textContent = file.name;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    this.lyricsTextarea.value = event.target.result;
+                };
+                reader.readAsText(file);
+            }
+        };
+
+        this.saveLyricsBtn.onclick = () => {
+            const lyrics = this.lyricsTextarea.value;
+            if (lyrics.trim()) {
+                const currentTrack = this.currentPlaylist[this.currentTrackIndex];
+                this.saveLyrics(currentTrack.path, lyrics);
+                close();
+            }
+        };
+    }
+
+    showViewLyricsModal(lyrics) {
+        this.lyricsDisplay.textContent = lyrics;
+        this.lyricsModalBackdrop.style.display = 'block';
+        this.viewLyricsModal.style.display = 'block';
+        
+        // Apply saved font size
+        let currentFontSize = window.settingsManager.settings.lyricsFontSize;
+        this.lyricsDisplay.style.fontSize = `${currentFontSize}px`;
+
+        requestAnimationFrame(() => {
+            this.viewLyricsModal.classList.add('show');
+        });
+
+        const close = () => {
+            this.viewLyricsModal.classList.remove('show');
+            this.lyricsModalBackdrop.classList.remove('show');
+            setTimeout(() => {
+                this.viewLyricsModal.style.display = 'none';
+                this.lyricsModalBackdrop.style.display = 'none';
+            }, 300);
+            this.lyricsDisplay.removeEventListener('wheel', handleWheel);
+        };
+
+        this.closeViewLyricsModalBtn.onclick = close;
+        this.lyricsModalBackdrop.onclick = close;
+
+        this.editLyricsBtn.onclick = () => {
+            close();
+            this.showAddLyricsModal(lyrics);
+        };
+
+        this.deleteLyricsBtn.onclick = () => {
+            if (confirm('Are you sure you want to delete the lyrics for this track?')) {
+                const currentTrack = this.currentPlaylist[this.currentTrackIndex];
+                this.deleteLyrics(currentTrack.path);
+                close();
+            }
+        };
+
+        // Handle font size adjustment with touchpad pinch
+        let initialPinchDistance = null;
+        
+        const handleWheel = (e) => {
+            if (e.ctrlKey) {
+                e.preventDefault();
+                currentFontSize -= e.deltaY * 0.1;
+                currentFontSize = Math.max(8, Math.min(48, currentFontSize));
+                this.lyricsDisplay.style.fontSize = `${currentFontSize}px`;
+                window.settingsManager.settings.lyricsFontSize = currentFontSize;
+                window.settingsManager.saveSettings();
+            }
+        };
+
+        this.lyricsDisplay.addEventListener('wheel', handleWheel, { passive: false });
     }
 } 

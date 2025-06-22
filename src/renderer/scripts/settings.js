@@ -13,7 +13,8 @@ class SettingsManager {
             miniPlayerMode: false, // Add mini player mode setting
             playbackSpeed: 1.0, // Add playback speed setting
             eqPreset: 'flat', // Add equalizer preset setting
-            eqBands: [0, 0, 0, 0, 0, 0] // Add equalizer custom bands
+            eqBands: [0, 0, 0, 0, 0, 0], // Add equalizer custom bands
+            lyricsFontSize: 14 // Add lyrics font size setting
         };
         
         this.init();
@@ -81,7 +82,8 @@ class SettingsManager {
                     miniPlayerMode: parsedSettings.miniPlayerMode ?? false,
                     playbackSpeed: parsedSettings.playbackSpeed ?? 1.0,
                     eqPreset: parsedSettings.eqPreset ?? 'flat',
-                    eqBands: parsedSettings.eqBands ?? [0, 0, 0, 0, 0, 0]
+                    eqBands: parsedSettings.eqBands ?? [0, 0, 0, 0, 0, 0],
+                    lyricsFontSize: parsedSettings.lyricsFontSize ?? 14
                 };
             }
         } catch (error) {
