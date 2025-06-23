@@ -1934,14 +1934,24 @@ html, body {
 
 .settings-section h3 {
     margin: 0 0 20px 0;
-    font-size: 1.3em;
-    color: var(--text-color);
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 10px;
-    font-weight: 600;
+    font-size: 1.45em;
+    color: var(--primary-color);
+    background: linear-gradient(90deg, var(--primary-light, #e8f5e9) 0%, var(--background-color) 100%);
+    border-bottom: 2px solid var(--primary-color);
+    padding: 18px 28px 12px 28px;
+    font-weight: 700;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    border-radius: 12px 12px 0 0;
+    letter-spacing: 0.01em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+body[data-theme="dark"] .settings-section h3 {
+    background: linear-gradient(90deg, #23272f 0%, var(--background-color) 100%);
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
 }
 
 .settings-section h3 i {
@@ -5287,9 +5297,45 @@ body:not([data-theme="dark"]) .playlist-contents-actions .copy-to-folder-btn:hov
 }
 
 .modal-footer {
-    padding: 16px 24px;
+    padding: 20px 32px;
     border-top: 1px solid var(--border-color);
-    text-align: right;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.lyrics-modal-actions {
+    display: flex;
+    gap: 14px;
+}
+
+.styled-zoom-tip {
+    background: var(--hover-color);
+    color: var(--text-muted);
+    font-size: 0.95em;
+    padding: 6px 14px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.modal-button.secondary, .modal-button.danger {
+    min-width: 90px;
+    font-size: 1em;
+    padding: 10px 22px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.modal-button.secondary:hover, .modal-button.danger:hover {
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
 }
 
 .modal-button.primary {
@@ -5331,8 +5377,19 @@ body:not([data-theme="dark"]) .playlist-contents-actions .copy-to-folder-btn:hov
     max-height: 60vh;
     overflow-y: auto;
     background-color: var(--hover-color);
-    padding: 20px;
+    padding: 28px 28px 28px 36px;
     border-radius: 8px;
+    font-size: 1.18em;
+    line-height: 2.1;
+    letter-spacing: 0.02em;
+    color: var(--text-color);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    transition: background 0.2s, color 0.2s;
+}
+
+body[data-theme="dark"] .lyrics-display-area {
+    background-color: #23272f;
+    color: #e0e0e0;
 }
 
 /* Dark Mode Styles for Modals */

@@ -247,6 +247,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 presetSelect.dispatchEvent(new Event('change'));
             }
         }
+
+        // Ctrl+S for lyrics
+        if (e.ctrlKey && e.key.toLowerCase() === 's') {
+            e.preventDefault();
+            if (window.player && typeof window.player.handleLyricsClick === 'function') {
+                window.player.handleLyricsClick();
+            }
+        }
     });
 
     // Listen for track details show event

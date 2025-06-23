@@ -569,9 +569,11 @@
                     <div id="lyrics-display" class="lyrics-display-area"></div>
                 </div>
                 <div class="modal-footer">
-                    <span class="lyrics-zoom-tip">Use Ctrl + Scroll or pinch to zoom</span>
-                    <button id="edit-lyrics-btn" class="modal-button secondary">Edit</button>
-                    <button id="delete-lyrics-btn" class="modal-button danger">Delete</button>
+                    <span class="lyrics-zoom-tip styled-zoom-tip"><i class="fas fa-magnifying-glass"></i> Use Ctrl + Scroll or pinch to zoom</span>
+                    <div class="lyrics-modal-actions">
+                        <button id="edit-lyrics-btn" class="modal-button secondary"><i class="fas fa-pen"></i> Edit</button>
+                        <button id="delete-lyrics-btn" class="modal-button danger"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -636,6 +638,10 @@
                     <div class="shortcut-item">
                         <span class="shortcut-key">→</span>
                         <span class="shortcut-description">Skip Forward</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <span class="shortcut-key">Ctrl + S</span>
+                        <span class="shortcut-description">Show Lyrics for Current Track</span>
                     </div>
                 </div>
                 <div class="shortcut-group">
