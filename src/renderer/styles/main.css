@@ -5313,7 +5313,7 @@ body:not([data-theme="dark"]) .playlist-contents-actions .copy-to-folder-btn:hov
 .styled-zoom-tip {
     background: var(--hover-color);
     color: var(--text-muted);
-    font-size: 0.95em;
+    font-size: 0.7em;
     padding: 6px 14px;
     border-radius: 16px;
     display: flex;
@@ -5343,32 +5343,51 @@ body:not([data-theme="dark"]) .playlist-contents-actions .copy-to-folder-btn:hov
     color: white;
     border: none;
     padding: 10px 20px;
-    border-radius: 6px;
+    border-radius: 50px;
     cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
 }
 
 .modal-button.primary:hover {
     background-color: var(--primary-hover);
+    color: white;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
 }
 
 .modal-button.secondary {
-    background-color: var(--hover-color);
-    color: var(--text-color);
-    border: 1px solid var(--border-color);
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    border-radius: 50px;
+    padding: 10px 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
 }
 
 .modal-button.secondary:hover {
-    background-color: var(--border-color);
+    background-color: var(--primary-hover);
+    color: white;
+    border-color: var(--primary-hover);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
 }
 
 .modal-button.danger {
     background-color: var(--danger-color);
     color: white;
     border: none;
+    border-radius: 50px;
+    padding: 10px 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
 }
 
 .modal-button.danger:hover {
     background-color: var(--danger-hover);
+    color: white;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
 }
 
 .lyrics-display-area {
@@ -5380,9 +5399,9 @@ body:not([data-theme="dark"]) .playlist-contents-actions .copy-to-folder-btn:hov
     padding: 28px 28px 28px 36px;
     border-radius: 8px;
     font-size: 1.18em;
-    line-height: 2.1;
+    line-height: 1.5;
     letter-spacing: 0.02em;
-    color: var(--text-color);
+    color: black;
     box-shadow: 0 2px 12px rgba(0,0,0,0.06);
     transition: background 0.2s, color 0.2s;
 }
