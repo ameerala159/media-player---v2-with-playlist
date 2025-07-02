@@ -5443,3 +5443,40 @@ body[data-theme="dark"] .lyrics-display-area {
     flex: 1;
     overflow-y: auto;
 }
+
+.loading-percentage {
+    margin-top: 8px;
+    font-size: 1.1em;
+    color: var(--primary-color);
+    font-weight: 500;
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+
+.song-count-info {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 90px;
+    z-index: 10;
+    background: rgba(255,255,255,0.85);
+    color: #222;
+    border-radius: 8px;
+    padding: 6px 16px;
+    font-size: 1em;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    transition: background 0.2s, color 0.2s;
+    pointer-events: none;
+}
+body[data-theme="dark"] .song-count-info {
+    background: rgba(34,34,34,0.85);
+    color: #f1f1f1;
+}
+@media (max-width: 768px) {
+    .song-count-info {
+        bottom: 140px;
+        font-size: 0.95em;
+        padding: 5px 10px;
+    }
+}

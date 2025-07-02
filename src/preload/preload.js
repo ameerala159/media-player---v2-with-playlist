@@ -26,6 +26,7 @@ contextBridge.exposeInMainWorld(
     deleteFile: (filePath) => ipcRenderer.invoke('delete-file', filePath),
     renameFile: (oldPath, newPath) => ipcRenderer.invoke('rename-file', { oldPath, newPath }),
     showItemInFolder: (filePath) => ipcRenderer.invoke('show-item-in-folder', filePath),
-    copyFilesToFolder: (filePaths, destinationFolder) => ipcRenderer.invoke('copy-files-to-folder', { filePaths, destinationFolder })
+    copyFilesToFolder: (filePaths, destinationFolder) => ipcRenderer.invoke('copy-files-to-folder', { filePaths, destinationFolder }),
+    receiveMusicLoadingProgress: (callback) => ipcRenderer.on('music-loading-progress', (event, percent) => callback(percent))
   }
 );

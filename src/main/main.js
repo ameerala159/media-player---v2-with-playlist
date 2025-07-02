@@ -198,31 +198,31 @@ ipcMain.handle('get-music-files', async (event, { path: folderPath, batchSize = 
 
         // Get total count for pagination
         const totalCount = musicFilesPaths.length;
-        
-        // Get batch of files
         const batchFiles = musicFilesPaths.slice(startIndex, startIndex + batchSize);
-        
-        // Process batch of files
-        const tracks = await Promise.all(batchFiles.map(async (filePath) => {
+        const tracks = [];
+        for (let i = 0; i < batchFiles.length; i++) {
+            const filePath = batchFiles[i];
             try {
                 const metadata = await musicMetadata.parseFile(filePath);
-                return {
+                tracks.push({
                     name: metadata.common.title || path.parse(filePath).name,
                     artist: metadata.common.artist || 'Unknown Artist',
                     duration: metadata.format.duration,
                     path: filePath
-                };
+                });
             } catch (error) {
                 console.error(`Error reading metadata for ${filePath}:`, error);
-                return {
+                tracks.push({
                     name: path.parse(filePath).name,
                     artist: 'Unknown Artist',
                     duration: 0,
                     path: filePath
-                };
+                });
             }
-        }));
-
+            // Send progress update
+            const percent = Math.round(((i + 1) / batchFiles.length) * 100);
+            event.sender.send('music-loading-progress', percent);
+        }
         return {
             tracks,
             totalCount,

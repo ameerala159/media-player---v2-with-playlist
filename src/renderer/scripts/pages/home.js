@@ -22,7 +22,26 @@ export class HomePage {
         this.customSortSelected = document.getElementById('customSortSelected');
         this.customSortOptions = document.getElementById('customSortOptions');
         this.customSortOptionEls = this.customSortOptions ? this.customSortOptions.querySelectorAll('.custom-dropdown-option') : [];
-        this.selectedSortValue = 'title';
+        this.selectedSortValue = null; // No default sort
+        this.fullTrackList = []; // Store all tracks for searching
+        // Set default sort dropdown label
+        if (this.customSortSelected) {
+            this.customSortSelected.innerHTML = '';
+            const defaultIcon = document.createElement('i');
+            defaultIcon.className = 'fas fa-sort';
+            this.customSortSelected.appendChild(defaultIcon);
+            this.customSortSelected.appendChild(document.createTextNode(' Sort'));
+        }
+        this.loadingPercentageEl = document.getElementById('loadingPercentage');
+        // Listen for loading progress
+        if (window.api && window.api.receiveMusicLoadingProgress) {
+            window.api.receiveMusicLoadingProgress((percent) => {
+                if (this.loadingPercentageEl) {
+                    this.loadingPercentageEl.textContent = percent + '%';
+                }
+            });
+        }
+        this.songCountInfoEl = document.getElementById('songCountInfo');
 
         // Initialize scroll handler
         this.initializeScrollHandler();
@@ -79,7 +98,7 @@ export class HomePage {
                     this.selectedSortValue = value;
                     this.customSortSelected.innerHTML = '';
                     this.customSortSelected.appendChild(icon);
-                    this.customSortSelected.appendChild(document.createTextNode(label));
+                    this.customSortSelected.appendChild(document.createTextNode(' ' + label));
                     this.customSortOptionEls.forEach(opt => opt.classList.remove('active'));
                     option.classList.add('active');
                     this.customSortDropdown.classList.remove('open');
@@ -139,7 +158,27 @@ export class HomePage {
     initializeScrollHandler() {
         this.musicList.addEventListener('scroll', () => {
             const { scrollTop, scrollHeight, clientHeight } = this.musicList;
-            if (scrollHeight - scrollTop <= clientHeight * 1.5 && !this.isLoading && this.hasMore) {
+            // Get the current filtered list length
+            const searchTerm = this.searchInput.value.toLowerCase();
+            let filteredTracks;
+            if (searchTerm) {
+                const matchingIndices = [];
+                this.searchIndex.forEach((text, index) => {
+                    if (text.includes(searchTerm)) {
+                        matchingIndices.push(index);
+                    }
+                });
+                filteredTracks = matchingIndices.map(index => this.fullTrackList[index]);
+            } else {
+                filteredTracks = [...this.fullTrackList];
+            }
+            // Only load more if there are more tracks to show
+            const tracksToDisplayCount = this.batchSize * (this.currentBatch + 1);
+            if (
+                scrollHeight - scrollTop <= clientHeight * 1.5 &&
+                !this.isLoading &&
+                tracksToDisplayCount < filteredTracks.length
+            ) {
                 this.loadMoreTracks();
             }
         });
@@ -147,25 +186,13 @@ export class HomePage {
 
     // Load more tracks when scrolling
     async loadMoreTracks() {
-        if (this.isLoading || !this.hasMore) return;
-        
+        if (this.isLoading || !this.fullTrackList.length) return;
         this.isLoading = true;
         this.showLoading();
-        
         try {
-            const result = await window.api.getMusicFiles({
-                path: this.currentFolderPath,
-                batchSize: this.batchSize,
-                startIndex: this.currentBatch * this.batchSize
-            });
-
-            if (result.tracks.length > 0) {
-                this.allTracks = [...this.allTracks, ...result.tracks];
-                this.hasMore = result.hasMore;
-                this.currentBatch++;
-                this.updateSearchIndex();
-                this.filterAndSortTracks();
-            }
+            this.currentBatch++;
+            this.filterAndSortTracks(); // This will show more tracks based on the new batch
+            this.updateSongCountInfo();
         } catch (error) {
             console.error('Error loading more tracks:', error);
         } finally {
@@ -198,22 +225,24 @@ export class HomePage {
         this.currentFolderPath = folderPath;
         this.currentBatch = 0;
         this.allTracks = [];
+        this.fullTrackList = [];
         this.musicList.innerHTML = '';
-        
         this.isLoading = true;
         this.showLoading();
-        
         try {
+            // Fetch ALL tracks at once for searching
             const result = await window.api.getMusicFiles({
                 path: folderPath,
-                batchSize: this.batchSize,
+                batchSize: Number.MAX_SAFE_INTEGER,
                 startIndex: 0
             });
-
-            this.allTracks = result.tracks;
-            this.hasMore = result.hasMore;
+            this.fullTrackList = result.tracks;
+            this.hasMore = false; // We'll handle batching in the UI only
+            // Load the first batch for display
+            this.allTracks = this.fullTrackList.slice(0, this.batchSize);
             this.updateSearchIndex();
             this.filterAndSortTracks();
+            this.updateSongCountInfo(this.allTracks.length);
         } catch (error) {
             console.error('Error loading music files:', error);
         } finally {
@@ -225,7 +254,8 @@ export class HomePage {
     // Update search index for fast searching
     updateSearchIndex() {
         this.searchIndex.clear();
-        this.allTracks.forEach((track, index) => {
+        // Use fullTrackList for search index
+        this.fullTrackList.forEach((track, index) => {
             const searchableText = `${track.name} ${track.artist}`.toLowerCase();
             this.searchIndex.set(index, searchableText);
         });
@@ -235,7 +265,6 @@ export class HomePage {
     filterAndSortTracks() {
         const searchTerm = this.searchInput.value.toLowerCase();
         let filteredTracks;
-
         // Fast filtering using search index
         if (searchTerm) {
             const matchingIndices = [];
@@ -244,13 +273,12 @@ export class HomePage {
                     matchingIndices.push(index);
                 }
             });
-            filteredTracks = matchingIndices.map(index => this.allTracks[index]);
+            filteredTracks = matchingIndices.map(index => this.fullTrackList[index]);
         } else {
             // When search is cleared, use all tracks
-            filteredTracks = [...this.allTracks];
+            filteredTracks = [...this.fullTrackList];
         }
-
-        // Optimized sorting
+        // Only sort if a sort value is selected
         switch (this.selectedSortValue) {
             case 'title':
                 filteredTracks.sort((a, b) => a.name.localeCompare(b.name));
@@ -269,10 +297,14 @@ export class HomePage {
                     return dateB - dateA;
                 });
                 break;
+            default:
+                // No sort, keep original order
+                break;
         }
-
-        // Update the music list with the filtered and sorted tracks
-        this.updateMusicList(filteredTracks);
+        // Only display the first batchSize tracks for performance
+        const tracksToDisplay = filteredTracks.slice(0, this.batchSize * (this.currentBatch + 1));
+        this.updateMusicList(tracksToDisplay);
+        this.updateSongCountInfo(tracksToDisplay.length);
     }
 
     // Show loading state
@@ -280,6 +312,9 @@ export class HomePage {
         this.loadingIndicator.style.display = 'flex';
         this.musicList.classList.add('loading');
         this.selectFolderBtn.disabled = true;
+        if (this.loadingPercentageEl) {
+            this.loadingPercentageEl.textContent = '0%';
+        }
     }
 
     // Hide loading state
@@ -287,6 +322,9 @@ export class HomePage {
         this.loadingIndicator.style.display = 'none';
         this.musicList.classList.remove('loading');
         this.selectFolderBtn.disabled = false;
+        if (this.loadingPercentageEl) {
+            this.loadingPercentageEl.textContent = '';
+        }
     }
 
     // Create music item element
@@ -679,5 +717,24 @@ export class HomePage {
                 }
             }
         });
+    }
+
+    // Call this after loading, filtering, and scrolling
+    updateSongCountInfo(loadedCount = null) {
+        if (!this.songCountInfoEl) return;
+        const total = this.fullTrackList.length;
+        let loaded = loadedCount;
+        if (loaded == null) {
+            // Default to currently displayed tracks
+            const musicItems = this.musicList.querySelectorAll('.music-item');
+            loaded = musicItems.length;
+        }
+        this.songCountInfoEl.textContent = `Loaded ${loaded} of ${total} songs`;
+        this.songCountInfoEl.style.opacity = '1';
+        // Hide after 3 seconds
+        if (this.songCountInfoTimeout) clearTimeout(this.songCountInfoTimeout);
+        this.songCountInfoTimeout = setTimeout(() => {
+            if (this.songCountInfoEl) this.songCountInfoEl.style.opacity = '0';
+        }, 3000);
     }
 } 
