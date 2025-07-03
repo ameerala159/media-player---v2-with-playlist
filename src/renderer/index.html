@@ -565,7 +565,10 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h3>Lyrics</h3>
-                    <button id="close-view-lyrics-modal" class="close-modal-btn">&times;</button>
+                    <div class="lyrics-modal-header-actions">
+                        <button id="fullscreen-lyrics-btn" class="modal-button fullscreen-btn" title="Fullscreen Lyrics"><i class="fas fa-expand"></i></button>
+                        <button id="close-view-lyrics-modal" class="close-modal-btn">&times;</button>
+                    </div>
                 </div>
                 <div class="modal-body">
                     <div id="lyrics-display" class="lyrics-display-area"></div>
@@ -577,6 +580,17 @@
                         <button id="delete-lyrics-btn" class="modal-button danger"><i class="fas fa-trash"></i> Delete</button>
                     </div>
                 </div>
+            </div>
+        </div>
+        
+        <!-- Fullscreen Lyrics Overlay -->
+        <div id="fullscreen-lyrics-overlay" style="display: none;">
+            <div class="fullscreen-lyrics-content">
+                <div class="fullscreen-lyrics-header">
+                    <button id="exit-fullscreen-lyrics-btn" class="modal-button fullscreen-exit-btn" title="Exit Fullscreen"><i class="fas fa-compress"></i></button>
+                    <button id="toggle-autoscroll-lyrics-btn" class="modal-button autoscroll-btn" title="Toggle Auto-Scroll"><i class="fas fa-scroll"></i> <span id="autoscroll-lyrics-label">Auto-Scroll Off</span></button>
+                </div>
+                <div id="fullscreen-lyrics-display" class="fullscreen-lyrics-display"></div>
             </div>
         </div>
         

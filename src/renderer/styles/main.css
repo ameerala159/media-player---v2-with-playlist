@@ -5480,3 +5480,195 @@ body[data-theme="dark"] .song-count-info {
         padding: 5px 10px;
     }
 }
+
+/* --- Fullscreen Lyrics Overlay --- */
+#fullscreen-lyrics-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 9999;
+    background: linear-gradient(135deg, #181818 60%, #1db954 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s;
+}
+.fullscreen-lyrics-content {
+    position: relative;
+    width: 90vw;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(24,24,24,0.95);
+    border-radius: 32px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    padding: 48px 32px 32px 32px;
+}
+#fullscreen-lyrics-display {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    color: #fff;
+    font-family: 'Poppins', 'Sora', 'Space Grotesk', 'Outfit', 'Lexend', 'Manrope', 'Work Sans', 'Rubik', 'Urbanist', 'Figtree', 'Onest', 'Switzer', 'Chillax', 'Satoshi', 'Gambarino', 'Bungee Shade', 'Monoton', 'Press Start 2P', sans-serif;
+    font-size: 2.8vw;
+    font-weight: 500;
+    text-align: center;
+    line-height: 1.5;
+    letter-spacing: 0.04em;
+    text-shadow: 0 2px 16px #1db954, 0 1px 0 #000, 0 0px 8px #000;
+    user-select: text;
+    padding: 0 2vw;
+    transition: font-size 0.2s;
+    word-break: break-word;
+}
+#exit-fullscreen-lyrics-btn {
+    position: absolute;
+    top: 18px;
+    right: 24px;
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    font-size: 1.6em;
+    cursor: pointer;
+    z-index: 10;
+    transition: background 0.2s;
+}
+#exit-fullscreen-lyrics-btn:hover {
+    background: #1db954;
+    color: #181818;
+}
+.fullscreen-btn {
+    background: none;
+    border: none;
+    color: #1db954;
+    font-size: 1.3em;
+    margin-right: 8px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.fullscreen-btn:hover {
+    color: #fff;
+}
+.fullscreen-lyrics-display::-webkit-scrollbar {
+    width: 8px;
+    background: #222;
+}
+.fullscreen-lyrics-display::-webkit-scrollbar-thumb {
+    background: #1db954;
+    border-radius: 4px;
+}
+
+/* Dark mode override for fullscreen lyrics overlay */
+body[data-theme="dark"] #fullscreen-lyrics-overlay {
+    background: linear-gradient(135deg, #181818 60%, #1db954 100%);
+}
+body[data-theme="dark"] .fullscreen-lyrics-content {
+    background: rgba(24,24,24,0.95);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+body[data-theme="dark"] #fullscreen-lyrics-display {
+    color: #fff;
+    text-shadow: 0 2px 16px #1db954, 0 1px 0 #000, 0 0px 8px #000;
+}
+body[data-theme="dark"] #exit-fullscreen-lyrics-btn {
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+}
+body[data-theme="dark"] #exit-fullscreen-lyrics-btn:hover {
+    background: #1db954;
+    color: #181818;
+}
+body[data-theme="dark"] .fullscreen-btn:hover {
+    color: #fff;
+}
+body[data-theme="dark"] .fullscreen-lyrics-display::-webkit-scrollbar {
+    background: #222;
+}
+body[data-theme="dark"] .fullscreen-lyrics-display::-webkit-scrollbar-thumb {
+    background: #1db954;
+}
+
+/* --- Fullscreen Lyrics Overlay (Light & Dark Mode) --- */
+#fullscreen-lyrics-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 9999;
+    background: linear-gradient(135deg, #f8fafc 60%, #1db954 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s;
+}
+.fullscreen-lyrics-content {
+    position: relative;
+    width: 90vw;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.97);
+    border-radius: 32px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+    padding: 48px 32px 32px 32px;
+}
+#fullscreen-lyrics-display {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    color: #181818;
+    font-family: 'Poppins', 'Sora', 'Space Grotesk', 'Outfit', 'Lexend', 'Manrope', 'Work Sans', 'Rubik', 'Urbanist', 'Figtree', 'Onest', 'Switzer', 'Chillax', 'Satoshi', 'Gambarino', 'Bungee Shade', 'Monoton', 'Press Start 2P', sans-serif;
+    font-size: 2.8vw;
+    font-weight: 500;
+    text-align: center;
+    line-height: 1.5;
+    letter-spacing: 0.04em;
+    text-shadow: 0 2px 16px #b2f5c5, 0 1px 0 #fff, 0 0px 8px #1db95422;
+    user-select: text;
+    padding: 0 2vw;
+    transition: font-size 0.2s, color 0.2s, background 0.2s;
+    word-break: break-word;
+}
+#exit-fullscreen-lyrics-btn {
+    position: absolute;
+    top: 18px;
+    right: 24px;
+    background: rgba(0,0,0,0.07);
+    color: #1db954;
+    border: none;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    font-size: 1.6em;
+    cursor: pointer;
+    z-index: 10;
+    transition: background 0.2s, color 0.2s;
+}
+#exit-fullscreen-lyrics-btn:hover {
+    background: #1db954;
+    color: #fff;
+}
+.fullscreen-btn {
+    background: none;
+    border: none;
+    color: #1db954;
+    font-size: 1.3em;
+    margin-right: 8px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.fullscreen-btn:hover {
+    color: #181818;
+}
+.fullscreen-lyrics-display::-webkit-scrollbar {
+    width: 8px;
+    background: #e0e0e0;
+}
+.fullscreen-lyrics-display::-webkit-scrollbar-thumb {
+    background: #1db954;
+    border-radius: 4px;
+}

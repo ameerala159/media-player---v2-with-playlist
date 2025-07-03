@@ -1048,16 +1048,38 @@ export class Player {
         this.lyricsDisplay.textContent = lyrics;
         this.lyricsModalBackdrop.style.display = 'block';
         this.viewLyricsModal.style.display = 'block';
-        
         // Apply saved font size
         let currentFontSize = window.settingsManager.settings.lyricsFontSize;
         this.lyricsDisplay.style.fontSize = `${currentFontSize}px`;
-
         requestAnimationFrame(() => {
             this.viewLyricsModal.classList.add('show');
         });
-
-        const close = () => {
+        // Fullscreen lyrics logic
+        const fullscreenBtn = document.getElementById('fullscreen-lyrics-btn');
+        const fullscreenOverlay = document.getElementById('fullscreen-lyrics-overlay');
+        const fullscreenLyricsDisplay = document.getElementById('fullscreen-lyrics-display');
+        const exitFullscreenBtn = document.getElementById('exit-fullscreen-lyrics-btn');
+        const closeViewLyricsModalBtn = document.getElementById('close-view-lyrics-modal');
+        // Remove previous listeners if any
+        if (fullscreenBtn) fullscreenBtn.onclick = null;
+        if (exitFullscreenBtn) exitFullscreenBtn.onclick = null;
+        if (closeViewLyricsModalBtn) closeViewLyricsModalBtn.onclick = null;
+        // Show fullscreen overlay
+        const showFullscreen = () => {
+            fullscreenLyricsDisplay.innerText = lyrics;
+            fullscreenOverlay.style.display = 'flex';
+            setTimeout(() => fullscreenOverlay.classList.add('show'), 10);
+            // Allow Esc to exit
+            document.addEventListener('keydown', escListener);
+        };
+        // Hide fullscreen overlay
+        const hideFullscreen = () => {
+            fullscreenOverlay.classList.remove('show');
+            setTimeout(() => fullscreenOverlay.style.display = 'none', 300);
+            document.removeEventListener('keydown', escListener);
+        };
+        // Close modal
+        const closeModal = () => {
             this.viewLyricsModal.classList.remove('show');
             this.lyricsModalBackdrop.classList.remove('show');
             setTimeout(() => {
@@ -1066,26 +1088,29 @@ export class Player {
             }, 300);
             this.lyricsDisplay.removeEventListener('wheel', handleWheel);
         };
-
-        this.closeViewLyricsModalBtn.onclick = close;
-        this.lyricsModalBackdrop.onclick = close;
-
+        // Escape key handler
+        const escListener = (e) => {
+            if (e.key === 'Escape') hideFullscreen();
+        };
+        if (fullscreenBtn) fullscreenBtn.onclick = showFullscreen;
+        if (exitFullscreenBtn) exitFullscreenBtn.onclick = hideFullscreen;
+        if (closeViewLyricsModalBtn) closeViewLyricsModalBtn.onclick = closeModal;
+        this.lyricsModalBackdrop.onclick = closeModal;
         this.editLyricsBtn.onclick = () => {
-            close();
+            hideFullscreen();
+            closeModal();
             this.showAddLyricsModal(lyrics);
         };
-
         this.deleteLyricsBtn.onclick = () => {
             if (confirm('Are you sure you want to delete the lyrics for this track?')) {
                 const currentTrack = this.currentPlaylist[this.currentTrackIndex];
                 this.deleteLyrics(currentTrack.path);
-                close();
+                hideFullscreen();
+                closeModal();
             }
         };
-
         // Handle font size adjustment with touchpad pinch
         let initialPinchDistance = null;
-        
         const handleWheel = (e) => {
             if (e.ctrlKey) {
                 e.preventDefault();
@@ -1096,7 +1121,6 @@ export class Player {
                 window.settingsManager.saveSettings();
             }
         };
-
         this.lyricsDisplay.addEventListener('wheel', handleWheel, { passive: false });
     }
 } 
