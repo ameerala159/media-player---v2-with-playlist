@@ -589,11 +589,62 @@
         <!-- Fullscreen Lyrics Overlay -->
         <div id="fullscreen-lyrics-overlay" style="display: none;">
             <div class="fullscreen-lyrics-content">
-                <button id="lyrics-autoscroll-btn" class="modal-button autoscroll-btn" title="Auto Scroll Lyrics" style="position: absolute; top: 18px; left: 24px; z-index: 11;">
-                    <i class="fas fa-arrows-down-to-line"></i>
-                    <span id="autoscroll-speed-label" style="font-size: 0.8em; margin-left: 6px;">Off</span>
-                </button>
+                <div class="fullscreen-lyrics-toolbar" style="position: absolute; top: 18px; left: 24px; z-index: 12; display: flex; gap: 10px;">
+                    <button id="lyrics-autoscroll-btn" class="modal-button autoscroll-btn" title="Auto Scroll Lyrics">
+                        <i class="fas fa-arrows-down-to-line"></i>
+                        <span id="autoscroll-speed-label" style="font-size: 0.8em; margin-left: 6px;">Off</span>
+                    </button>
+                    <button id="fullscreen-lyrics-settings-btn" class="modal-button fullscreen-settings-btn" title="Lyrics Display Settings">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
                 <button id="exit-fullscreen-lyrics-btn" class="modal-button fullscreen-exit-btn" title="Exit Fullscreen"><i class="fas fa-compress"></i></button>
+                <div id="fullscreen-lyrics-settings-popup" class="fullscreen-lyrics-settings-popup" style="display: none; position: absolute; top: 70px; left: 24px; z-index: 20;">
+                    <div class="settings-popup-content">
+                        <div class="settings-popup-header">
+                            <span>Lyrics Display Settings</span>
+                            <button id="close-fullscreen-lyrics-settings" class="close-modal-btn" style="font-size:1.2em;">&times;</button>
+                        </div>
+                        <div class="settings-popup-row">
+                            <label for="fullscreenLyricsFontSize">Font Size</label>
+                            <input type="range" id="fullscreenLyricsFontSize" min="16" max="80" value="32">
+                            <span id="fullscreenLyricsFontSizeValue">32px</span>
+                        </div>
+                        <div class="settings-popup-row">
+                            <label for="fullscreenLyricsFontFamily">Font Family</label>
+                            <select id="fullscreenLyricsFontFamily">
+                                <option value="'Poppins', sans-serif">Poppins</option>
+                                <option value="'Sora', sans-serif">Sora</option>
+                                <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
+                                <option value="'Outfit', sans-serif">Outfit</option>
+                                <option value="'Lexend', sans-serif">Lexend</option>
+                                <option value="'Manrope', sans-serif">Manrope</option>
+                                <option value="'Work Sans', sans-serif">Work Sans</option>
+                                <option value="'Rubik', sans-serif">Rubik</option>
+                                <option value="'Urbanist', sans-serif">Urbanist</option>
+                                <option value="'Figtree', sans-serif">Figtree</option>
+                                <option value="'Onest', sans-serif">Onest</option>
+                                <option value="'Switzer', sans-serif">Switzer</option>
+                                <option value="'Chillax', sans-serif">Chillax</option>
+                                <option value="'Satoshi', sans-serif">Satoshi</option>
+                                <option value="'Gambarino', serif">Gambarino</option>
+                                <option value="'Bungee Shade', cursive">Bungee Shade</option>
+                                <option value="'Monoton', cursive">Monoton</option>
+                                <option value="'Press Start 2P', cursive">Press Start 2P</option>
+                            </select>
+                        </div>
+                        <div class="settings-popup-row">
+                            <label for="fullscreenLyricsGlow">Glow Degree</label>
+                            <input type="range" id="fullscreenLyricsGlow" min="0" max="64" value="16">
+                            <span id="fullscreenLyricsGlowValue">16px</span>
+                        </div>
+                        <div class="settings-popup-row" style="justify-content: flex-end; margin-top: 10px;">
+                            <button id="fullscreenLyricsResetBtn" class="modal-button secondary" type="button">
+                                <i class="fas fa-undo"></i> Reset to Default
+                            </button>
+                        </div>
+                    </div>
+                </div>
                 <div id="fullscreen-lyrics-display" class="fullscreen-lyrics-display"></div>
             </div>
         </div>
