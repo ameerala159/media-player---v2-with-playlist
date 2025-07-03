@@ -1034,6 +1034,21 @@ export class Player {
             }
         };
 
+        // Add blank line every 2 rows button logic
+        const addBlankLinesBtn = document.getElementById('add-blank-lines-btn');
+        if (addBlankLinesBtn) {
+            addBlankLinesBtn.onclick = () => {
+                const lines = this.lyricsTextarea.value.split(/\r?\n/);
+                let newLines = [];
+                for (let i = 0; i < lines.length; i += 2) {
+                    newLines.push(lines[i]);
+                    if (i + 1 < lines.length) newLines.push(lines[i + 1]);
+                    if (i + 2 < lines.length) newLines.push(''); // Add blank line after every two
+                }
+                this.lyricsTextarea.value = newLines.join('\n');
+            };
+        }
+
         this.saveLyricsBtn.onclick = () => {
             const lyrics = this.lyricsTextarea.value;
             if (lyrics.trim()) {
@@ -1060,23 +1075,98 @@ export class Player {
         const fullscreenLyricsDisplay = document.getElementById('fullscreen-lyrics-display');
         const exitFullscreenBtn = document.getElementById('exit-fullscreen-lyrics-btn');
         const closeViewLyricsModalBtn = document.getElementById('close-view-lyrics-modal');
+        const autoscrollBtn = document.getElementById('lyrics-autoscroll-btn');
+        const autoscrollSpeedLabel = document.getElementById('autoscroll-speed-label');
         // Remove previous listeners if any
         if (fullscreenBtn) fullscreenBtn.onclick = null;
         if (exitFullscreenBtn) exitFullscreenBtn.onclick = null;
         if (closeViewLyricsModalBtn) closeViewLyricsModalBtn.onclick = null;
+        if (autoscrollBtn) autoscrollBtn.onclick = null;
+        // --- Auto-scroll logic ---
+        let autoscrollInterval = null;
+        let autoscrollSpeedIndex = 0; // 0: off, 1: slow, 2: medium, 3: fast
+        const speeds = [null, 60, 30, 15]; // seconds to scroll from top to bottom
+        const speedLabels = ['Off', 'Slow', 'Medium', 'Fast'];
+        let userPausedAutoscroll = false;
+        function updateAutoscrollUI() {
+            if (autoscrollBtn) {
+                autoscrollBtn.classList.toggle('active', autoscrollSpeedIndex !== 0);
+                autoscrollSpeedLabel.textContent = speedLabels[autoscrollSpeedIndex];
+            }
+        }
+        function stopAutoscroll() {
+            if (autoscrollInterval) {
+                clearInterval(autoscrollInterval);
+                autoscrollInterval = null;
+            }
+        }
+        function startAutoscroll() {
+            stopAutoscroll();
+            userPausedAutoscroll = false;
+            if (autoscrollSpeedIndex === 0) return;
+            const duration = speeds[autoscrollSpeedIndex] * 1000;
+            const scrollEl = fullscreenLyricsDisplay;
+            const maxScroll = scrollEl.scrollHeight - scrollEl.clientHeight;
+            if (maxScroll <= 0) return;
+            // Calculate remaining distance and adjust duration
+            const startScroll = scrollEl.scrollTop;
+            const remainingScroll = maxScroll - startScroll;
+            if (remainingScroll <= 0) return;
+            const remainingDuration = duration * (remainingScroll / maxScroll);
+            const startTime = Date.now();
+            autoscrollInterval = setInterval(() => {
+                if (userPausedAutoscroll) {
+                    stopAutoscroll();
+                    return;
+                }
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / remainingDuration, 1);
+                scrollEl.scrollTop = startScroll + progress * remainingScroll;
+                if (progress >= 1) stopAutoscroll();
+            }, 16);
+        }
+        // Listen for user scroll to pause auto-scroll
+        fullscreenLyricsDisplay.addEventListener('wheel', () => {
+            if (autoscrollSpeedIndex !== 0 && !userPausedAutoscroll) {
+                userPausedAutoscroll = true;
+                autoscrollSpeedIndex = 0;
+                updateAutoscrollUI();
+                stopAutoscroll();
+                // Optionally, show a subtle notification (not implemented here)
+            }
+        }, { passive: true });
+        // When user clicks the speed button again, resume auto-scroll from current position
+        if (autoscrollBtn) {
+            autoscrollBtn.onclick = () => {
+                autoscrollSpeedIndex = (autoscrollSpeedIndex + 1) % speeds.length;
+                updateAutoscrollUI();
+                stopAutoscroll();
+                userPausedAutoscroll = false;
+                if (autoscrollSpeedIndex !== 0) startAutoscroll();
+            };
+        }
+        // Reset autoscroll state on open
+        autoscrollSpeedIndex = 0;
+        updateAutoscrollUI();
+        stopAutoscroll();
         // Show fullscreen overlay
         const showFullscreen = () => {
             fullscreenLyricsDisplay.innerText = lyrics;
             fullscreenOverlay.style.display = 'flex';
             setTimeout(() => fullscreenOverlay.classList.add('show'), 10);
-            // Allow Esc to exit
             document.addEventListener('keydown', escListener);
+            // Reset scroll and autoscroll only when entering fullscreen
+            fullscreenLyricsDisplay.scrollTop = 0;
+            autoscrollSpeedIndex = 0;
+            updateAutoscrollUI();
+            stopAutoscroll();
         };
         // Hide fullscreen overlay
         const hideFullscreen = () => {
             fullscreenOverlay.classList.remove('show');
             setTimeout(() => fullscreenOverlay.style.display = 'none', 300);
             document.removeEventListener('keydown', escListener);
+            stopAutoscroll();
         };
         // Close modal
         const closeModal = () => {
@@ -1087,6 +1177,7 @@ export class Player {
                 this.lyricsModalBackdrop.style.display = 'none';
             }, 300);
             this.lyricsDisplay.removeEventListener('wheel', handleWheel);
+            stopAutoscroll();
         };
         // Escape key handler
         const escListener = (e) => {

@@ -5525,9 +5525,9 @@ body[data-theme="dark"] .song-count-info {
 #exit-fullscreen-lyrics-btn {
     position: absolute;
     top: 18px;
-    right: 24px;
-    background: rgba(0,0,0,0.5);
-    color: #fff;
+    right: 48px; /* was 24px, now moved left to avoid scrollbar */
+    background: rgba(0,0,0,0.07);
+    color: #1db954;
     border: none;
     border-radius: 50%;
     width: 48px;
@@ -5535,7 +5535,7 @@ body[data-theme="dark"] .song-count-info {
     font-size: 1.6em;
     cursor: pointer;
     z-index: 10;
-    transition: background 0.2s;
+    transition: background 0.2s, color 0.2s;
 }
 #exit-fullscreen-lyrics-btn:hover {
     background: #1db954;
@@ -5636,7 +5636,7 @@ body[data-theme="dark"] .fullscreen-lyrics-display::-webkit-scrollbar-thumb {
 #exit-fullscreen-lyrics-btn {
     position: absolute;
     top: 18px;
-    right: 24px;
+    right: 48px; /* was 24px, now moved left to avoid scrollbar */
     background: rgba(0,0,0,0.07);
     color: #1db954;
     border: none;
@@ -5671,4 +5671,70 @@ body[data-theme="dark"] .fullscreen-lyrics-display::-webkit-scrollbar-thumb {
 .fullscreen-lyrics-display::-webkit-scrollbar-thumb {
     background: #1db954;
     border-radius: 4px;
+}
+
+/* --- Auto-scroll button for fullscreen lyrics --- */
+#lyrics-autoscroll-btn {
+    background: rgba(29, 185, 84, 0.12);
+    color: #1db954;
+    border: none;
+    border-radius: 50px;
+    padding: 8px 18px 8px 14px;
+    font-size: 1.1em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    transition: background 0.2s, color 0.2s;
+}
+#lyrics-autoscroll-btn:hover, #lyrics-autoscroll-btn.active {
+    background: #1db954;
+    color: #fff;
+}
+#lyrics-autoscroll-btn i {
+    font-size: 1.2em;
+}
+body[data-theme="dark"] #lyrics-autoscroll-btn {
+    background: rgba(29, 185, 84, 0.18);
+    color: #1db954;
+}
+body[data-theme="dark"] #lyrics-autoscroll-btn:hover, body[data-theme="dark"] #lyrics-autoscroll-btn.active {
+    background: #1db954;
+    color: #181818;
+}
+
+#exit-fullscreen-lyrics-btn {
+    position: absolute;
+    top: 18px;
+    right: 48px;
+    background: rgba(29, 185, 84, 0.12);
+    color: #1db954;
+    border: none;
+    border-radius: 50px;
+    padding: 8px 18px 8px 14px;
+    font-size: 1.1em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    transition: background 0.2s, color 0.2s;
+    width: auto;
+    height: auto;
+}
+#exit-fullscreen-lyrics-btn i {
+    font-size: 1.2em;
+}
+#exit-fullscreen-lyrics-btn:hover {
+    background: #1db954;
+    color: #fff;
+}
+body[data-theme="dark"] #exit-fullscreen-lyrics-btn {
+    background: rgba(29, 185, 84, 0.18);
+    color: #1db954;
+}
+body[data-theme="dark"] #exit-fullscreen-lyrics-btn:hover {
+    background: #1db954;
+    color: #181818;
 }
