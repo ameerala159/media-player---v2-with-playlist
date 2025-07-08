@@ -3,6 +3,24 @@ const path = require('path');
 const fs = require('fs');
 const musicMetadata = require('music-metadata');
 
+// Add for caching
+const os = require('os');
+
+// Helper to get cache file path for a folder
+function getCacheFilePath(folderPath) {
+    // Use a hash of the folder path for uniqueness
+    const crypto = require('crypto');
+    const hash = crypto.createHash('md5').update(folderPath).digest('hex');
+    const userData = app.getPath('userData');
+    return path.join(userData, `musicCache_${hash}.json`);
+}
+
+// Helper to get folder's last modified time
+async function getFolderMTime(folderPath) {
+    const stat = await fs.promises.stat(folderPath);
+    return stat.mtimeMs;
+}
+
 let isSquirrel = false;
 try {
   isSquirrel = require('electron-squirrel-startup');
@@ -187,13 +205,47 @@ ipcMain.handle('get-subfolders', async (event, folderPath) => {
 ipcMain.handle('get-music-files', async (event, { path: folderPath, batchSize = 100, startIndex = 0 }) => {
     try {
         let musicFilesPaths = [];
+        let cacheUsed = false;
+        let cacheFilePath;
+        let folderMTime;
+        let cacheData;
 
         if (Array.isArray(folderPath)) {
             // If paths is an array, it's individual files
             musicFilesPaths = folderPath;
         } else if (typeof folderPath === 'string') {
             // If paths is a string, it's a folder path
-            musicFilesPaths = await scanDirectoryRecursively(folderPath);
+            cacheFilePath = getCacheFilePath(folderPath);
+            try {
+                folderMTime = await getFolderMTime(folderPath);
+                if (fs.existsSync(cacheFilePath)) {
+                    const raw = await fs.promises.readFile(cacheFilePath, 'utf-8');
+                    cacheData = JSON.parse(raw);
+                    // Check if cache is up-to-date
+                    if (cacheData.folderMTime === folderMTime) {
+                        musicFilesPaths = cacheData.musicFilesPaths;
+                        cacheUsed = true;
+                    }
+                }
+            } catch (e) {
+                // Ignore cache errors, fallback to scan
+            }
+            if (!cacheUsed) {
+                musicFilesPaths = await scanDirectoryRecursively(folderPath);
+                // Save to cache
+                try {
+                    await fs.promises.writeFile(
+                        cacheFilePath,
+                        JSON.stringify({
+                            folderMTime,
+                            musicFilesPaths
+                        }),
+                        'utf-8'
+                    );
+                } catch (e) {
+                    // Ignore cache write errors
+                }
+            }
         }
 
         // Get total count for pagination
