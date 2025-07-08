@@ -204,7 +204,9 @@ ipcMain.handle('get-subfolders', async (event, folderPath) => {
 // Handle getting music files
 ipcMain.handle('get-music-files', async (event, { path: folderPath, batchSize = 100, startIndex = 0 }) => {
     try {
-        let musicFilesPaths = [];
+        let tracks = [];
+        let totalCount = 0;
+        let hasMore = false;
         let cacheUsed = false;
         let cacheFilePath;
         let folderMTime;
@@ -212,9 +214,28 @@ ipcMain.handle('get-music-files', async (event, { path: folderPath, batchSize = 
 
         if (Array.isArray(folderPath)) {
             // If paths is an array, it's individual files
-            musicFilesPaths = folderPath;
+            // Collect metadata for each file
+            for (const filePath of folderPath) {
+                try {
+                    const metadata = await musicMetadata.parseFile(filePath);
+                    tracks.push({
+                        name: metadata.common.title || path.parse(filePath).name,
+                        artist: metadata.common.artist || 'Unknown Artist',
+                        duration: metadata.format.duration,
+                        path: filePath
+                    });
+                } catch (error) {
+                    tracks.push({
+                        name: path.parse(filePath).name,
+                        artist: 'Unknown Artist',
+                        duration: 0,
+                        path: filePath
+                    });
+                }
+            }
+            totalCount = tracks.length;
+            hasMore = false;
         } else if (typeof folderPath === 'string') {
-            // If paths is a string, it's a folder path
             cacheFilePath = getCacheFilePath(folderPath);
             try {
                 folderMTime = await getFolderMTime(folderPath);
@@ -223,7 +244,9 @@ ipcMain.handle('get-music-files', async (event, { path: folderPath, batchSize = 
                     cacheData = JSON.parse(raw);
                     // Check if cache is up-to-date
                     if (cacheData.folderMTime === folderMTime) {
-                        musicFilesPaths = cacheData.musicFilesPaths;
+                        tracks = cacheData.tracks;
+                        totalCount = tracks.length;
+                        hasMore = startIndex + batchSize < totalCount;
                         cacheUsed = true;
                     }
                 }
@@ -231,14 +254,41 @@ ipcMain.handle('get-music-files', async (event, { path: folderPath, batchSize = 
                 // Ignore cache errors, fallback to scan
             }
             if (!cacheUsed) {
-                musicFilesPaths = await scanDirectoryRecursively(folderPath);
+                // Scan for music files
+                const musicFilesPaths = await scanDirectoryRecursively(folderPath);
+                totalCount = musicFilesPaths.length;
+                tracks = [];
+                // Collect metadata for each file
+                for (let i = 0; i < musicFilesPaths.length; i++) {
+                    const filePath = musicFilesPaths[i];
+                    try {
+                        const metadata = await musicMetadata.parseFile(filePath);
+                        tracks.push({
+                            name: metadata.common.title || path.parse(filePath).name,
+                            artist: metadata.common.artist || 'Unknown Artist',
+                            duration: metadata.format.duration,
+                            path: filePath
+                        });
+                    } catch (error) {
+                        tracks.push({
+                            name: path.parse(filePath).name,
+                            artist: 'Unknown Artist',
+                            duration: 0,
+                            path: filePath
+                        });
+                    }
+                    // Send progress update
+                    const percent = Math.round(((i + 1) / musicFilesPaths.length) * 100);
+                    event.sender.send('music-loading-progress', percent);
+                }
+                hasMore = startIndex + batchSize < totalCount;
                 // Save to cache
                 try {
                     await fs.promises.writeFile(
                         cacheFilePath,
                         JSON.stringify({
                             folderMTime,
-                            musicFilesPaths
+                            tracks
                         }),
                         'utf-8'
                     );
@@ -247,38 +297,12 @@ ipcMain.handle('get-music-files', async (event, { path: folderPath, batchSize = 
                 }
             }
         }
-
-        // Get total count for pagination
-        const totalCount = musicFilesPaths.length;
-        const batchFiles = musicFilesPaths.slice(startIndex, startIndex + batchSize);
-        const tracks = [];
-        for (let i = 0; i < batchFiles.length; i++) {
-            const filePath = batchFiles[i];
-            try {
-                const metadata = await musicMetadata.parseFile(filePath);
-                tracks.push({
-                    name: metadata.common.title || path.parse(filePath).name,
-                    artist: metadata.common.artist || 'Unknown Artist',
-                    duration: metadata.format.duration,
-                    path: filePath
-                });
-            } catch (error) {
-                console.error(`Error reading metadata for ${filePath}:`, error);
-                tracks.push({
-                    name: path.parse(filePath).name,
-                    artist: 'Unknown Artist',
-                    duration: 0,
-                    path: filePath
-                });
-            }
-            // Send progress update
-            const percent = Math.round(((i + 1) / batchFiles.length) * 100);
-            event.sender.send('music-loading-progress', percent);
-        }
+        // Return the requested batch
+        const batchTracks = tracks.slice(startIndex, startIndex + batchSize);
         return {
-            tracks,
-            totalCount,
-            hasMore: startIndex + batchSize < totalCount
+            tracks: batchTracks,
+            totalCount: tracks.length,
+            hasMore: startIndex + batchSize < tracks.length
         };
     } catch (error) {
         console.error('Error reading music files:', error);
