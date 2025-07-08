@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog, nativeImage, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, nativeImage, shell, Tray, Menu } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const musicMetadata = require('music-metadata');
@@ -30,6 +30,52 @@ try {
 if (isSquirrel) app.quit();
 
 let mainWindow;
+let tray = null;
+let isQuitting = false;
+let closeBehavior = 'ask'; // Default
+
+// Helper to get close behavior from renderer (localStorage)
+ipcMain.handle('get-close-behavior', async () => {
+  return closeBehavior;
+});
+ipcMain.on('set-close-behavior', (event, value) => {
+  closeBehavior = value;
+});
+
+// Remove showCloseDialog and dialog logic, just act on the action received from renderer
+function createTray() {
+  if (tray) return;
+  const iconPath = path.join(__dirname, '../renderer/assets/icon.ico');
+  tray = new Tray(iconPath);
+  tray.setToolTip('Media Player');
+
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Show/Hide',
+      click: () => {
+        if (mainWindow.isVisible()) {
+          mainWindow.hide();
+        } else {
+          mainWindow.show();
+          mainWindow.focus();
+        }
+      }
+    },
+    { type: 'separator' },
+    {
+      label: 'Quit',
+      click: () => {
+        isQuitting = true;
+        app.quit();
+      }
+    }
+  ]);
+  tray.setContextMenu(contextMenu);
+  tray.on('double-click', () => {
+    mainWindow.show();
+    mainWindow.focus();
+  });
+}
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -50,6 +96,36 @@ function createWindow() {
   
   // Set window icon
   mainWindow.setIcon(path.join(__dirname, '../renderer/assets/icon.ico'));
+
+  // Create tray icon
+  createTray();
+
+  // Hide to tray or close on close
+  mainWindow.on('close', async (e) => {
+    if (!isQuitting) {
+      const { webContents } = mainWindow;
+      let behavior = closeBehavior;
+      try {
+        behavior = await webContents.executeJavaScript('window.settingsManager?.settings?.closeBehavior || "ask"');
+      } catch {}
+      if (behavior === 'ask') {
+        e.preventDefault();
+        // The renderer will show the modal and send the action
+      } else if (behavior === 'minimize') {
+        e.preventDefault();
+        mainWindow.hide();
+      } else if (behavior === 'close') {
+        isQuitting = true;
+        // allow close
+      }
+    }
+  });
+
+  // Hide to tray on minimize
+  mainWindow.on('minimize', (e) => {
+    e.preventDefault();
+    mainWindow.hide();
+  });
 
   // Set up thumbnail toolbar buttons for Windows
   if (process.platform === 'win32') {
@@ -127,10 +203,10 @@ function createWindow() {
 }
 
 // Handle window control actions
-ipcMain.on('toMain', (event, data) => {
+ipcMain.on('toMain', async (event, data) => {
   switch (data.action) {
     case 'minimize':
-      mainWindow.minimize();
+      mainWindow.hide();
       break;
     case 'maximize':
       if (mainWindow.isMaximized()) {
@@ -140,7 +216,25 @@ ipcMain.on('toMain', (event, data) => {
       }
       break;
     case 'close':
-      mainWindow.close();
+      if (!isQuitting) {
+        const { webContents } = mainWindow;
+        let behavior = closeBehavior;
+        try {
+          behavior = await webContents.executeJavaScript('window.settingsManager?.settings?.closeBehavior || "ask"');
+        } catch {}
+        if (behavior === 'ask') {
+          // The renderer will show the modal and send the action
+        } else if (behavior === 'minimize') {
+          mainWindow.hide();
+        } else if (behavior === 'close') {
+          isQuitting = true;
+          app.quit();
+        }
+      }
+      break;
+    case 'force-close':
+      isQuitting = true;
+      app.quit();
       break;
     case 'restart':
       app.relaunch();

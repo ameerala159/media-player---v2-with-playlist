@@ -276,9 +276,73 @@ document.addEventListener('DOMContentLoaded', () => {
         window.api.send('toMain', { action: 'maximize' });
     });
 
-    closeBtn.addEventListener('click', () => {
-        window.api.send('toMain', { action: 'close' });
+    const closeModal = document.getElementById('closeModal');
+    const closeModalMinimizeBtn = document.getElementById('closeModalMinimizeBtn');
+    const closeModalCloseBtn = document.getElementById('closeModalCloseBtn');
+    const closeModalCancelBtn = document.getElementById('closeModalCancelBtn');
+    const rememberCloseChoice = document.getElementById('rememberCloseChoice');
+
+    function showCloseModal() {
+        closeModal.style.display = 'flex';
+    }
+    function hideCloseModal() {
+        closeModal.style.display = 'none';
+        rememberCloseChoice.checked = false;
+    }
+
+    closeBtn.addEventListener('click', (e) => {
+        // Only show modal if setting is 'ask'
+        if (window.settingsManager?.settings?.closeBehavior === 'ask') {
+            showCloseModal();
+        } else if (window.settingsManager?.settings?.closeBehavior === 'minimize') {
+            window.api.send('toMain', { action: 'close' });
+        } else if (window.settingsManager?.settings?.closeBehavior === 'close') {
+            window.api.send('toMain', { action: 'close' });
+        }
     });
+
+    function updateCloseBehaviorDropdownUI(value) {
+        const closeBehaviorDropdown = document.getElementById('closeBehaviorDropdown');
+        const closeBehaviorSelected = document.getElementById('closeBehaviorSelected');
+        const closeBehaviorOptions = document.getElementById('closeBehaviorOptions');
+        if (closeBehaviorDropdown && closeBehaviorSelected && closeBehaviorOptions) {
+            const selectedOption = closeBehaviorOptions.querySelector(`[data-value="${value}"]`);
+            if (selectedOption) {
+                closeBehaviorSelected.textContent = selectedOption.textContent;
+                closeBehaviorOptions.querySelectorAll('.custom-dropdown-option').forEach(opt => opt.classList.remove('active'));
+                selectedOption.classList.add('active');
+            }
+        }
+    }
+
+    closeModalMinimizeBtn.addEventListener('click', () => {
+        if (rememberCloseChoice.checked) {
+            window.settingsManager.settings.closeBehavior = 'minimize';
+            window.settingsManager.saveSettings();
+            window.api.send('set-close-behavior', 'minimize');
+            updateCloseBehaviorDropdownUI('minimize');
+        }
+        hideCloseModal();
+        window.api.send('toMain', { action: 'minimize' });
+    });
+
+    closeModalCloseBtn.addEventListener('click', () => {
+        if (rememberCloseChoice.checked) {
+            window.settingsManager.settings.closeBehavior = 'close';
+            window.settingsManager.saveSettings();
+            window.api.send('set-close-behavior', 'close');
+            updateCloseBehaviorDropdownUI('close');
+        }
+        hideCloseModal();
+        window.api.send('toMain', { action: 'force-close' });
+    });
+
+    closeModalCancelBtn.addEventListener('click', () => {
+        hideCloseModal();
+    });
+
+    // Hide modal on backdrop click
+    closeModal.querySelector('.custom-modal-backdrop').addEventListener('click', hideCloseModal);
 
     // Get the menu item and its dropdown
     const fileMenuItem = document.querySelector('.menu-item');
@@ -1105,4 +1169,27 @@ document.addEventListener('DOMContentLoaded', () => {
         window.Player = new Player();
         window.Player.init();
     }
+
+    window.api.receive('tray-play-pause', () => {
+        if (window.player && typeof window.player.togglePlay === 'function') {
+            window.player.togglePlay();
+        }
+    });
+    window.api.receive('tray-next', () => {
+        if (window.player && typeof window.player.playNext === 'function') {
+            window.player.playNext();
+        }
+    });
+    window.api.receive('tray-prev', () => {
+        if (window.player && typeof window.player.playPrevious === 'function') {
+            window.player.playPrevious();
+        }
+    });
+
+    window.api.receive('set-close-behavior', (value) => {
+        if (window.settingsManager) {
+            window.settingsManager.settings.closeBehavior = value;
+            window.settingsManager.saveSettings();
+        }
+    });
 });

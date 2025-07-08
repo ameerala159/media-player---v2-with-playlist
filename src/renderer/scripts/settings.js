@@ -14,7 +14,8 @@ class SettingsManager {
             playbackSpeed: 1.0, // Add playback speed setting
             eqPreset: 'flat', // Add equalizer preset setting
             eqBands: [0, 0, 0, 0, 0, 0], // Add equalizer custom bands
-            lyricsFontSize: 14 // Add lyrics font size setting
+            lyricsFontSize: 14, // Add lyrics font size setting
+            closeBehavior: 'ask' // Add close behavior setting
         };
         
         this.init();
@@ -83,7 +84,8 @@ class SettingsManager {
                     playbackSpeed: parsedSettings.playbackSpeed ?? 1.0,
                     eqPreset: parsedSettings.eqPreset ?? 'flat',
                     eqBands: parsedSettings.eqBands ?? [0, 0, 0, 0, 0, 0],
-                    lyricsFontSize: parsedSettings.lyricsFontSize ?? 14
+                    lyricsFontSize: parsedSettings.lyricsFontSize ?? 14,
+                    closeBehavior: parsedSettings.closeBehavior ?? 'ask'
                 };
             }
         } catch (error) {
@@ -373,6 +375,41 @@ class SettingsManager {
 
                 // Show notification
                 this.showSpeedNotification(speed);
+            });
+        }
+
+        // Close Behavior Dropdown
+        const closeBehaviorDropdown = document.getElementById('closeBehaviorDropdown');
+        const closeBehaviorSelected = document.getElementById('closeBehaviorSelected');
+        const closeBehaviorOptions = document.getElementById('closeBehaviorOptions');
+        if (closeBehaviorDropdown && closeBehaviorSelected && closeBehaviorOptions) {
+            // Set initial value
+            const initialValue = this.settings.closeBehavior;
+            const initialOption = closeBehaviorOptions.querySelector(`[data-value="${initialValue}"]`);
+            if (initialOption) {
+                closeBehaviorSelected.textContent = initialOption.textContent;
+                initialOption.classList.add('active');
+            }
+            // Setup dropdown behavior
+            closeBehaviorDropdown.addEventListener('click', (e) => {
+                closeBehaviorDropdown.classList.toggle('open');
+            });
+            closeBehaviorDropdown.addEventListener('blur', (e) => {
+                setTimeout(() => closeBehaviorDropdown.classList.remove('open'), 100);
+            });
+            // Handle option selection
+            closeBehaviorOptions.querySelectorAll('.custom-dropdown-option').forEach(option => {
+                option.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const value = option.getAttribute('data-value');
+                    const label = option.textContent;
+                    this.settings.closeBehavior = value;
+                    closeBehaviorSelected.textContent = label;
+                    closeBehaviorOptions.querySelectorAll('.custom-dropdown-option').forEach(opt => opt.classList.remove('active'));
+                    option.classList.add('active');
+                    closeBehaviorDropdown.classList.remove('open');
+                    this.saveSettings();
+                });
             });
         }
     }

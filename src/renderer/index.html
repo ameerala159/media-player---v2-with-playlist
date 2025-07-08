@@ -348,6 +348,23 @@
                                 </button>
                             </div>
                         </div>
+                        <div class="settings-section">
+                            <h3>Window Behavior</h3>
+                            <div class="setting-item">
+                                <div class="setting-label">
+                                    <i class="fas fa-window-close"></i>
+                                    <span>On Close</span>
+                                </div>
+                                <div id="closeBehaviorDropdown" class="custom-dropdown" tabindex="0">
+                                    <div class="custom-dropdown-selected" id="closeBehaviorSelected">Ask every time</div>
+                                    <div class="custom-dropdown-options" id="closeBehaviorOptions">
+                                        <div class="custom-dropdown-option" data-value="ask">Ask every time</div>
+                                        <div class="custom-dropdown-option" data-value="minimize">Minimize to tray</div>
+                                        <div class="custom-dropdown-option" data-value="close">Close app</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -779,6 +796,30 @@
             </div>
         </div>
     </div>
+
+    <!-- Custom Close/Minimize Modal -->
+    <div id="closeModal" class="custom-modal" style="display:none;">
+      <div class="custom-modal-backdrop"></div>
+      <div class="custom-modal-content">
+        <div class="custom-modal-header">
+          <i class="fas fa-question-circle"></i>
+          <span>Close or Minimize?</span>
+        </div>
+        <div class="custom-modal-body">
+          <p>Do you want to close the app or minimize it to the tray?</p>
+          <label class="remember-choice-label">
+            <input type="checkbox" id="rememberCloseChoice">
+            Remember my choice
+          </label>
+        </div>
+        <div class="custom-modal-footer">
+          <button id="closeModalMinimizeBtn" class="custom-modal-btn">Minimize to Tray</button>
+          <button id="closeModalCloseBtn" class="custom-modal-btn">Close App</button>
+          <button id="closeModalCancelBtn" class="custom-modal-btn cancel">Cancel</button>
+        </div>
+      </div>
+    </div>
+    <!-- End Custom Close/Minimize Modal -->
 
     <script src="scripts/renderer.js" type="module"></script>
 </body>
