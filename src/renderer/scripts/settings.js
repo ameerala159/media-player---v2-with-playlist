@@ -127,9 +127,33 @@ class SettingsManager {
             // Setup dropdown behavior
             fontSizeDropdown.addEventListener('click', (e) => {
                 fontSizeDropdown.classList.toggle('open');
+                if (fontSizeDropdown.classList.contains('open')) {
+                    const rect = fontSizeDropdown.getBoundingClientRect();
+                    fontSizeOptions.style.position = 'fixed';
+                    fontSizeOptions.style.left = rect.left + 'px';
+                    fontSizeOptions.style.top = (rect.bottom + 4) + 'px';
+                    fontSizeOptions.style.width = rect.width + 'px';
+                    fontSizeOptions.style.zIndex = 9999;
+                } else {
+                    fontSizeOptions.style.position = '';
+                    fontSizeOptions.style.left = '';
+                    fontSizeOptions.style.top = '';
+                    fontSizeOptions.style.width = '';
+                    fontSizeOptions.style.zIndex = '';
+                }
+            });
+            fontSizeOptions.addEventListener('mousedown', (e) => {
+                e.preventDefault();
             });
             fontSizeDropdown.addEventListener('blur', (e) => {
-                setTimeout(() => fontSizeDropdown.classList.remove('open'), 100);
+                setTimeout(() => {
+                    fontSizeDropdown.classList.remove('open');
+                    fontSizeOptions.style.position = '';
+                    fontSizeOptions.style.left = '';
+                    fontSizeOptions.style.top = '';
+                    fontSizeOptions.style.width = '';
+                    fontSizeOptions.style.zIndex = '';
+                }, 100);
             });
 
             // Handle option selection
@@ -143,6 +167,11 @@ class SettingsManager {
                     fontSizeOptions.querySelectorAll('.custom-dropdown-option').forEach(opt => opt.classList.remove('active'));
                     option.classList.add('active');
                     fontSizeDropdown.classList.remove('open');
+                    fontSizeOptions.style.position = '';
+                    fontSizeOptions.style.left = '';
+                    fontSizeOptions.style.top = '';
+                    fontSizeOptions.style.width = '';
+                    fontSizeOptions.style.zIndex = '';
                     this.applySettings();
                     this.saveSettings();
                 });
@@ -165,9 +194,33 @@ class SettingsManager {
             // Setup dropdown behavior
             fontFamilyDropdown.addEventListener('click', (e) => {
                 fontFamilyDropdown.classList.toggle('open');
+                if (fontFamilyDropdown.classList.contains('open')) {
+                    const rect = fontFamilyDropdown.getBoundingClientRect();
+                    fontFamilyOptions.style.position = 'fixed';
+                    fontFamilyOptions.style.left = rect.left + 'px';
+                    fontFamilyOptions.style.top = (rect.bottom + 4) + 'px';
+                    fontFamilyOptions.style.width = rect.width + 'px';
+                    fontFamilyOptions.style.zIndex = 9999;
+                } else {
+                    fontFamilyOptions.style.position = '';
+                    fontFamilyOptions.style.left = '';
+                    fontFamilyOptions.style.top = '';
+                    fontFamilyOptions.style.width = '';
+                    fontFamilyOptions.style.zIndex = '';
+                }
+            });
+            fontFamilyOptions.addEventListener('mousedown', (e) => {
+                e.preventDefault();
             });
             fontFamilyDropdown.addEventListener('blur', (e) => {
-                setTimeout(() => fontFamilyDropdown.classList.remove('open'), 100);
+                setTimeout(() => {
+                    fontFamilyDropdown.classList.remove('open');
+                    fontFamilyOptions.style.position = '';
+                    fontFamilyOptions.style.left = '';
+                    fontFamilyOptions.style.top = '';
+                    fontFamilyOptions.style.width = '';
+                    fontFamilyOptions.style.zIndex = '';
+                }, 100);
             });
 
             // Handle option selection
@@ -181,6 +234,11 @@ class SettingsManager {
                     fontFamilyOptions.querySelectorAll('.custom-dropdown-option').forEach(opt => opt.classList.remove('active'));
                     option.classList.add('active');
                     fontFamilyDropdown.classList.remove('open');
+                    fontFamilyOptions.style.position = '';
+                    fontFamilyOptions.style.left = '';
+                    fontFamilyOptions.style.top = '';
+                    fontFamilyOptions.style.width = '';
+                    fontFamilyOptions.style.zIndex = '';
                     this.applySettings();
                     this.saveSettings();
                 });
@@ -248,9 +306,33 @@ class SettingsManager {
             // Setup dropdown behavior
             repeatModeDropdown.addEventListener('click', (e) => {
                 repeatModeDropdown.classList.toggle('open');
+                if (repeatModeDropdown.classList.contains('open')) {
+                    const rect = repeatModeDropdown.getBoundingClientRect();
+                    repeatModeOptions.style.position = 'fixed';
+                    repeatModeOptions.style.left = rect.left + 'px';
+                    repeatModeOptions.style.top = (rect.bottom + 4) + 'px';
+                    repeatModeOptions.style.width = rect.width + 'px';
+                    repeatModeOptions.style.zIndex = 9999;
+                } else {
+                    repeatModeOptions.style.position = '';
+                    repeatModeOptions.style.left = '';
+                    repeatModeOptions.style.top = '';
+                    repeatModeOptions.style.width = '';
+                    repeatModeOptions.style.zIndex = '';
+                }
+            });
+            repeatModeOptions.addEventListener('mousedown', (e) => {
+                e.preventDefault();
             });
             repeatModeDropdown.addEventListener('blur', (e) => {
-                setTimeout(() => repeatModeDropdown.classList.remove('open'), 100);
+                setTimeout(() => {
+                    repeatModeDropdown.classList.remove('open');
+                    repeatModeOptions.style.position = '';
+                    repeatModeOptions.style.left = '';
+                    repeatModeOptions.style.top = '';
+                    repeatModeOptions.style.width = '';
+                    repeatModeOptions.style.zIndex = '';
+                }, 100);
             });
 
             // Handle option selection
@@ -264,6 +346,11 @@ class SettingsManager {
                     repeatModeOptions.querySelectorAll('.custom-dropdown-option').forEach(opt => opt.classList.remove('active'));
                     option.classList.add('active');
                     repeatModeDropdown.classList.remove('open');
+                    repeatModeOptions.style.position = '';
+                    repeatModeOptions.style.left = '';
+                    repeatModeOptions.style.top = '';
+                    repeatModeOptions.style.width = '';
+                    repeatModeOptions.style.zIndex = '';
                     this.saveSettings();
                 });
             });
@@ -393,9 +480,35 @@ class SettingsManager {
             // Setup dropdown behavior
             closeBehaviorDropdown.addEventListener('click', (e) => {
                 closeBehaviorDropdown.classList.toggle('open');
+                if (closeBehaviorDropdown.classList.contains('open')) {
+                    // Dynamically position the dropdown options
+                    const rect = closeBehaviorDropdown.getBoundingClientRect();
+                    closeBehaviorOptions.style.position = 'fixed';
+                    closeBehaviorOptions.style.left = rect.left + 'px';
+                    closeBehaviorOptions.style.top = (rect.bottom + 4) + 'px'; // 4px margin
+                    closeBehaviorOptions.style.width = rect.width + 'px';
+                    closeBehaviorOptions.style.zIndex = 9999;
+                } else {
+                    closeBehaviorOptions.style.position = '';
+                    closeBehaviorOptions.style.left = '';
+                    closeBehaviorOptions.style.top = '';
+                    closeBehaviorOptions.style.width = '';
+                    closeBehaviorOptions.style.zIndex = '';
+                }
+            });
+            // Prevent blur when clicking options
+            closeBehaviorOptions.addEventListener('mousedown', (e) => {
+                e.preventDefault();
             });
             closeBehaviorDropdown.addEventListener('blur', (e) => {
-                setTimeout(() => closeBehaviorDropdown.classList.remove('open'), 100);
+                setTimeout(() => {
+                    closeBehaviorDropdown.classList.remove('open');
+                    closeBehaviorOptions.style.position = '';
+                    closeBehaviorOptions.style.left = '';
+                    closeBehaviorOptions.style.top = '';
+                    closeBehaviorOptions.style.width = '';
+                    closeBehaviorOptions.style.zIndex = '';
+                }, 100);
             });
             // Handle option selection
             closeBehaviorOptions.querySelectorAll('.custom-dropdown-option').forEach(option => {
@@ -408,6 +521,11 @@ class SettingsManager {
                     closeBehaviorOptions.querySelectorAll('.custom-dropdown-option').forEach(opt => opt.classList.remove('active'));
                     option.classList.add('active');
                     closeBehaviorDropdown.classList.remove('open');
+                    closeBehaviorOptions.style.position = '';
+                    closeBehaviorOptions.style.left = '';
+                    closeBehaviorOptions.style.top = '';
+                    closeBehaviorOptions.style.width = '';
+                    closeBehaviorOptions.style.zIndex = '';
                     this.saveSettings();
                 });
             });

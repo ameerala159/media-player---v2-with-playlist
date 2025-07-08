@@ -5942,3 +5942,23 @@ body[data-theme="dark"] #fullscreenLyricsFontSizeValue, body[data-theme="dark"] 
   font-size: 0.97rem;
   color: #bbb;
 }
+
+/* --- FIX: Ensure dropdown popup is not cut off in settings --- */
+.settings-section .custom-dropdown.open .custom-dropdown-options {
+    position: fixed !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    min-width: 220px;
+    max-width: 320px;
+    z-index: 9999 !important;
+    /* Optional: adjust top dynamically with JS if needed, or set a reasonable offset */
+}
+
+@media (max-width: 768px) {
+  .settings-section .custom-dropdown.open .custom-dropdown-options {
+    min-width: 160px;
+    max-width: 95vw;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+  }
+}
