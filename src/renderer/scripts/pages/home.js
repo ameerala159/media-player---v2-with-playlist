@@ -152,6 +152,89 @@ export class HomePage {
             this.updateSearchIndex();
             this.filterAndSortTracks();
         });
+
+        // --- RANDOM PLAYLIST FEATURE ---
+        const randomPlaylistBtn = document.getElementById('randomPlaylistBtn');
+        const randomPlaylistModal = document.getElementById('randomPlaylistModal');
+        const closeRandomPlaylistModal = document.getElementById('closeRandomPlaylistModal');
+        const randomPlaylistList = document.getElementById('randomPlaylistList');
+        const randomPlaylistSubtitle = document.getElementById('randomPlaylistSubtitle');
+        const playRandomPlaylistBtn = document.getElementById('playRandomPlaylistBtn');
+        const randomizeAgainBtn = document.getElementById('randomizeAgainBtn');
+        let currentRandomPlaylist = [];
+
+        function showRandomPlaylistModal() {
+            randomPlaylistModal.style.display = 'flex';
+            randomPlaylistModal.offsetHeight;
+            randomPlaylistModal.classList.add('show');
+        }
+        function closeRandomPlaylist() {
+            randomPlaylistModal.classList.remove('show');
+            setTimeout(() => {
+                randomPlaylistModal.style.display = 'none';
+            }, 300);
+        }
+        function pickRandom100Songs() {
+            if (!Array.isArray(window.homePage.fullTrackList) || window.homePage.fullTrackList.length === 0) return [];
+            const shuffled = window.homePage.fullTrackList.slice().sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, 100);
+        }
+        function updateRandomPlaylistModal(tracks) {
+            randomPlaylistList.innerHTML = '';
+            tracks.forEach((track, idx) => {
+                const li = document.createElement('li');
+                li.textContent = `${idx + 1}. ${track.name} - ${track.artist}`;
+                randomPlaylistList.appendChild(li);
+            });
+            randomPlaylistSubtitle.textContent = `100 random songs selected!`;
+        }
+        function showRandomizingProgress() {
+            randomPlaylistList.innerHTML = '';
+            randomPlaylistSubtitle.textContent = 'Selecting 100 random songs...';
+        }
+        if (randomPlaylistBtn) {
+            randomPlaylistBtn.addEventListener('click', () => {
+                showRandomPlaylistModal();
+                showRandomizingProgress();
+                setTimeout(() => {
+                    currentRandomPlaylist = pickRandom100Songs();
+                    updateRandomPlaylistModal(currentRandomPlaylist);
+                }, 500); // Simulate progress
+            });
+        }
+        if (closeRandomPlaylistModal) {
+            closeRandomPlaylistModal.addEventListener('click', closeRandomPlaylist);
+        }
+        if (randomizeAgainBtn) {
+            randomizeAgainBtn.addEventListener('click', () => {
+                showRandomizingProgress();
+                setTimeout(() => {
+                    currentRandomPlaylist = pickRandom100Songs();
+                    updateRandomPlaylistModal(currentRandomPlaylist);
+                }, 500);
+            });
+        }
+        if (playRandomPlaylistBtn) {
+            playRandomPlaylistBtn.addEventListener('click', () => {
+                if (currentRandomPlaylist.length > 0 && window.player) {
+                    window.player.currentPlaylist = currentRandomPlaylist;
+                    window.player.playTrack(0);
+                    closeRandomPlaylist();
+                }
+            });
+        }
+        // Close modal on outside click
+        if (randomPlaylistModal) {
+            randomPlaylistModal.addEventListener('click', (e) => {
+                if (e.target === randomPlaylistModal) closeRandomPlaylist();
+            });
+        }
+        // Close modal on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && randomPlaylistModal.classList.contains('show')) {
+                closeRandomPlaylist();
+            }
+        });
     }
 
     // Initialize scroll handler for virtual scrolling

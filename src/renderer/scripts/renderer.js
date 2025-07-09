@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize other modules
     const homePage = new HomePage();
+    window.homePage = homePage;
     const favoritesPage = new FavoritesPage();
     const trackDetails = new TrackDetails();
     const playlistsPage = new PlaylistsPage();
