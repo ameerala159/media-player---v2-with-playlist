@@ -161,6 +161,7 @@ export class HomePage {
         const randomPlaylistSubtitle = document.getElementById('randomPlaylistSubtitle');
         const playRandomPlaylistBtn = document.getElementById('playRandomPlaylistBtn');
         const randomizeAgainBtn = document.getElementById('randomizeAgainBtn');
+        const saveRandomPlaylistBtn = document.getElementById('saveRandomPlaylistBtn');
         let currentRandomPlaylist = [];
 
         function showRandomPlaylistModal() {
@@ -183,10 +184,55 @@ export class HomePage {
             randomPlaylistList.innerHTML = '';
             tracks.forEach((track, idx) => {
                 const li = document.createElement('li');
-                li.textContent = `${idx + 1}. ${track.name} - ${track.artist}`;
+                li.className = 'random-playlist-item';
+                // Song info
+                const infoDiv = document.createElement('div');
+                infoDiv.className = 'random-playlist-song-info';
+                const indexSpan = document.createElement('span');
+                indexSpan.className = 'random-playlist-song-index';
+                indexSpan.textContent = idx + 1;
+                const titleSpan = document.createElement('span');
+                titleSpan.className = 'random-playlist-song-title';
+                titleSpan.textContent = track.name;
+                const artistSpan = document.createElement('span');
+                artistSpan.className = 'random-playlist-song-artist';
+                artistSpan.textContent = track.artist;
+                infoDiv.appendChild(indexSpan);
+                infoDiv.appendChild(titleSpan);
+                infoDiv.appendChild(artistSpan);
+                // Actions
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'random-playlist-actions';
+                // Play button
+                const playBtn = document.createElement('button');
+                playBtn.className = 'random-playlist-btn play';
+                playBtn.title = 'Play from here';
+                playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                playBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (window.player) {
+                        window.player.currentPlaylist = currentRandomPlaylist;
+                        window.player.playTrack(idx);
+                        closeRandomPlaylist();
+                    }
+                });
+                // Remove button
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'random-playlist-btn remove';
+                removeBtn.title = 'Remove from list';
+                removeBtn.innerHTML = '<i class="fas fa-trash"></i>';
+                removeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    currentRandomPlaylist.splice(idx, 1);
+                    updateRandomPlaylistModal(currentRandomPlaylist);
+                });
+                actionsDiv.appendChild(playBtn);
+                actionsDiv.appendChild(removeBtn);
+                li.appendChild(infoDiv);
+                li.appendChild(actionsDiv);
                 randomPlaylistList.appendChild(li);
             });
-            randomPlaylistSubtitle.textContent = `100 random songs selected!`;
+            randomPlaylistSubtitle.textContent = `${tracks.length} random songs selected!`;
         }
         function showRandomizingProgress() {
             randomPlaylistList.innerHTML = '';
@@ -220,6 +266,32 @@ export class HomePage {
                     window.player.currentPlaylist = currentRandomPlaylist;
                     window.player.playTrack(0);
                     closeRandomPlaylist();
+                }
+            });
+        }
+        if (saveRandomPlaylistBtn) {
+            saveRandomPlaylistBtn.addEventListener('click', () => {
+                if (currentRandomPlaylist.length > 0 && window.playlistsPage) {
+                    // Open the create playlist modal, then add all tracks after creation
+                    window.playlistsPage.showCreatePlaylistModal();
+                    // Wait for the modal to be created and the form to be submitted
+                    setTimeout(() => {
+                        const modal = document.querySelector('.create-playlist-modal');
+                        if (!modal) return;
+                        const form = modal.querySelector('form');
+                        if (!form) return;
+                        form.addEventListener('submit', function handler(e) {
+                            // Remove this handler after first run
+                            form.removeEventListener('submit', handler);
+                            // Find the new playlist (last in the list)
+                            const playlists = window.playlistsPage.playlists;
+                            const playlistIndex = playlists.length - 1;
+                            // Add all tracks
+                            currentRandomPlaylist.forEach(track => {
+                                window.playlistsPage.addTrackToPlaylist(track, playlistIndex);
+                            });
+                        });
+                    }, 100);
                 }
             });
         }

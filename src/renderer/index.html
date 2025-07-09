@@ -486,7 +486,9 @@
                         </div>
                     </div>
                     <div class="track-details-description">
-                        <ul id="randomPlaylistList" style="max-height: 300px; overflow-y: auto; margin-bottom: 20px;"></ul>
+                        <div id="randomPlaylistListContainer" class="random-playlist-list-container">
+                            <ul id="randomPlaylistList" class="random-playlist-list"></ul>
+                        </div>
                     </div>
                     <div class="track-details-actions" style="flex-direction: row; gap: 10px;">
                         <button class="track-action-btn playlist-btn" id="playRandomPlaylistBtn">
@@ -496,6 +498,10 @@
                         <button class="track-action-btn playlist-btn" id="randomizeAgainBtn">
                             <i class="fas fa-random"></i>
                             Randomize Again
+                        </button>
+                        <button class="track-action-btn playlist-btn" id="saveRandomPlaylistBtn">
+                            <i class="fas fa-save"></i>
+                            Save as Playlist
                         </button>
                     </div>
                 </div>

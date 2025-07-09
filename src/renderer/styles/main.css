@@ -5950,3 +5950,94 @@ body[data-theme="dark"] #fullscreenLyricsFontSizeValue, body[data-theme="dark"] 
     transform: translateX(-50%) !important;
   }
 }
+
+/* Random Playlist Modal Song List Styles */
+.random-playlist-list-container {
+    max-height: 340px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    padding: 0 0 0 0;
+}
+.random-playlist-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.random-playlist-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 18px;
+    border-bottom: 1px solid var(--border-color);
+    transition: background 0.2s;
+    gap: 10px;
+}
+.random-playlist-item:last-child {
+    border-bottom: none;
+}
+.random-playlist-item:hover {
+    background: var(--hover-color);
+}
+.random-playlist-song-info {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    overflow: hidden;
+}
+.random-playlist-song-index {
+    font-weight: 600;
+    color: var(--primary-color);
+    min-width: 28px;
+    text-align: right;
+}
+.random-playlist-song-title {
+    font-weight: 500;
+    color: var(--text-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 220px;
+}
+.random-playlist-song-artist {
+    color: var(--text-secondary-color, #888);
+    font-size: 0.98em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
+}
+.random-playlist-actions {
+    display: flex;
+    gap: 6px;
+}
+.random-playlist-btn {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    font-size: 1.1em;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, color 0.2s;
+}
+.random-playlist-btn:hover {
+    background: var(--primary-color);
+    color: #fff;
+}
+.random-playlist-btn.remove {
+    color: var(--danger-color);
+}
+.random-playlist-btn.remove:hover {
+    background: var(--danger-color);
+    color: #fff;
+}

@@ -976,7 +976,7 @@ export class Player {
         const lyrics = this.getLyrics(currentTrack.path);
 
         if (lyrics) {
-            this.showViewLyricsModal(lyrics);
+            this.showFullscreenLyrics(lyrics);
         } else {
             this.showAddLyricsModal();
         }
@@ -1293,7 +1293,7 @@ export class Player {
             if (e.key === 'Escape') hideFullscreen();
         };
         if (fullscreenBtn) fullscreenBtn.onclick = showFullscreen;
-        if (exitFullscreenBtn) exitFullscreenBtn.onclick = hideFullscreen;
+        if (exitFullscreenBtn) exitFullscreenBtn.onclick = closeModal;
         if (closeViewLyricsModalBtn) closeViewLyricsModalBtn.onclick = closeModal;
         this.lyricsModalBackdrop.onclick = closeModal;
         this.editLyricsBtn.onclick = () => {
@@ -1322,5 +1322,206 @@ export class Player {
             }
         };
         this.lyricsDisplay.addEventListener('wheel', handleWheel, { passive: false });
+    }
+
+    showFullscreenLyrics(lyrics) {
+        // Fullscreen lyrics logic (moved from showViewLyricsModal)
+        const fullscreenOverlay = document.getElementById('fullscreen-lyrics-overlay');
+        const fullscreenLyricsDisplay = document.getElementById('fullscreen-lyrics-display');
+        const exitFullscreenBtn = document.getElementById('exit-fullscreen-lyrics-btn');
+        const autoscrollBtn = document.getElementById('lyrics-autoscroll-btn');
+        const autoscrollSpeedLabel = document.getElementById('autoscroll-speed-label');
+        const settingsBtn = document.getElementById('fullscreen-lyrics-settings-btn');
+        const settingsPopup = document.getElementById('fullscreen-lyrics-settings-popup');
+        const closeSettingsBtn = document.getElementById('close-fullscreen-lyrics-settings');
+        const fontSizeInput = document.getElementById('fullscreenLyricsFontSize');
+        const fontSizeValue = document.getElementById('fullscreenLyricsFontSizeValue');
+        const fontFamilySelect = document.getElementById('fullscreenLyricsFontFamily');
+        const glowInput = document.getElementById('fullscreenLyricsGlow');
+        const glowValue = document.getElementById('fullscreenLyricsGlowValue');
+        const resetBtn = document.getElementById('fullscreenLyricsResetBtn');
+        function getDefaultGlow() {
+            return document.body.getAttribute('data-theme') === 'dark' ? 16 : 9;
+        }
+        // Default settings for session
+        let fullscreenFontSize = 32;
+        let fullscreenFontFamily = "'Poppins', sans-serif";
+        let fullscreenGlow = getDefaultGlow();
+        // Load settings from localStorage if available
+        function loadFullscreenLyricsSettings() {
+            try {
+                const saved = JSON.parse(localStorage.getItem('fullscreenLyricsSettings') || '{}');
+                if (saved.fontSize) fullscreenFontSize = saved.fontSize;
+                if (saved.fontFamily) fullscreenFontFamily = saved.fontFamily;
+                if (saved.glow !== undefined) fullscreenGlow = saved.glow;
+                else fullscreenGlow = getDefaultGlow();
+            } catch { fullscreenGlow = getDefaultGlow(); }
+        }
+        function saveFullscreenLyricsSettings() {
+            localStorage.setItem('fullscreenLyricsSettings', JSON.stringify({
+                fontSize: fullscreenFontSize,
+                fontFamily: fullscreenFontFamily,
+                glow: fullscreenGlow
+            }));
+        }
+        function applyFullscreenLyricsStyles() {
+            fullscreenLyricsDisplay.style.fontSize = fullscreenFontSize + 'px';
+            fullscreenLyricsDisplay.style.fontFamily = fullscreenFontFamily;
+            fullscreenLyricsDisplay.querySelectorAll('.lyrics-line').forEach(line => {
+                line.style.fontFamily = fullscreenFontFamily;
+            });
+            // Glow effect: subtle in light mode, strong in dark mode
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            const baseGlow = isDark
+                ? `0 2px ${fullscreenGlow}px #1db954, 0 1px 0 #000, 0 0px 8px #000`
+                : `0 2px ${Math.round(fullscreenGlow/2)}px #b2f5c5, 0 1px 0 #fff, 0 0px 8px #1db95422`;
+            fullscreenLyricsDisplay.style.textShadow = baseGlow;
+            fullscreenLyricsDisplay.querySelectorAll('.lyrics-line').forEach(line => {
+                line.style.textShadow = baseGlow;
+            });
+        }
+        // --- Auto-scroll logic ---
+        let autoscrollInterval = null;
+        let autoscrollSpeedIndex = 0; // 0: off, 1: slow, 2: medium, 3: fast
+        const speeds = [null, 60, 30, 15]; // seconds to scroll from top to bottom
+        const speedLabels = ['Off', 'Slow', 'Medium', 'Fast'];
+        let userPausedAutoscroll = false;
+        function updateAutoscrollUI() {
+            if (autoscrollBtn) {
+                autoscrollBtn.classList.toggle('active', autoscrollSpeedIndex !== 0);
+                autoscrollSpeedLabel.textContent = speedLabels[autoscrollSpeedIndex];
+            }
+        }
+        function stopAutoscroll() {
+            if (autoscrollInterval) {
+                clearInterval(autoscrollInterval);
+                autoscrollInterval = null;
+            }
+        }
+        function startAutoscroll() {
+            stopAutoscroll();
+            userPausedAutoscroll = false;
+            if (autoscrollSpeedIndex === 0) return;
+            const duration = speeds[autoscrollSpeedIndex] * 1000;
+            const scrollEl = fullscreenLyricsDisplay;
+            const maxScroll = scrollEl.scrollHeight - scrollEl.clientHeight;
+            if (maxScroll <= 0) return;
+            // Calculate remaining distance and adjust duration
+            const startScroll = scrollEl.scrollTop;
+            const remainingScroll = maxScroll - startScroll;
+            if (remainingScroll <= 0) return;
+            const remainingDuration = duration * (remainingScroll / maxScroll);
+            const startTime = Date.now();
+            autoscrollInterval = setInterval(() => {
+                if (userPausedAutoscroll) {
+                    stopAutoscroll();
+                    return;
+                }
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / remainingDuration, 1);
+                scrollEl.scrollTop = startScroll + progress * remainingScroll;
+                if (progress >= 1) stopAutoscroll();
+            }, 16);
+        }
+        fullscreenLyricsDisplay.addEventListener('wheel', () => {
+            if (autoscrollSpeedIndex !== 0 && !userPausedAutoscroll) {
+                userPausedAutoscroll = true;
+                autoscrollSpeedIndex = 0;
+                updateAutoscrollUI();
+                stopAutoscroll();
+            }
+        }, { passive: true });
+        if (autoscrollBtn) {
+            autoscrollBtn.onclick = () => {
+                autoscrollSpeedIndex = (autoscrollSpeedIndex + 1) % speeds.length;
+                updateAutoscrollUI();
+                stopAutoscroll();
+                userPausedAutoscroll = false;
+                if (autoscrollSpeedIndex !== 0) startAutoscroll();
+            };
+        }
+        autoscrollSpeedIndex = 0;
+        updateAutoscrollUI();
+        stopAutoscroll();
+        // Show fullscreen overlay
+        const showFullscreen = () => {
+            const lines = lyrics.split(/\r?\n/);
+            fullscreenLyricsDisplay.innerHTML = lines.map(line => `<span class=\"lyrics-line\">${line === '' ? '&nbsp;' : line.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>`).join('');
+            fullscreenOverlay.style.display = 'flex';
+            setTimeout(() => fullscreenOverlay.classList.add('show'), 10);
+            document.addEventListener('keydown', escListener);
+            fullscreenLyricsDisplay.scrollTop = 0;
+            autoscrollSpeedIndex = 0;
+            updateAutoscrollUI();
+            stopAutoscroll();
+            loadFullscreenLyricsSettings();
+            if (fontSizeInput) { fontSizeInput.value = fullscreenFontSize; fontSizeValue.textContent = fullscreenFontSize + 'px'; }
+            if (fontFamilySelect) fontFamilySelect.value = fullscreenFontFamily;
+            if (glowInput) { glowInput.value = fullscreenGlow; glowValue.textContent = fullscreenGlow + 'px'; }
+            applyFullscreenLyricsStyles();
+            if (settingsPopup) settingsPopup.style.display = 'none';
+        };
+        const hideFullscreen = () => {
+            fullscreenOverlay.classList.remove('show');
+            setTimeout(() => fullscreenOverlay.style.display = 'none', 300);
+            document.removeEventListener('keydown', escListener);
+            stopAutoscroll();
+        };
+        const escListener = (e) => {
+            if (e.key === 'Escape') hideFullscreen();
+        };
+        if (exitFullscreenBtn) exitFullscreenBtn.onclick = hideFullscreen;
+        if (settingsBtn) {
+            settingsBtn.onclick = () => {
+                settingsPopup.style.display = settingsPopup.style.display === 'none' ? 'block' : 'none';
+            };
+        }
+        if (closeSettingsBtn) {
+            closeSettingsBtn.onclick = () => {
+                settingsPopup.style.display = 'none';
+            };
+        }
+        if (fontSizeInput) {
+            fontSizeInput.oninput = (e) => {
+                fullscreenFontSize = parseInt(e.target.value, 10);
+                fontSizeValue.textContent = fullscreenFontSize + 'px';
+                applyFullscreenLyricsStyles();
+                saveFullscreenLyricsSettings();
+            };
+        }
+        if (fontFamilySelect) {
+            fontFamilySelect.oninput = (e) => {
+                fullscreenFontFamily = e.target.value;
+                applyFullscreenLyricsStyles();
+                saveFullscreenLyricsSettings();
+            };
+        }
+        if (glowInput) {
+            glowInput.oninput = (e) => {
+                fullscreenGlow = parseInt(e.target.value, 10);
+                glowValue.textContent = fullscreenGlow + 'px';
+                applyFullscreenLyricsStyles();
+                saveFullscreenLyricsSettings();
+            };
+        }
+        function resetFullscreenLyricsSettings() {
+            fullscreenFontSize = 32;
+            fullscreenFontFamily = "'Poppins', sans-serif";
+            fullscreenGlow = getDefaultGlow();
+            if (fontSizeInput) { fontSizeInput.value = fullscreenFontSize; fontSizeValue.textContent = fullscreenFontSize + 'px'; }
+            if (fontFamilySelect) fontFamilySelect.value = fullscreenFontFamily;
+            if (glowInput) { glowInput.value = fullscreenGlow; glowValue.textContent = fullscreenGlow + 'px'; }
+            applyFullscreenLyricsStyles();
+            saveFullscreenLyricsSettings();
+        }
+        if (resetBtn) {
+            resetBtn.onclick = resetFullscreenLyricsSettings;
+        }
+        showFullscreen();
+        if (exitFullscreenBtn) exitFullscreenBtn.onclick = () => {
+            hideFullscreen();
+            const currentTrack = this.currentPlaylist[this.currentTrackIndex];
+            this.showAddLyricsModal(lyrics);
+        };
     }
 } 
