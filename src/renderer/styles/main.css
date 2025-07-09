@@ -3734,48 +3734,36 @@ body[data-theme="dark"] .delete-confirmation-actions .cancel-btn:hover {
 
 /* Specific styles for the rating dropdown in home page */
 .sort-select.custom-dropdown {
-    min-height: 28px;
+    height: 44px;
+    min-width: 180px;
+    border-radius: 25px;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    font-size: 1em;
+    background-color: var(--background-color);
+    border: 1px solid var(--primary-color);
+    box-shadow: 0 2px 10px var(--shadow-color);
+    transition: all 0.3s ease;
 }
 
 .sort-select .custom-dropdown-selected {
-    padding: 3px 15px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    height: 44px;
+    font-size: 1em;
 }
 
-.sort-select .custom-dropdown-selected i {
-    color: var(--primary-color);
-    font-size: 0.9em;
-}
-
-.sort-select .custom-dropdown-options {
-    max-height: 150px;
-}
-
-.sort-select .custom-dropdown-option {
-    padding: 6px 15px;
+#randomPlaylistBtn {
+    height: 44px;
+    min-width: 180px;
+    border-radius: 25px;
+    padding: 0 24px;
     display: flex;
     align-items: center;
-    gap: 8px;
-}
-
-.sort-select .custom-dropdown-option i {
-    color: var(--primary-color);
-    font-size: 0.9em;
-    opacity: 0.7;
-    transition: opacity 0.2s ease;
-}
-
-.sort-select .custom-dropdown-option:hover i,
-.sort-select .custom-dropdown-option.active i {
-    opacity: 1;
-}
-
-/* Dark mode specific styles */
-body[data-theme="dark"] .sort-select .custom-dropdown-selected i,
-body[data-theme="dark"] .sort-select .custom-dropdown-option i {
-    color: var(--primary-color);
+    font-size: 1em;
+    box-shadow: 0 2px 10px var(--shadow-color);
 }
 
 /* Mini Player Styles */
